@@ -1,4 +1,5 @@
 package JSON::Schema::AsType;
+# ABSTRACT: generates Type::Tiny types out of JSON schemas
 
 use strict;
 use warnings;
@@ -21,16 +22,20 @@ use Moose;
 
 use MooseX::MungeHas 'is_ro';
 
+no warnings 'uninitialized';
+
 our %EXTERNAL_SCHEMAS;
 
 has type   => ( is => 'rwp', handles => [ qw/ check validate validate_explain / ], builder => 1, lazy => 1 );
 
 has schema => ( isa => 'HashRef', lazy => 1, default => sub {
-        my $self = shift;
+    my $self = shift;
         
-        die "schema or uri required" unless $self->uri;
-        from_json LWP::Simple::get($self->uri);
+    my $uri = $self->uri or die "schema or uri required";
+
+    return $self->fetch($uri)->schema;
 });
+
 
 has parent_schema => ();
 
@@ -45,10 +50,18 @@ sub fetch {
         }
     }
 
-    return $JSON::Schema::AsType::EXTERNAL_SCHEMAS{$url} ||= $self->new( uri => $url );
+    return $EXTERNAL_SCHEMAS{$url} if eval { $EXTERNAL_SCHEMAS{$url}->schema };
+
+    my $schema = eval { from_json LWP::Simple::get($url) };
+
+    die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
+
+    return $EXTERNAL_SCHEMAS{$url} = $self->new( uri => $url, schema => $schema );
 }
 
-has uri => ();
+has uri => ( trigger => sub {
+        $EXTERNAL_SCHEMAS{$_[1]} ||= $_[0];
+} );
 
 has references => sub { 
     +{}
@@ -98,8 +111,6 @@ sub _process_keyword {
 
     my $value = $self->schema->{$keyword} // return;
 
-    #log_debug{ "processing keyword '$keyword'" };
-
     my $method = "_keyword_$keyword";
 
     my $type = $self->$method($value) or return;
@@ -110,9 +121,6 @@ sub _process_keyword {
 
 sub resolve_reference {
     my( $self, $ref ) = @_;
-
-    $DB::single = 1;
-    #log_debug{ "ref: $ref" };
 
     $ref = join '/', '#', map { $self->_escape_ref($_) } @$ref
         if ref $ref;
@@ -143,7 +151,7 @@ sub resolve_reference {
 
     $self->references->{$ref} = $x;
 
-    $x or die "didn't find reference $ref";
+    $x;
 }
 
 sub _unescape_ref {

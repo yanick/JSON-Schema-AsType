@@ -16,14 +16,21 @@ my $jsts_dir = path( 't', 'json-schema-test-suite' );
 # seed the external schemas
 my $remote_dir = $jsts_dir->child('remotes');
 
-$JSON::Schema::AsType::EXTERNAL_SCHEMAS{'http://localhost:1234/integer.json'}
-    = JSON::Schema::AsType->new( schema => from_json $remote_dir->child( 'integer.json' )->slurp );
+$remote_dir->visit(sub{
+    my $path = shift;
+    return unless $path =~ qr/\.json$/;
 
-$JSON::Schema::AsType::EXTERNAL_SCHEMAS{'http://localhost:1234/subSchemas.json'}
-    = JSON::Schema::AsType->new( schema => from_json $remote_dir->child('subSchemas.json' )->slurp );
+    my $name = $path->relative($remote_dir);
 
-$JSON::Schema::AsType::EXTERNAL_SCHEMAS{'http://localhost:1234/folder/folderInteger.json'}
-    = JSON::Schema::AsType->new( schema => from_json $remote_dir->child( 'folder', 'folderInteger.json' )->slurp );
+    JSON::Schema::AsType->new( 
+        uri    => "http://localhost:1234/$name",
+        schema => from_json $path->slurp 
+    );
+
+    return;
+
+},{recurse => 1});
+
 
 @ARGV = grep { $_->is_file } $jsts_dir->child( 'tests','draft4')->children unless @ARGV;
 

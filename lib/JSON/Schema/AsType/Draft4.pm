@@ -1,4 +1,15 @@
 package JSON::Schema::AsType::Draft4;
+# ABSTRACT: Role processing draft4 JSON Schema 
+
+=head1 DESCRIPTION
+
+This role is not intended to be used directly. It is used internally
+by L<JSON::Schema::AsType> objects.
+
+Importing this module auto-populate the Draft4 schema in the
+L<JSON::Schema::AsType> schema cache.
+
+=cut
 
 use strict;
 use warnings;
@@ -18,8 +29,6 @@ my $JsonObject = declare 'JsonObject', as HashRef() & ~Object();
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
 
-        #log_debug{ "declaring ref to $ref" };
-        
         return Type::Tiny->new(
             name => 'Ref',
             display_name => "Ref($ref)",
@@ -32,19 +41,12 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
                 join "\n", "ref schema is " . to_json($schema->schema), @{$schema->validate_explain($_)} 
             }
         );
-
-        declare 'Ref', where {
-            #warn "checking $ref";
-            #warn "$_ - ", $self->resolve_reference($ref)->check($_);
-            $self->resolve_reference($ref)->check($_);
-        }, message { join "\n", @{$self->resolve_reference($ref)->validate_explain($_)} };
 } );
 
 sub _keyword_pattern {
     my( $self, $pattern ) = @_;
 
     (~Str) | declare 'Pattern', where { /$pattern/ };
-#        message { "$_ does not match pattern '$pattern'" }
 }
 
 sub _keyword_enum {
@@ -161,14 +163,12 @@ sub _keyword_maxProperties {
     my( $self, $max ) = @_;
 
     (~HashRef) | declare 'MaxProperties', where { keys(%$_) <= $max };
-#        message { "object has @{[  scalar  keys %$_ ]} properties, max of $max" };
 }
 
 sub _keyword_minProperties {
     my( $self, $min ) = @_;
 
     ~ HashRef | declare 'MinProperties', where { keys(%$_) >= $min };
-#        message { "object has @{[  scalar  keys %$_ ]} properties, min of $min" };
 }
 
 sub _keyword_required {
@@ -195,7 +195,7 @@ sub _keyword_oneOf {
     declare 'OneOf', where {
         my $t = $_;
         1 == grep { $_->check($t) } @x
-    };#, message { "anyOf condition not met" };
+    };
 }
 
 
@@ -242,7 +242,6 @@ sub _keyword_multipleOf {
             !StrictNum->check($_)
             or ($_ / $num) !~ /\./
         };
-#        message { "$_ is not a a multiple of $num" };
 }
 
 sub _keyword_maxItems {
@@ -250,8 +249,6 @@ sub _keyword_maxItems {
 
     (~ArrayRef) | declare 'MaxItems',
         where { $max >= @$_ };
-        #message { "'$_' length (@{[ scalar @$_ ]}) is greater than $max"};
-
 }
 
 sub _keyword_minItems {
@@ -262,8 +259,6 @@ sub _keyword_minItems {
             !ArrayRef->check($_)
             or $max  <= @$_
         };
-        #message { "'$_' length (@{[ scalar @$_ ]}) is less than $max"};
-
 }
 
 sub _keyword_maxLength {
@@ -275,7 +270,6 @@ sub _keyword_maxLength {
             or StrictNum->check($_)
             or $max >= length
         };
-        #message { "'$_' length (@{[ length ]}) is greater than $max"};
 }
 
 sub _keyword_minLength {
@@ -287,7 +281,6 @@ sub _keyword_minLength {
             or StrictNum->check($_)
             or $min <= length
         };
-        #message { "'$_' length (@{[ length ]}) is less than $min"};
 }
 
 sub _keyword_maximum {
@@ -298,14 +291,12 @@ sub _keyword_maximum {
             where {
                 !StrictNum->check($_) or $_ < $maximum 
             };
-            #message { "$_ is greater or equal to $maximum" };
     }
     else {
         return declare 'Maximum',
             where {
                 !StrictNum->check($_) or $_ <= $maximum 
             };
-            #message { "$_ is greater to $maximum" };
     }
 }
 
@@ -317,15 +308,12 @@ sub _keyword_minimum {
             where {
                 !StrictNum->check($_) or $_ > $minimum 
             };
-            # message { "$_ is less or equal to $minimum" };
     }
 
     return declare 'Minimum',
             where {
                 !StrictNum->check($_) or $_ >= $minimum 
             };
-            #message { "$_ is less than $minimum" };
-
 }
 
 sub _keyword_additionalItems {
@@ -377,7 +365,7 @@ sub _keyword_items {
 }
 
 
-$JSON::Schema::AsType::EXTERNAL_SCHEMAS{'http://json-schema.org/draft-04/schema'} = JSON::Schema::AsType->new(
+JSON::Schema::AsType->new(
     specification => 'draft4',
     uri           => 'http://json-schema.org/draft-04/schema',
     schema        => from_json <<'END_JSON' );

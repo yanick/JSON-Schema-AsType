@@ -1,0 +1,135 @@
+=head1 SYNOPSIS
+
+    use JSON::Schema::AsType;
+
+    my $schema = JSON::Schema::AsType->new( schema => {
+            properties => {
+                foo => { type => 'integer' },
+                bar => { type => 'object' },
+            },
+    });
+
+    print 'valid' if $schema->check({ foo => 1, bar => { two => 2 } }); # prints 'valid'
+
+    print $schema->validate_explain({ foo => 'potato', bar => { two => 2 } });
+
+=head1 DESCRIPTION
+
+This module takes in a JSON Schema (L<http://json-schema.org/>) and turns it into a
+L<Type::Tiny> type.
+
+
+=head1 SEE ALSO
+
+=over
+
+=item L<JSON::Schema>
+
+=item L<JSV>
+
+=back
+
+=cut
+
+=method new( %args )
+
+    my $schema = JSON::Schema::AsType->new( schema => $my_schema );
+
+The class constructor. Accepts the following arguments.
+
+=over
+
+=item schema => \%schema
+
+The JSON schema to compile, as a hashref. 
+
+If not given, will be retrieved from C<uri>. 
+
+An error will be thrown is neither C<schema> nor C<uri> is given.
+
+=item uri => $uri
+
+Optional uri associated with the schema. 
+
+If provided, the schema will also 
+be added to a schema cache. There is currently no way to prevent this. 
+If this is an issue for you, you can manipulate the cache by accessing 
+C<%JSON::Schema::AsType::EXTERNAL_SCHEMAS> directly.
+
+=item specification => $version
+
+The version of the JSON-Schema specification to use. Defaults to 'draft4' 
+(and doesn't accept anything else  at the moment).
+
+
+=back
+
+=cut
+
+=method type
+
+Returns the compiled L<Type::Tiny> type.
+
+=method check( $struct )
+
+Returns C<true> if C<$struct> is valid as per the schema.
+
+=method validate( $struct )
+
+Returns a short explanation if C<$struct> didn't validate, nothing otherwise.
+
+=method validate_explain( $struct )
+
+Returns a log explanation if C<$struct> didn't validate, nothing otherwise.
+
+
+=cut
+
+=method schema
+
+Returns the JSON schema, as a hashref.
+
+=cut
+
+=method parent_schema 
+
+Returns the L<JSON::Schema::AsType> object for the parent schema, or
+C<undef> is the current schema is the top-level one.
+
+=cut
+
+=method fetch( $url )
+
+Fetches the schema at the given C<$url>. If already present, it will use the schema in
+the cache. If not, the newly fetched schema will be added to the cache.
+
+=cut
+
+=method uri 
+
+Returns the uri associated with the schema, if any.
+
+=method specification
+
+Returns the JSON Schema specification used by the object.
+
+=method root_schema
+
+Returns the top-level schema including this schema.
+
+=method is_root_schema
+
+Returns C<true> if this schema is a top-level
+schema.
+
+=cut
+
+=method resolve_reference( $ref )
+
+    my $sub_schema = $schema->resolve_reference( '#/properties/foo' );
+
+    print $sub_schema->check( $struct );
+
+Returns the L<JSON::Schema::AsType> object associated with the 
+type referenced by C<$ref>.
+
