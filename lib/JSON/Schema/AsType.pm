@@ -57,6 +57,7 @@ has references => sub {
 has specification => (
     is => 'ro',
     default => sub { 'draft4' },
+    isa => enum 'JsonSchemaSpecification', [ qw/ draft4 / ],
 );
 
 
@@ -186,7 +187,7 @@ sub _add_to_type {
 
 sub BUILD {
     my $self = shift;
-    apply_all_roles( $self, 'JSON::Schema::AsType::Draft4' );
+    apply_all_roles( $self, 'JSON::Schema::AsType::' . ucfirst $self->specification );
 }
 
 1;
