@@ -69,8 +69,9 @@ has references => sub {
 
 has specification => (
     is => 'ro',
-    default => sub { 'draft4' },
-    isa => enum 'JsonSchemaSpecification', [ qw/ draft4 / ],
+    lazy => 1,
+    default => sub { eval { $_[0]->parent_schema->specification } || 'draft4' },
+    isa => enum 'JsonSchemaSpecification', [ qw/ draft3 draft4 / ],
 );
 
 

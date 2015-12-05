@@ -71,7 +71,7 @@ sub _keyword_uniqueItems {
 
     declare 'UniqueItems',
         where {
-            my $size = @$_;
+            my $size = eval { @$_ } or return 1;
             $size == uniq map { to_json $_ , { allow_nonref => 1 } } @$_
         };
 
@@ -177,7 +177,7 @@ sub _keyword_required {
     reduce { $a & $b }
     map { 
         my $p = $_;
-        declare 'Required', where { exists $_->{$p} };# message { "property '$p' is required" }
+        declare 'Required', where { exists $_->{$p} };
     } @$required;
 
 }
