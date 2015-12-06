@@ -95,10 +95,6 @@ sub _build_type {
     
     $self->_set_type('');
 
-    my $snippet = substr to_json( $self->schema, { pretty => 1, canonical => 1} ), 0, 20;
-
-    #log_debug { "Building type for $snippet" };
-
     $self->_process_keyword($_) 
         for sort map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 
