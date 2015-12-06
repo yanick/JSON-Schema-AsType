@@ -22,6 +22,8 @@ use List::Util qw/ reduce pairmap pairs /;
 use List::MoreUtils qw/ any all none uniq zip /;
 use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object slurpy Dict Optional slurpy /; 
 
+use JSON::Schema::AsType;
+
 use JSON;
 
 my $JsonObject = declare 'JsonObject', as HashRef() & ~Object();

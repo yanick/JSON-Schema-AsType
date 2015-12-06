@@ -24,6 +24,8 @@ use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object 
 
 use JSON;
 
+use JSON::Schema::AsType;
+
 my $JsonObject = declare 'JsonObject', as HashRef() & ~Object();
 
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
