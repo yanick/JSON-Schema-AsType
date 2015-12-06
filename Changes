@@ -1,5 +1,7 @@
 Revision history for JSON-Schema-AsType
 
-{{$NEXT}}
-
+0.0.1 2015-12-06
   - First version, unleashed on an unsuspecting world.
+
+  [ STATISTICS ]
+    - code churn: 74 files changed, 5230 insertions(+), 10 deletions(-)
