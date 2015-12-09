@@ -1,6 +1,8 @@
 Revision history for JSON-Schema-AsType
 
 {{$NEXT}}
+  - Minimum Path::Tiny version of 0.062 (for `visit()`)
+
   [ API CHANGES ]
 
   [ BUG FIXES ]

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use JSON;
-use Path::Tiny;
+use Path::Tiny 0.062;
 use JSON::Schema::AsType;
 
 use Test::More;
