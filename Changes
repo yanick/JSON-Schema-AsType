@@ -2,6 +2,7 @@ Revision history for JSON-Schema-AsType
 
 {{$NEXT}}
   - Minimum Path::Tiny version of 0.062 (for `visit()`)
+  - Set minimum Perl to be 5.10.0.
 
   [ API CHANGES ]
 

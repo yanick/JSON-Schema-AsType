@@ -1,6 +1,8 @@
 package JSON::Schema::AsType;
 # ABSTRACT: generates Type::Tiny types out of JSON schemas
 
+use 5.10.0;
+
 use strict;
 use warnings;
 
