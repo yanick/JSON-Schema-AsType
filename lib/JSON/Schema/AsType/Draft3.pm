@@ -115,7 +115,7 @@ sub _keyword_dependencies {
     return $type;
 }
 
-JSON::Schema::AsType->new(
+our $SpecSchema = JSON::Schema::AsType->new(
     specification => 'draft3',
     uri           => 'http://json-schema.org/draft-03/schema',
     schema        => from_json <<'END_JSON' );

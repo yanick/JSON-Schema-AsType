@@ -8,6 +8,8 @@ Revision history for JSON-Schema-AsType
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
+  - Add 'validate_*_schema' for validation of the schema agains its spec.
+    (GH#5)
 
   [ NEW FEATURES ]
 

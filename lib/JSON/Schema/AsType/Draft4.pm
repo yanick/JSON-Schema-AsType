@@ -366,7 +366,7 @@ sub _keyword_items {
 }
 
 
-JSON::Schema::AsType->new(
+our $SpecSchema = JSON::Schema::AsType->new(
     specification => 'draft4',
     uri           => 'http://json-schema.org/draft-04/schema',
     schema        => from_json <<'END_JSON' );
