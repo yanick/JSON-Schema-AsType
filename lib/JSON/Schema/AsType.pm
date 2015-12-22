@@ -15,6 +15,7 @@ use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object 
 use Type::Utils;
 use LWP::Simple;
 use Clone 'clone';
+use Class::Load qw/ load_class /;
 
 use Moose::Util qw/ apply_all_roles /;
 
@@ -76,6 +77,27 @@ has specification => (
     isa => enum 'JsonSchemaSpecification', [ qw/ draft3 draft4 / ],
 );
 
+sub specification_schema {
+    my $self = shift;
+
+    my $spec = $self->specification;
+
+    my $class  = "JSON::Schema::AsType::" . ucfirst $spec;
+
+    load_class( $class );
+
+    return eval '$'.$class . "::SpecSchema";
+}
+
+sub validate_schema {
+    my $self = shift;
+    $self->specification_schema->validate($self->schema);
+}
+
+sub validate_explain_schema {
+    my $self = shift;
+    $self->specification_schema->validate_explain($self->schema);
+}
 
 sub root_schema {
     my $self = shift;

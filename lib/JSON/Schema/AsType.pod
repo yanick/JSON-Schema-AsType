@@ -82,6 +82,23 @@ Returns a short explanation if C<$struct> didn't validate, nothing otherwise.
 
 Returns a log explanation if C<$struct> didn't validate, nothing otherwise.
 
+=method validate_schema
+
+Like C<validate>, but validates the schema itself against its specification.
+
+
+    print $schema->validate_schema;
+
+    # equivalent to
+
+    print $schema->specification_schema->validate($schema);
+
+=method validate_explain_schema
+
+Like C<validate_explain>, but validates the schema itself against its specification.
+
+
+
 
 =cut
 
@@ -112,6 +129,11 @@ Returns the uri associated with the schema, if any.
 =method specification
 
 Returns the JSON Schema specification used by the object.
+
+=method specification_schema
+
+Returns the L<JSON::Schema::AsType> object representing the schema of 
+the current object's specification.
 
 =method root_schema
 

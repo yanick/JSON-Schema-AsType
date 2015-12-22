@@ -84,5 +84,6 @@ t/json-schema-test-suite/tests/draft4/required.json
 t/json-schema-test-suite/tests/draft4/type.json
 t/json-schema-test-suite/tests/draft4/uniqueItems.json
 t/json-schema-test-suite/tox.ini
+t/spec-schema.t
 xt/release/pause-permissions.t
 xt/release/unused-vars.t
