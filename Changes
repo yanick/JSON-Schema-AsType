@@ -1,19 +1,12 @@
 Revision history for JSON-Schema-AsType
 
-{{$NEXT}}
-  [ API CHANGES ]
-
-  [ BUG FIXES ]
-
-  [ DOCUMENTATION ]
-
+0.1.0 2015-12-22
   [ ENHANCEMENTS ]
-  - Add 'validate_*_schema' for validation of the schema agains its spec.
-    (GH#5)
-
-  [ NEW FEATURES ]
+    - Add 'validate_*_schema' for validation of the schema agains its spec.
+      (GH#5)
 
   [ STATISTICS ]
+    - code churn: 7 files changed, 86 insertions(+), 5 deletions(-)
 
 0.0.2 2015-12-09
   - Minimum Path::Tiny version of 0.062 (for `visit()`)

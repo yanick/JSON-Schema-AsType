@@ -1,6 +1,7 @@
 package JSON::Schema::AsType;
+our $AUTHORITY = 'cpan:YANICK';
 # ABSTRACT: generates Type::Tiny types out of JSON schemas
-
+$JSON::Schema::AsType::VERSION = '0.1.0';
 use 5.10.0;
 
 use strict;
@@ -220,3 +221,169 @@ sub BUILD {
 }
 
 1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+JSON::Schema::AsType - generates Type::Tiny types out of JSON schemas
+
+=head1 VERSION
+
+version 0.1.0
+
+=head1 SYNOPSIS
+
+    use JSON::Schema::AsType;
+
+    my $schema = JSON::Schema::AsType->new( schema => {
+            properties => {
+                foo => { type => 'integer' },
+                bar => { type => 'object' },
+            },
+    });
+
+    print 'valid' if $schema->check({ foo => 1, bar => { two => 2 } }); # prints 'valid'
+
+    print $schema->validate_explain({ foo => 'potato', bar => { two => 2 } });
+
+=head1 DESCRIPTION
+
+This module takes in a JSON Schema (L<http://json-schema.org/>) and turns it into a
+L<Type::Tiny> type.
+
+=head1 METHODS
+
+=head2 new( %args )
+
+    my $schema = JSON::Schema::AsType->new( schema => $my_schema );
+
+The class constructor. Accepts the following arguments.
+
+=over
+
+=item schema => \%schema
+
+The JSON schema to compile, as a hashref. 
+
+If not given, will be retrieved from C<uri>. 
+
+An error will be thrown is neither C<schema> nor C<uri> is given.
+
+=item uri => $uri
+
+Optional uri associated with the schema. 
+
+If provided, the schema will also 
+be added to a schema cache. There is currently no way to prevent this. 
+If this is an issue for you, you can manipulate the cache by accessing 
+C<%JSON::Schema::AsType::EXTERNAL_SCHEMAS> directly.
+
+=item specification => $version
+
+The version of the JSON-Schema specification to use. Defaults to 'draft4' 
+(and doesn't accept anything else  at the moment).
+
+=back
+
+=head2 type
+
+Returns the compiled L<Type::Tiny> type.
+
+=head2 check( $struct )
+
+Returns C<true> if C<$struct> is valid as per the schema.
+
+=head2 validate( $struct )
+
+Returns a short explanation if C<$struct> didn't validate, nothing otherwise.
+
+=head2 validate_explain( $struct )
+
+Returns a log explanation if C<$struct> didn't validate, nothing otherwise.
+
+=head2 validate_schema
+
+Like C<validate>, but validates the schema itself against its specification.
+
+    print $schema->validate_schema;
+
+    # equivalent to
+
+    print $schema->specification_schema->validate($schema);
+
+=head2 validate_explain_schema
+
+Like C<validate_explain>, but validates the schema itself against its specification.
+
+=head2 schema
+
+Returns the JSON schema, as a hashref.
+
+=head2 parent_schema 
+
+Returns the L<JSON::Schema::AsType> object for the parent schema, or
+C<undef> is the current schema is the top-level one.
+
+=head2 fetch( $url )
+
+Fetches the schema at the given C<$url>. If already present, it will use the schema in
+the cache. If not, the newly fetched schema will be added to the cache.
+
+=head2 uri 
+
+Returns the uri associated with the schema, if any.
+
+=head2 specification
+
+Returns the JSON Schema specification used by the object.
+
+=head2 specification_schema
+
+Returns the L<JSON::Schema::AsType> object representing the schema of 
+the current object's specification.
+
+=head2 root_schema
+
+Returns the top-level schema including this schema.
+
+=head2 is_root_schema
+
+Returns C<true> if this schema is a top-level
+schema.
+
+=head2 resolve_reference( $ref )
+
+    my $sub_schema = $schema->resolve_reference( '#/properties/foo' );
+
+    print $sub_schema->check( $struct );
+
+Returns the L<JSON::Schema::AsType> object associated with the 
+type referenced by C<$ref>.
+
+=head1 SEE ALSO
+
+=over
+
+=item L<JSON::Schema>
+
+=item L<JSV>
+
+=back
+
+=head1 AUTHOR
+
+Yanick Champoux <yanick@babyl.dyndns.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2015 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
