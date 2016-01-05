@@ -65,8 +65,10 @@ sub run_schema_test {
                     'a string is still a string, even if it looks like a number',
                     'a string is still not a number, even if it looks like one'; 
 
-            is !!$schema->check($_->{data}) => !!$_->{valid}, $_->{description} 
-                or diag join "\n", eval { @{$schema->validate_explain($_->{data})} };
+            # Test that the result from check is the same as what is in the spec.
+            # If the check should be true and the result is false, do validate_explain.
+            is !!$schema->check($_->{data}) => !!$_->{valid}, $_->{description}
+                or $_->{valid} and diag join "\n", @{$schema->validate_explain($_->{data})};
 
             diag join "\n", @{ $schema->validate_explain($_->{data}) || [] }
                 unless $_->{valid} or not $explain;
