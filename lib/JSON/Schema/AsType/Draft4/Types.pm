@@ -13,10 +13,30 @@ use Type::Library
         ExclusiveMaximum
         MinLength
         MultipleOf
+        MaxItems
+        MinItems
     );
 
 use Type::Utils -all;
 use Types::Standard -types;
+
+declare 'MaxItems',
+    constraint_generator => sub {
+        my $max = shift;
+
+        return sub {
+            ref ne 'ARRAY' or @$_ <= $max;
+        };
+    };
+
+declare 'MinItems',
+    constraint_generator => sub {
+        my $min = shift;
+
+        return sub {
+            ref ne 'ARRAY' or @$_ >= $min;
+        };
+    };
 
 declare 'MultipleOf',
     constraint_generator => sub {
