@@ -22,9 +22,17 @@ test_type( MultipleOf[5], [ 10, 'banana' ], [ 3 ] );
 test_type( MaxItems[2], [ 10, [1] ], [ [1..3] ] );
 test_type( MinItems[2], [ 10, [1..2] ], [ [1] ] );
 
-test_type( Null, [ undef ], [ 'banana' ] );
+subtest types => sub {
+    test_type( Null, [ undef ], [ 'banana' ] );
 
-test_type( Boolean, [ JSON::true, JSON::false ], [ 1 ] );
+    test_type( Boolean, [ JSON::true, JSON::false ], [ 1 ] );
+
+    test_type( Array, [ [] ], [ 1 ] );
+
+    test_type( Object, [ {} ], [ [], 1 ] );
+
+    test_type( String, [ "foo" ], [ [], 1 ] );
+};
 
 done_testing;
 

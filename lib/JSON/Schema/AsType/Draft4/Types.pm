@@ -15,12 +15,22 @@ use Type::Library
         MultipleOf
         MaxItems
         MinItems
+
         Null
         Boolean
+        Array
+        Object
+        String
     );
 
 use Type::Utils -all;
 use Types::Standard -types;
+
+declare String => as Str & ~StrictNum;
+
+declare Object => as HashRef;
+
+declare Array => as ArrayRef;
 
 declare Boolean => where sub { ref =~ /JSON/ };
 

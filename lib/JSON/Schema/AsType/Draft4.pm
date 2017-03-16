@@ -220,17 +220,19 @@ sub _keyword_type {
 
     my $notBoolean = declare as Any, where { ref( $_ ) !~ /JSON/ };
     my $notNumber = declare as Any, where { not StrictNum->check($_) };
-    my $Boolean = declare as Any, where { ref($_) =~ /JSON/ };
 
     return declare "TypeInteger", as Int & $notBoolean if $struct_type eq 'integer';
     return StrictNum & $notBoolean if $struct_type eq 'number';
-    return  Str & $notNumber if $struct_type eq 'string';
-    return  HashRef if $struct_type eq 'object';
-    return  ArrayRef if $struct_type eq 'array';
 
-    return  Boolean if $struct_type eq 'boolean';
+    return String if $struct_type eq 'string';
 
-    return  Null if $struct_type eq 'null';
+    return Object if $struct_type eq 'object';
+
+    return Array if $struct_type eq 'array';
+
+    return Boolean if $struct_type eq 'boolean';
+
+    return Null if $struct_type eq 'null';
 
     if( my @types = eval { @$struct_type } ) {
         return reduce { $a | $b } map { $self->_keyword_type($_) } @types;
