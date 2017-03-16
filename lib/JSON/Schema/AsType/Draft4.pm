@@ -227,7 +227,9 @@ sub _keyword_type {
     return  Str & $notNumber if $struct_type eq 'string';
     return  HashRef if $struct_type eq 'object';
     return  ArrayRef if $struct_type eq 'array';
-    return  $Boolean if $struct_type eq 'boolean';
+
+    return  Boolean if $struct_type eq 'boolean';
+
     return  Null if $struct_type eq 'null';
 
     if( my @types = eval { @$struct_type } ) {

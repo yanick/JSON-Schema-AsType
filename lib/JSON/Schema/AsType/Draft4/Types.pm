@@ -16,10 +16,13 @@ use Type::Library
         MaxItems
         MinItems
         Null
+        Boolean
     );
 
 use Type::Utils -all;
 use Types::Standard -types;
+
+declare Boolean => where sub { ref =~ /JSON/ };
 
 declare Null => where sub { not defined };
 
