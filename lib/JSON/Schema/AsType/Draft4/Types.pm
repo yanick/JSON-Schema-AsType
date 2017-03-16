@@ -21,10 +21,12 @@ use Type::Library
         Array
         Object
         String
+        Integer
     );
 
 use Type::Utils -all;
 use Types::Standard -types;
+
 
 declare String => as Str & ~StrictNum;
 
@@ -33,6 +35,8 @@ declare Object => as HashRef;
 declare Array => as ArrayRef;
 
 declare Boolean => where sub { ref =~ /JSON/ };
+
+declare Integer => as Int & ~Boolean;
 
 declare Null => where sub { not defined };
 
