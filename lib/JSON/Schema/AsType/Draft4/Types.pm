@@ -3,6 +3,11 @@ package JSON::Schema::AsType::Draft4::Types;
 use strict;
 use warnings;
 
+use Type::Utils -all;
+use Types::Standard qw/ 
+    Str StrictNum HashRef ArrayRef 
+    Int
+/;
 
 use Type::Library
     -base,
@@ -22,15 +27,20 @@ use Type::Library
         Object
         String
         Integer
+        Pattern
     );
-
-use Type::Utils -all;
-use Types::Standard -types;
 
 
 declare String => as Str & ~StrictNum;
 
-declare Object => as HashRef;
+# ~Str or ~String?
+declare Pattern,
+    constraint_generator => sub {
+        my $regex = shift;
+        sub { !String->check($_) or /$regex/ },
+    };
+
+declare Object => as HashRef ,where sub { ref eq 'HASH' };
 
 declare Array => as ArrayRef;
 
