@@ -15,6 +15,8 @@ test_type( ExclusiveMaximum[5], [ 4, 'banana' ], [ 5, 6 ] );
 
 test_type( MinLength[5], [ 6, 'banana', {} ], [ 'foo' ] );
 
+test_type( MultipleOf[5], [ 10, 'banana' ], [ 3 ] );
+
 sub test_type {
     my( $type, $good, $bad ) = @_;
 

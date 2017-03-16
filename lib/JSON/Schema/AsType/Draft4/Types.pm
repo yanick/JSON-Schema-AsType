@@ -12,10 +12,21 @@ use Type::Library
         Maximum
         ExclusiveMaximum
         MinLength
+        MultipleOf
     );
 
 use Type::Utils -all;
 use Types::Standard -types;
+
+declare 'MultipleOf',
+    constraint_generator => sub {
+        my $num =shift;
+
+        return sub {
+            !StrictNum->check($_)
+                or ($_ / $num) !~ /\./;
+        }
+    };
 
 declare 'MinLength',
     constraint_generator => sub {

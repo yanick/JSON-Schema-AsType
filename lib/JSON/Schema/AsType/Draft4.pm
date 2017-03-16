@@ -241,11 +241,7 @@ sub _keyword_type {
 sub _keyword_multipleOf {
     my( $self, $num ) = @_;
 
-    declare 'MultipleOf',
-        where {
-            !StrictNum->check($_)
-            or ($_ / $num) !~ /\./
-        };
+    MultipleOf[$num];
 }
 
 sub _keyword_maxItems {
