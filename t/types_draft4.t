@@ -5,6 +5,8 @@ use warnings;
 
 use Test::More;
 
+use JSON;
+
 use JSON::Schema::AsType::Draft4::Types '-all';
 
 test_type( Minimum[5], [ 6, 'banana', 5 ], [ 4 ] );
@@ -21,6 +23,8 @@ test_type( MaxItems[2], [ 10, [1] ], [ [1..3] ] );
 test_type( MinItems[2], [ 10, [1..2] ], [ [1] ] );
 
 test_type( Null, [ undef ], [ 'banana' ] );
+
+test_type( Boolean, [ JSON::true, JSON::false ], [ 1 ] );
 
 done_testing;
 
