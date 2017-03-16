@@ -279,29 +279,16 @@ sub _keyword_maxLength {
 sub _keyword_minLength {
     my( $self, $min ) = @_;
 
-    declare 'MinLength',
-        where {
-            !Str->check($_)
-            or StrictNum->check($_)
-            or $min <= length
-        };
+    return MinLength[$min];
 }
 
 sub _keyword_maximum {
     my( $self, $maximum ) = @_;
 
-    if ( $self->schema->{exclusiveMaximum} ) {
-        return declare 'ExclusiveMaximum',
-            where {
-                !StrictNum->check($_) or $_ < $maximum 
-            };
-    }
-    else {
-        return declare 'Maximum',
-            where {
-                !StrictNum->check($_) or $_ <= $maximum 
-            };
-    }
+    return $self->schema->{exclusiveMaximum}
+        ? ExclusiveMaximum[$maximum]
+        : Maximum[$maximum];
+
 }
 
 sub _keyword_minimum {

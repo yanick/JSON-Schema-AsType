@@ -9,6 +9,8 @@ use Type::Library
     -declare => qw( 
         Minimum
         ExclusiveMinimum
+        Maximum
+        ExclusiveMaximum
         MinLength
     );
 
@@ -41,6 +43,24 @@ declare ExclusiveMinimum,
         return sub { 
             ! StrictNum->check($_)
                 or $_ > $minimum;
+        }
+    };
+
+declare Maximum,
+    constraint_generator => sub {
+        my $max = shift;
+        return sub {
+            ! StrictNum->check($_)
+                or $_ <= $max;
+        };
+    };
+
+declare ExclusiveMaximum,
+    constraint_generator => sub {
+        my $max = shift;
+        return sub { 
+            ! StrictNum->check($_)
+                or $_ < $max;
         }
     };
 

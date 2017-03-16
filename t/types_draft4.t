@@ -8,8 +8,10 @@ use Test::More tests => 3;
 use JSON::Schema::AsType::Draft4::Types '-all';
 
 test_type( Minimum[5], [ 6, 'banana', 5 ], [ 4 ] );
-
 test_type( ExclusiveMinimum[5], [ 6, 'banana' ], [ 5, 4 ] );
+
+test_type( Maximum[5], [ 4, 'banana', 5 ], [ 6 ] );
+test_type( ExclusiveMaximum[5], [ 4, 'banana' ], [ 5, 6 ] );
 
 test_type( MinLength[5], [ 6, 'banana', {} ], [ 'foo' ] );
 
