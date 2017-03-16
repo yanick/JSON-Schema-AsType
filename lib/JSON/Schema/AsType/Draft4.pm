@@ -221,7 +221,8 @@ sub _keyword_type {
     my $notBoolean = declare as Any, where { ref( $_ ) !~ /JSON/ };
     my $notNumber = declare as Any, where { not StrictNum->check($_) };
 
-    return declare "TypeInteger", as Int & $notBoolean if $struct_type eq 'integer';
+    return Integer if $struct_type eq 'integer';
+
     return StrictNum & $notBoolean if $struct_type eq 'number';
 
     return String if $struct_type eq 'string';

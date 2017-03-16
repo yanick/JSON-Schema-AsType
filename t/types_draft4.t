@@ -32,6 +32,8 @@ subtest types => sub {
     test_type( Object, [ {} ], [ [], 1 ] );
 
     test_type( String, [ "foo" ], [ [], 1 ] );
+
+    test_type( Integer, [ 1 ], [ [], "foo", JSON::true ] );
 };
 
 done_testing;
