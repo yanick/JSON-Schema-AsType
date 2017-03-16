@@ -22,6 +22,8 @@ use List::Util qw/ reduce pairmap pairs /;
 use List::MoreUtils qw/ any all none uniq zip /;
 use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object slurpy Dict Optional slurpy /; 
 
+use JSON::Schema::AsType::Draft4::Types '-all';
+
 use JSON;
 
 use JSON::Schema::AsType;
@@ -306,16 +308,10 @@ sub _keyword_minimum {
     my( $self, $minimum ) = @_;
 
     if ( $self->schema->{exclusiveMinimum} ) {
-        return declare 'MinimumExclusive',
-            where {
-                !StrictNum->check($_) or $_ > $minimum 
-            };
+        return ExclusiveMinimum[$minimum];
     }
 
-    return declare 'Minimum',
-            where {
-                !StrictNum->check($_) or $_ >= $minimum 
-            };
+    return Minimum[$minimum];
 }
 
 sub _keyword_additionalItems {

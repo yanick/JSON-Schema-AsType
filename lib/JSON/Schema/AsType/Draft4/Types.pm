@@ -1,0 +1,48 @@
+package JSON::Schema::AsType::Draft4::Types;
+
+use strict;
+use warnings;
+
+
+use Type::Library
+    -base,
+    -declare => qw( 
+        Minimum
+        ExclusiveMinimum
+        MinLength
+    );
+
+use Type::Utils -all;
+use Types::Standard -types;
+
+declare 'MinLength',
+    constraint_generator => sub {
+        my $min =shift;
+
+        return sub {
+            !Str->check($_)
+            or StrictNum->check($_)
+            or $min <= length
+        }
+    };
+
+declare Minimum,
+    constraint_generator => sub {
+        my $minimum = shift;
+        return sub {
+            ! StrictNum->check($_)
+                or $_ >= $minimum;
+        };
+    };
+
+declare ExclusiveMinimum,
+    constraint_generator => sub {
+        my $minimum = shift;
+        return sub { 
+            ! StrictNum->check($_)
+                or $_ > $minimum;
+        }
+    };
+
+
+1;
