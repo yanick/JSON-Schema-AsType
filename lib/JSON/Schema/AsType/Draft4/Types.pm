@@ -30,9 +30,17 @@ use Type::Library
         Pattern
 
         Required
+
+        Not
     );
 
 use List::MoreUtils qw/ all /;
+
+declare Not,
+    constraint_generator => sub {
+        my $type = shift;
+        sub { not $type->check($_) },
+    };
 
 declare String => as Str & ~StrictNum;
 

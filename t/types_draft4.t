@@ -41,6 +41,13 @@ subtest types => sub {
 test_type( Required['foo'],
     [ { foo => 1 } ], [ { bar => 1 }, [], 1 ]
 );
+test_type( Required['foo','bar'],
+    [ { foo => 1, bar => 1 } ], [ { bar => 1 }, [], 1 ]
+);
+
+test_type( Not[Integer],
+    [ { foo => 1 }, "banana" ], [ 1 ]
+);
 
 done_testing;
 
