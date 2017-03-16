@@ -20,15 +20,13 @@ use Type::Utils;
 use Scalar::Util qw/ looks_like_number /;
 use List::Util qw/ reduce pairmap pairs /;
 use List::MoreUtils qw/ any all none uniq zip /;
-use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object slurpy Dict Optional slurpy /; 
+use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int slurpy Dict Optional slurpy /; 
 
 use JSON::Schema::AsType::Draft4::Types '-all';
 
 use JSON;
 
 use JSON::Schema::AsType;
-
-my $JsonObject = declare 'JsonObject', as HashRef() & ~Object();
 
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
@@ -50,7 +48,7 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
 sub _keyword_pattern {
     my( $self, $pattern ) = @_;
 
-    (~Str) | declare 'Pattern', where { /$pattern/ };
+    Pattern[$pattern];
 }
 
 sub _keyword_enum {
@@ -111,7 +109,7 @@ sub _keyword_additionalProperties {
     my $add_schema;
     $add_schema = $self->sub_schema($addi) if ref $addi eq 'HASH';
 
-    ~$JsonObject | declare where { 
+    ~Object | declare where { 
         my $obj = $_;
 
         my @keys = keys %$obj;
@@ -147,7 +145,7 @@ sub _keyword_patternProperties {
             };
     }
 
-    return (~$JsonObject) | $type;
+    return (~Object) | $type;
 }
 
 sub _keyword_properties {
@@ -160,7 +158,7 @@ sub _keyword_properties {
 
     my $type = Dict[@props,slurpy Any];
 
-    return (~$JsonObject) | $type;
+    return (~Object) | $type;
 }
 
 sub _keyword_maxProperties {
