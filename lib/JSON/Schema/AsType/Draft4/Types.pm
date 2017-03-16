@@ -28,8 +28,11 @@ use Type::Library
         String
         Integer
         Pattern
+
+        Required
     );
 
+use List::MoreUtils qw/ all /;
 
 declare String => as Str & ~StrictNum;
 
@@ -40,7 +43,18 @@ declare Pattern,
         sub { !String->check($_) or /$regex/ },
     };
 
+
 declare Object => as HashRef ,where sub { ref eq 'HASH' };
+
+declare Required,
+    as Object,
+    constraint_generator => sub {
+        my @keys = @_;
+        sub {
+            my $obj = $_;
+            all { exists $obj->{$_} } @keys;
+        }
+    };
 
 declare Array => as ArrayRef;
 

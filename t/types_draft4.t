@@ -38,6 +38,10 @@ subtest types => sub {
     test_type( Pattern[qr/foo/], [ 1, 'fool', 'foo' ], [ 'potato' ] );
 };
 
+test_type( Required['foo'],
+    [ { foo => 1 } ], [ { bar => 1 }, [], 1 ]
+);
+
 done_testing;
 
 sub test_type {
