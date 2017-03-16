@@ -33,7 +33,9 @@ subtest types => sub {
 
     test_type( String, [ "foo" ], [ [], 1 ] );
 
-    test_type( Integer, [ 1 ], [ [], "foo", JSON::true ] );
+    test_type( Integer, [ 1 ], [ 1.3, [], "foo", JSON::true ] );
+
+    test_type( Number, [ 1, 1.3 ], [ [], "foo", JSON::true ] );
 
     test_type( Pattern[qr/foo/], [ 1, 'fool', 'foo' ], [ 'potato' ] );
 };
