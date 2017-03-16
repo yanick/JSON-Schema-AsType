@@ -15,10 +15,13 @@ use Type::Library
         MultipleOf
         MaxItems
         MinItems
+        Null
     );
 
 use Type::Utils -all;
 use Types::Standard -types;
+
+declare Null => where sub { not defined };
 
 declare 'MaxItems',
     constraint_generator => sub {

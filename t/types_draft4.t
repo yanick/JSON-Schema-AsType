@@ -20,6 +20,8 @@ test_type( MultipleOf[5], [ 10, 'banana' ], [ 3 ] );
 test_type( MaxItems[2], [ 10, [1] ], [ [1..3] ] );
 test_type( MinItems[2], [ 10, [1..2] ], [ [1] ] );
 
+test_type( Null, [ undef ], [ 'banana' ] );
+
 done_testing;
 
 sub test_type {
