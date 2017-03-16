@@ -176,17 +176,12 @@ sub _keyword_minProperties {
 sub _keyword_required {
     my( $self, $required ) = @_;
 
-    reduce { $a & $b }
-    map { 
-        my $p = $_;
-        declare 'Required', where { exists $_->{$p} };
-    } @$required;
-
+    Required[@$required];
 }
 
 sub _keyword_not {
-    my( $self, $not_schema ) = @_;
-    ~ $self->sub_schema( $not_schema )->type;
+    my( $self, $schema ) = @_;
+    Not($schema);
 }
 
 sub _keyword_oneOf {
