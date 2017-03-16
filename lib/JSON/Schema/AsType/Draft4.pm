@@ -247,18 +247,13 @@ sub _keyword_multipleOf {
 sub _keyword_maxItems {
     my( $self, $max ) = @_;
 
-    (~ArrayRef) | declare 'MaxItems',
-        where { $max >= @$_ };
+    MaxItems[$max];
 }
 
 sub _keyword_minItems {
-    my( $self, $max ) = @_;
+    my( $self, $min ) = @_;
 
-    declare 'MinItems',
-        where {
-            !ArrayRef->check($_)
-            or $max  <= @$_
-        };
+    MinItems[$min];
 }
 
 sub _keyword_maxLength {
