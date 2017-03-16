@@ -4,6 +4,7 @@ Revision history for JSON-Schema-AsType
   [ API CHANGES ]
 
   [ BUG FIXES ]
+  - Only giving a schema url resulted in an infinite recursion. (GH#8)
 
   [ DOCUMENTATION ]
 
