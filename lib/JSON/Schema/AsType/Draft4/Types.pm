@@ -28,6 +28,7 @@ use Type::Library
         String
         Integer
         Pattern
+        Number
 
         Required
 
@@ -67,6 +68,8 @@ declare Required,
 declare Array => as ArrayRef;
 
 declare Boolean => where sub { ref =~ /JSON/ };
+
+declare Number => as StrictNum & ~Boolean;
 
 declare Integer => as Int & ~Boolean;
 

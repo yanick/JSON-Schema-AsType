@@ -216,7 +216,7 @@ sub _keyword_type {
 
     return Integer if $struct_type eq 'integer';
 
-    return StrictNum & $notBoolean if $struct_type eq 'number';
+    return Number if $struct_type eq 'number'; 
 
     return String if $struct_type eq 'string';
 
