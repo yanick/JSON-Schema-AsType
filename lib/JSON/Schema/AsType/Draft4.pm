@@ -151,14 +151,13 @@ sub _keyword_patternProperties {
 sub _keyword_properties {
     my( $self, $properties ) = @_;
 
-    my @props = pairmap { {
-        my $schema = $self->sub_schema($b);
-        $a => Optional[declare "Property", as $schema->type ];
-    }}  %$properties;
+    Properties[
+        pairmap { 
+            my $schema = $self->sub_schema($b);
+            $a => $schema->type;
+        }  %$properties;
+    ];
 
-    my $type = Dict[@props,slurpy Any];
-
-    return (~Object) | $type;
 }
 
 sub _keyword_maxProperties {

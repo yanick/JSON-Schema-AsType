@@ -7,6 +7,7 @@ use Type::Utils -all;
 use Types::Standard qw/ 
     Str StrictNum HashRef ArrayRef 
     Int
+    Dict slurpy Optional Any
 /;
 
 use Type::Library
@@ -46,10 +47,26 @@ use Type::Library
 
         Items
         AdditionalItems
+
+        Properties
     );
 
 use List::MoreUtils qw/ all any zip /;
-use List::Util qw/ pairs /;
+use List::Util qw/ pairs pairmap /;
+
+declare Properties,
+    constraint_generator => sub {
+        my @types = @_;
+
+        @types = pairmap { $a => Optional[$b] } @types;
+
+        my $type = Dict[@types,slurpy Any];
+
+        sub {
+            return 1 unless Object->check($_);
+            return $type->check($_);
+        }
+    };
 
 declare Items,
     constraint_generator => sub {

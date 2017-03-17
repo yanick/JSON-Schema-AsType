@@ -85,6 +85,11 @@ test_type(
     [ [1], [1,2], ["banana"] ], [ [1..3,'x'] ],
 );
 
+test_type(
+    Properties[ foo => Number, bar => Array ],
+    [ { foo => 1 }, { bar => [] } ], [ { foo => 'x' } ]
+);
+
 done_testing;
 
 sub test_type {
