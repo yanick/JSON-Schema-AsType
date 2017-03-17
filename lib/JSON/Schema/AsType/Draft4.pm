@@ -194,13 +194,13 @@ sub _keyword_oneOf {
 sub _keyword_anyOf {
     my( $self, $options ) = @_;
 
-   return reduce { $a | $b } map { $self->sub_schema($_)->type } @$options;
+    AnyOf[ map { $self->sub_schema($_)->type } @$options ];
 }
 
 sub _keyword_allOf {
     my( $self, $options ) = @_;
 
-   return reduce { $a & $b } map { $self->sub_schema($_)->type } @$options;
+    AllOf[ $self->sub_schema($_)->type } @$options ];
 }
 
 sub _keyword_type {

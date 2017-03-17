@@ -39,12 +39,13 @@ use Type::Library
 
         OneOf
         AllOf
+        AnyOf
 
         MaxLength
         MinLength
     );
 
-use List::MoreUtils qw/ all /;
+use List::MoreUtils qw/ all any /;
 
 declare MaxLength,
     constraint_generator => sub {
@@ -68,6 +69,15 @@ declare AllOf,
         sub {
             my $v = $_;
             all { $_->check($v) } @types;
+        }
+    };
+
+declare AnyOf,
+    constraint_generator => sub {
+        my @types = @_;
+        sub {
+            my $v = $_;
+            any { $_->check($v) } @types;
         }
     };
 
