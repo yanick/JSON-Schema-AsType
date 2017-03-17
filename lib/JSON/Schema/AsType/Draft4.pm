@@ -84,23 +84,10 @@ sub _keyword_dependencies {
 
     my $type = Any;
 
-    while( my ( $key, $deps ) = each %$dependencies ) {
-        $deps = $self->sub_schema( $deps) if ref $deps eq 'HASH';
-        $type = declare as $type,
-            where { 
-                my $obj = $_;
+    return Dependencies[
+        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b) : $b } %$dependencies
+    ];
 
-                return 1 if ref ne 'HASH' or ! $_->{$key};
-
-                if ( ref $deps eq 'ARRAY' ) {
-                    return all { exists $obj->{$_} } @$deps;
-                }
-
-                return $deps->check($obj);
-            };
-    }
-
-    return $type;
 }
 
 sub _keyword_additionalProperties {
@@ -155,7 +142,7 @@ sub _keyword_properties {
         pairmap { 
             my $schema = $self->sub_schema($b);
             $a => $schema->type;
-        }  %$properties;
+        }  %$properties
     ];
 
 }

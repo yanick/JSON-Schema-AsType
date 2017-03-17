@@ -17,7 +17,6 @@ use Type::Library
         ExclusiveMinimum
         Maximum
         ExclusiveMaximum
-        MinLength
         MultipleOf
         MaxItems
         MinItems
@@ -49,10 +48,39 @@ use Type::Library
         AdditionalItems
 
         Properties
+
+        Dependencies
+        Dependency
     );
 
 use List::MoreUtils qw/ all any zip /;
-use List::Util qw/ pairs pairmap /;
+use List::Util qw/ pairs pairmap reduce /;
+
+    # Dependencies[ foo => $type, bar => [ 'baz' ] ]
+# TODO name of generated type should be better
+declare Dependencies,
+    constraint_generator => sub {
+        my %deps = @_;
+
+        return reduce { $a & $b } pairmap { Dependency[$a => $b] } %deps;
+    };
+
+    # Depencency[ foo => $type ]
+declare Dependency,
+    constraint_generator => sub {
+        my( $property, $dep) = @_;
+
+        sub {
+            return 1 unless Object->check($_);
+            return 1 unless exists $_->{$property};
+
+            my $obj = $_;
+
+            return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
+
+            return $dep->check($_);
+        }
+    };
 
 declare Properties,
     constraint_generator => sub {

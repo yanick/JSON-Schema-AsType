@@ -90,6 +90,11 @@ test_type(
     [ { foo => 1 }, { bar => [] } ], [ { foo => 'x' } ]
 );
 
+test_type(
+    Dependencies[ foo => ['bar'], baz => MaxProperties[2] ],
+    [ { foo => 1, bar => 1 }, { baz => [] } ], [ { foo => 'x' }, { baz => 1, 1..4 } ]
+);
+
 done_testing;
 
 sub test_type {
