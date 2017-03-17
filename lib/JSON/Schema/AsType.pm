@@ -31,7 +31,11 @@ our %EXTERNAL_SCHEMAS;
 
 has type   => ( is => 'rwp', handles => [ qw/ check validate validate_explain / ], builder => 1, lazy => 1 );
 
-has schema => ( isa => 'HashRef', lazy => 1, default => sub {
+has schema => ( 
+    isa => 'HashRef', 
+    predicate => 'has_schema',
+    lazy => 1,
+    default => sub {
     my $self = shift;
         
     my $uri = $self->uri or die "schema or uri required";
@@ -53,7 +57,7 @@ sub fetch {
         }
     }
 
-    return $EXTERNAL_SCHEMAS{$url} if eval { $EXTERNAL_SCHEMAS{$url}->schema };
+    return $EXTERNAL_SCHEMAS{$url} if eval { $EXTERNAL_SCHEMAS{$url}->has_schema };
 
     my $schema = eval { from_json LWP::Simple::get($url) };
 
