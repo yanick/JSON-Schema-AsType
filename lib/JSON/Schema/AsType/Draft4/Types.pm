@@ -43,9 +43,43 @@ use Type::Library
 
         MaxLength
         MinLength
+
+        Items
+        AdditionalItems
     );
 
-use List::MoreUtils qw/ all any /;
+use List::MoreUtils qw/ all any zip /;
+use List::Util qw/ pairs /;
+
+declare Items,
+    constraint_generator => sub {
+        my $types = shift;
+
+        sub {
+            return 1 unless Array->check($_);
+
+            return  ref $types eq 'ARRAY'
+                ?  all { (! defined $_->[0]) or $_->[0]->check($_->[1]) } pairs zip @$types, @$_
+                :  all { $types->check($_) } @$_
+                ;
+        }
+
+    };
+
+declare AdditionalItems,
+    constraint_generator=> sub {
+        if( @_ > 1 ) {
+            my $to_skip = shift;
+            my $schema = shift;
+            return sub {
+                all { $schema->check($_) } splice @$_, $to_skip; 
+            }
+        }
+        else {
+            my $size = shift;
+            return sub { @$_ <= $size };
+        }
+    };
 
 declare MaxLength,
     constraint_generator => sub {
@@ -99,7 +133,10 @@ declare MaxProperties,
 declare MinProperties,
     constraint_generator => sub {
         my $nbr = shift;
-        sub { !Object->check($_) or $nbr <= keys %$_; },
+        sub { 
+            !Object->check($_) 
+                or $nbr <= scalar keys %$_ 
+        },
     };
 
 declare Not,

@@ -63,11 +63,27 @@ test_type( MinProperties[2],
 test_type( OneOf[ Integer, Boolean ],
     [ 1, JSON::true ], [ "banana", [] ] );
 
+test_type( OneOf[ MaxLength[7], MaxLength[6] ],
+  undef, [ "banana" ] );
+
+test_type( AnyOf[ MaxLength[7], MaxLength[6] ],
+    [ "banana" ] );
+
 test_type( AnyOf[ Integer, Boolean ],
     [ 1, JSON::true ], [ "banana", [] ] );
 
 test_type( AllOf[ MaxLength[5], MinLength[2] ],
     [ "fool", [] ], [ "banana" ] );
+
+test_type(
+    Items[ Number ],
+    [ [1], [1,2] ], [ ["banana"], [1,"foo"] ],
+);
+
+test_type(
+    AdditionalItems[ 1, Number ],
+    [ [1], [1,2], ["banana"] ], [ [1..3,'x'] ],
+);
 
 done_testing;
 

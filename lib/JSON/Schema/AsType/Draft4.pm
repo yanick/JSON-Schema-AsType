@@ -164,13 +164,13 @@ sub _keyword_properties {
 sub _keyword_maxProperties {
     my( $self, $max ) = @_;
 
-    MaxProperties($max);
+    MaxProperties[ $max ];
 }
 
 sub _keyword_minProperties {
     my( $self, $min ) = @_;
 
-    MinProperties($min);
+    MinProperties[ $min ];
 }
 
 sub _keyword_required {
@@ -181,7 +181,7 @@ sub _keyword_required {
 
 sub _keyword_not {
     my( $self, $schema ) = @_;
-    Not($schema);
+    Not[ $self->sub_schema($schema) ];
 }
 
 sub _keyword_oneOf {
@@ -200,7 +200,7 @@ sub _keyword_anyOf {
 sub _keyword_allOf {
     my( $self, $options ) = @_;
 
-    AllOf[ $self->sub_schema($_)->type } @$options ];
+    AllOf[ map { $self->sub_schema($_)->type } @$options ];
 }
 
 sub _keyword_type {
@@ -283,20 +283,15 @@ sub _keyword_additionalItems {
         my $items = $self->schema->{items} or return;
         return if ref $items eq 'HASH';  # it's a schema, nevermind
         my $size = @$items;
-        return declare 'AdditionalItems' => where {
-            @$_ <= $size
-        };
+
+        return AdditionalItems[$size];
     }
 
     my $schema = $self->sub_schema($s);
 
     my $to_skip  = @{ $self->schema->{items} };
 
-    declare 'AdditionalItems', where {
-        my @array = @$_;
-        all { $schema->check($_) } splice @array, $to_skip; 
-    };
-
+    return AdditionalItems[$to_skip,$schema];
 
 }
 
@@ -305,9 +300,8 @@ sub _keyword_items {
 
     if( ref $items eq 'HASH' ) {
         my $type = $self->sub_schema($items)->type;
-        return (~ArrayRef) | declare 'Items', where {
-            all { $type->check($_) } @$_;
-        };
+
+        return Items[$type];
     }
 
     # TODO forward declaration not workie
@@ -316,10 +310,8 @@ sub _keyword_items {
         push @types, $self->sub_schema($_);
     }
 
+    return Items[\@types];
 
-    declare 'Items', where {
-        all { (! defined $_->[0]) or $_->[0]->check($_->[1]) } pairs zip @types, @$_; 
-    };
 
 }
 
