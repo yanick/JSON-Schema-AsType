@@ -9,6 +9,7 @@ Revision history for JSON-Schema-AsType
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
+  - All keywords of Draft4 turned into types. (GH#1)
 
   [ NEW FEATURES ]
 
