@@ -20,13 +20,13 @@ use Type::Utils;
 use Scalar::Util qw/ looks_like_number /;
 use List::Util qw/ reduce pairmap pairs /;
 use List::MoreUtils qw/ any all none uniq zip /;
-use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object slurpy Dict Optional slurpy /; 
+use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int slurpy Dict Optional slurpy /; 
+
+use JSON::Schema::AsType::Draft4::Types '-all';
 
 use JSON;
 
 use JSON::Schema::AsType;
-
-my $JsonObject = declare 'JsonObject', as HashRef() & ~Object();
 
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
@@ -48,22 +48,13 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
 sub _keyword_pattern {
     my( $self, $pattern ) = @_;
 
-    (~Str) | declare 'Pattern', where { /$pattern/ };
+    Pattern[$pattern];
 }
 
 sub _keyword_enum {
     my( $self, $enum ) = @_;
-
-    my @enum = map { to_json $_ => { allow_nonref => 1, canonical => 1 } } @$enum;
-
-    declare 'Enum' => where {
-        my $j = to_json $_ => { allow_nonref => 1, canonical => 1 };
-        any { $_ eq $j } @enum;
-    }, message {
-        my $j = to_json $_ => { allow_nonref => 1, canonical => 1 };
-        "Value '$j' doesn't match any of the enum items:" . join " ", map { "'$_'" } @enum;
-    };
-
+ 
+    Enum[@$enum];
 }
 
 sub _keyword_uniqueItems {
@@ -71,36 +62,16 @@ sub _keyword_uniqueItems {
 
     return unless $unique;  # unique false? all is good
 
-    declare 'UniqueItems',
-        where {
-            my $size = eval { @$_ } or return 1;
-            $size == uniq map { to_json $_ , { allow_nonref => 1 } } @$_
-        };
-
+    return UniqueItems;
 }
 
 sub _keyword_dependencies {
     my( $self, $dependencies ) = @_;
 
-    my $type = Any;
+    return Dependencies[
+        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b) : $b } %$dependencies
+    ];
 
-    while( my ( $key, $deps ) = each %$dependencies ) {
-        $deps = $self->sub_schema( $deps) if ref $deps eq 'HASH';
-        $type = declare as $type,
-            where { 
-                my $obj = $_;
-
-                return 1 if ref ne 'HASH' or ! $_->{$key};
-
-                if ( ref $deps eq 'ARRAY' ) {
-                    return all { exists $obj->{$_} } @$deps;
-                }
-
-                return $deps->check($obj);
-            };
-    }
-
-    return $type;
 }
 
 sub _keyword_additionalProperties {
@@ -109,20 +80,11 @@ sub _keyword_additionalProperties {
     my $add_schema;
     $add_schema = $self->sub_schema($addi) if ref $addi eq 'HASH';
 
-    ~$JsonObject | declare where { 
-        my $obj = $_;
+    my @known_keys = (
+        eval { keys %{ $self->schema->{properties} } },
+        map { qr/$_/ } eval { keys %{ $self->schema->{patternProperties} } } );
 
-        my @keys = keys %$obj;
-        @keys = grep { 
-            my $key = $_;
-            none { $key eq $_ } eval { keys %{ $self->schema->{properties} } }
-                and none { $key =~ /$_/ } eval { keys %{ $self->schema->{patternProperties} } }
-        }  @keys;
-
-        return all { $add_schema->check($obj->{$_}) } @keys if $add_schema;
-
-        return not( @keys and not $addi );
-    }
+    return AdditionalProperties[ \@known_keys, $add_schema ? $add_schema->type : $addi ];
 }
 
 sub _keyword_patternProperties {
@@ -132,105 +94,82 @@ sub _keyword_patternProperties {
         $a => $self->sub_schema($b)->type
     } %$properties;
 
-    my $type = Any;
-
-    while( my($p,$s)= each%prop_schemas ) {
-        $type = declare as $type,
-            where { 
-                my @keys = grep { /$p/ } keys %$_;
-                for my $k ( @keys ) {
-                    return 0 unless $s->check($_->{$k});
-                }
-                return 1;
-            };
-    }
-
-    return (~$JsonObject) | $type;
+    return PatternProperties[ %prop_schemas ];
 }
 
 sub _keyword_properties {
     my( $self, $properties ) = @_;
 
-    my @props = pairmap { {
-        my $schema = $self->sub_schema($b);
-        $a => Optional[declare "Property", as $schema->type ];
-    }}  %$properties;
+    Properties[
+        pairmap { 
+            my $schema = $self->sub_schema($b);
+            $a => $schema->type;
+        }  %$properties
+    ];
 
-    my $type = Dict[@props,slurpy Any];
-
-    return (~$JsonObject) | $type;
 }
 
 sub _keyword_maxProperties {
     my( $self, $max ) = @_;
 
-    (~HashRef) | declare 'MaxProperties', where { keys(%$_) <= $max };
+    MaxProperties[ $max ];
 }
 
 sub _keyword_minProperties {
     my( $self, $min ) = @_;
 
-    ~ HashRef | declare 'MinProperties', where { keys(%$_) >= $min };
+    MinProperties[ $min ];
 }
 
 sub _keyword_required {
     my( $self, $required ) = @_;
 
-    reduce { $a & $b }
-    map { 
-        my $p = $_;
-        declare 'Required', where { exists $_->{$p} };
-    } @$required;
-
+    Required[@$required];
 }
 
 sub _keyword_not {
-    my( $self, $not_schema ) = @_;
-    ~ $self->sub_schema( $not_schema )->type;
+    my( $self, $schema ) = @_;
+    Not[ $self->sub_schema($schema) ];
 }
 
 sub _keyword_oneOf {
     my( $self, $options ) = @_;
 
-    my @x = map { $self->sub_schema( $_ ) } @$options;
-
-    declare 'OneOf', where {
-        my $t = $_;
-        1 == grep { $_->check($t) } @x
-    };
+    OneOf[ map { $self->sub_schema( $_ ) } @$options ];
 }
 
 
 sub _keyword_anyOf {
     my( $self, $options ) = @_;
 
-   return reduce { $a | $b } map { $self->sub_schema($_)->type } @$options;
+    AnyOf[ map { $self->sub_schema($_)->type } @$options ];
 }
 
 sub _keyword_allOf {
     my( $self, $options ) = @_;
 
-   return reduce { $a & $b } map { $self->sub_schema($_)->type } @$options;
+    AllOf[ map { $self->sub_schema($_)->type } @$options ];
 }
 
 sub _keyword_type {
     my( $self, $struct_type ) = @_;
 
-    my $notBoolean = declare as Any, where { ref( $_ ) !~ /JSON/ };
-    my $notNumber = declare as Any, where { not StrictNum->check($_) };
-    my $Boolean = declare as Any, where { ref($_) =~ /JSON/ };
-    my $Null = declare as Any, where { ! defined $_ };
+    return Integer if $struct_type eq 'integer';
 
-    return declare "TypeInteger", as Int & $notBoolean if $struct_type eq 'integer';
-    return StrictNum & $notBoolean if $struct_type eq 'number';
-    return  Str & $notNumber if $struct_type eq 'string';
-    return  HashRef if $struct_type eq 'object';
-    return  ArrayRef if $struct_type eq 'array';
-    return  $Boolean if $struct_type eq 'boolean';
-    return  $Null if $struct_type eq 'null';
+    return Number if $struct_type eq 'number'; 
 
-    if( my @types = eval { @$struct_type } ) {
-        return reduce { $a | $b } map { $self->_keyword_type($_) } @types;
+    return String if $struct_type eq 'string';
+
+    return Object if $struct_type eq 'object';
+
+    return Array if $struct_type eq 'array';
+
+    return Boolean if $struct_type eq 'boolean';
+
+    return Null if $struct_type eq 'null';
+
+    if( ref $struct_type eq 'ARRAY' ) {
+        return AnyOf[map { $self->_keyword_type($_) } @$struct_type];
     }
 
     die "unknown type '$struct_type'";
@@ -239,83 +178,50 @@ sub _keyword_type {
 sub _keyword_multipleOf {
     my( $self, $num ) = @_;
 
-    declare 'MultipleOf',
-        where {
-            !StrictNum->check($_)
-            or ($_ / $num) !~ /\./
-        };
+    MultipleOf[$num];
 }
 
 sub _keyword_maxItems {
     my( $self, $max ) = @_;
 
-    (~ArrayRef) | declare 'MaxItems',
-        where { $max >= @$_ };
+    MaxItems[$max];
 }
 
 sub _keyword_minItems {
-    my( $self, $max ) = @_;
+    my( $self, $min ) = @_;
 
-    declare 'MinItems',
-        where {
-            !ArrayRef->check($_)
-            or $max  <= @$_
-        };
+    MinItems[$min];
 }
 
 sub _keyword_maxLength {
     my( $self, $max ) = @_;
 
-    declare "MaxLength",
-        where {
-            !Str->check($_)
-            or StrictNum->check($_)
-            or $max >= length
-        };
+    MaxLength[$max];
 }
 
 sub _keyword_minLength {
     my( $self, $min ) = @_;
 
-    declare 'MinLength',
-        where {
-            !Str->check($_)
-            or StrictNum->check($_)
-            or $min <= length
-        };
+    return MinLength[$min];
 }
 
 sub _keyword_maximum {
     my( $self, $maximum ) = @_;
 
-    if ( $self->schema->{exclusiveMaximum} ) {
-        return declare 'ExclusiveMaximum',
-            where {
-                !StrictNum->check($_) or $_ < $maximum 
-            };
-    }
-    else {
-        return declare 'Maximum',
-            where {
-                !StrictNum->check($_) or $_ <= $maximum 
-            };
-    }
+    return $self->schema->{exclusiveMaximum}
+        ? ExclusiveMaximum[$maximum]
+        : Maximum[$maximum];
+
 }
 
 sub _keyword_minimum {
     my( $self, $minimum ) = @_;
 
     if ( $self->schema->{exclusiveMinimum} ) {
-        return declare 'MinimumExclusive',
-            where {
-                !StrictNum->check($_) or $_ > $minimum 
-            };
+        return ExclusiveMinimum[$minimum];
     }
 
-    return declare 'Minimum',
-            where {
-                !StrictNum->check($_) or $_ >= $minimum 
-            };
+    return Minimum[$minimum];
 }
 
 sub _keyword_additionalItems {
@@ -325,20 +231,15 @@ sub _keyword_additionalItems {
         my $items = $self->schema->{items} or return;
         return if ref $items eq 'HASH';  # it's a schema, nevermind
         my $size = @$items;
-        return declare 'AdditionalItems' => where {
-            @$_ <= $size
-        };
+
+        return AdditionalItems[$size];
     }
 
     my $schema = $self->sub_schema($s);
 
     my $to_skip  = @{ $self->schema->{items} };
 
-    declare 'AdditionalItems', where {
-        my @array = @$_;
-        all { $schema->check($_) } splice @array, $to_skip; 
-    };
-
+    return AdditionalItems[$to_skip,$schema];
 
 }
 
@@ -347,9 +248,8 @@ sub _keyword_items {
 
     if( ref $items eq 'HASH' ) {
         my $type = $self->sub_schema($items)->type;
-        return (~ArrayRef) | declare 'Items', where {
-            all { $type->check($_) } @$_;
-        };
+
+        return Items[$type];
     }
 
     # TODO forward declaration not workie
@@ -358,13 +258,8 @@ sub _keyword_items {
         push @types, $self->sub_schema($_);
     }
 
-
-    declare 'Items', where {
-        all { (! defined $_->[0]) or $_->[0]->check($_->[1]) } pairs zip @types, @$_; 
-    };
-
+    return Items[\@types];
 }
-
 
 our $SpecSchema = JSON::Schema::AsType->new(
     specification => 'draft4',
@@ -521,3 +416,5 @@ our $SpecSchema = JSON::Schema::AsType->new(
     "default": {}
 }
 END_JSON
+
+1;
