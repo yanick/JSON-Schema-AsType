@@ -259,10 +259,7 @@ sub _keyword_items {
     }
 
     return Items[\@types];
-
-
 }
-
 
 our $SpecSchema = JSON::Schema::AsType->new(
     specification => 'draft4',
@@ -419,3 +416,5 @@ our $SpecSchema = JSON::Schema::AsType->new(
     "default": {}
 }
 END_JSON
+
+1;
