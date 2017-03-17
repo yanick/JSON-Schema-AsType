@@ -38,9 +38,38 @@ use Type::Library
         MinProperties
 
         OneOf
+        AllOf
+
+        MaxLength
+        MinLength
     );
 
 use List::MoreUtils qw/ all /;
+
+declare MaxLength,
+    constraint_generator => sub {
+        my $length = shift;
+        sub {
+            !String->check($_) or  $length >= length;
+        }
+    };
+
+declare MinLength,
+    constraint_generator => sub {
+        my $length = shift;
+        sub {
+            !String->check($_) or  $length <= length;
+        }
+    };
+
+declare AllOf,
+    constraint_generator => sub {
+        my @types = @_;
+        sub {
+            my $v = $_;
+            all { $_->check($v) } @types;
+        }
+    };
 
 declare OneOf,
     constraint_generator => sub {
@@ -126,17 +155,6 @@ declare 'MultipleOf',
         return sub {
             !StrictNum->check($_)
                 or ($_ / $num) !~ /\./;
-        }
-    };
-
-declare 'MinLength',
-    constraint_generator => sub {
-        my $min =shift;
-
-        return sub {
-            !Str->check($_)
-            or StrictNum->check($_)
-            or $min <= length
         }
     };
 

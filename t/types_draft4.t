@@ -16,6 +16,7 @@ test_type( Maximum[5], [ 4, 'banana', 5 ], [ 6 ] );
 test_type( ExclusiveMaximum[5], [ 4, 'banana' ], [ 5, 6 ] );
 
 test_type( MinLength[5], [ 6, 'banana', {} ], [ 'foo' ] );
+test_type( MaxLength[5], [ 6, 'foo', {} ], [ 'banana' ] );
 
 test_type( MultipleOf[5], [ 10, 'banana' ], [ 3 ] );
 
@@ -61,6 +62,9 @@ test_type( MinProperties[2],
 
 test_type( OneOf[ Integer, Boolean ],
     [ 1, JSON::true ], [ "banana", [] ] );
+
+test_type( AllOf[ MaxLength[5], MinLength[2] ],
+    [ "fool", [] ], [ "banana" ] );
 
 done_testing;
 

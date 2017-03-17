@@ -248,12 +248,7 @@ sub _keyword_minItems {
 sub _keyword_maxLength {
     my( $self, $max ) = @_;
 
-    declare "MaxLength",
-        where {
-            !Str->check($_)
-            or StrictNum->check($_)
-            or $max >= length
-        };
+    MaxLength[$max];
 }
 
 sub _keyword_minLength {
