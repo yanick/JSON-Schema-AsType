@@ -164,13 +164,13 @@ sub _keyword_properties {
 sub _keyword_maxProperties {
     my( $self, $max ) = @_;
 
-    (~HashRef) | declare 'MaxProperties', where { keys(%$_) <= $max };
+    MaxProperties($max);
 }
 
 sub _keyword_minProperties {
     my( $self, $min ) = @_;
 
-    ~ HashRef | declare 'MinProperties', where { keys(%$_) >= $min };
+    MinProperties($min);
 }
 
 sub _keyword_required {
@@ -210,9 +210,6 @@ sub _keyword_allOf {
 
 sub _keyword_type {
     my( $self, $struct_type ) = @_;
-
-    my $notBoolean = declare as Any, where { ref( $_ ) !~ /JSON/ };
-    my $notNumber = declare as Any, where { not StrictNum->check($_) };
 
     return Integer if $struct_type eq 'integer';
 

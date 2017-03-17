@@ -33,9 +33,24 @@ use Type::Library
         Required
 
         Not
+
+        MaxProperties
+        MinProperties
     );
 
 use List::MoreUtils qw/ all /;
+
+declare MaxProperties,
+    constraint_generator => sub {
+        my $nbr = shift;
+        sub { !Object->check($_) or $nbr >= keys %$_; },
+    };
+
+declare MinProperties,
+    constraint_generator => sub {
+        my $nbr = shift;
+        sub { !Object->check($_) or $nbr <= keys %$_; },
+    };
 
 declare Not,
     constraint_generator => sub {

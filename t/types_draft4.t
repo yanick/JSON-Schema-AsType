@@ -51,6 +51,14 @@ test_type( Not[Integer],
     [ { foo => 1 }, "banana" ], [ 1 ]
 );
 
+test_type( MaxProperties[2],
+    [ { foo => 1 }, "banana" ], [ { 1..6} ]
+);
+
+test_type( MinProperties[2],
+    [ { foo => 1, bar => 2 }, "banana" ], [ { 1..2} ]
+);
+
 done_testing;
 
 sub test_type {
