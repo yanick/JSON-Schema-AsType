@@ -1,4 +1,68 @@
 package JSON::Schema::AsType::Draft4::Types;
+# ABSTRACT: JSON-schema v4 keywords as types
+
+=head1  SYNOPSIS
+
+    use JSON::Schema::AsType::Draft4::Types '-all';
+
+    my $type = Object & 
+        Properties[
+            foo => Minimum[3]
+        ];
+
+    $type->check({ foo => 5 });  # => 1
+    $type->check({ foo => 1 });  # => 0
+
+=head1 EXPORTED TYPES
+
+        Minimum
+        ExclusiveMinimum
+        Maximum
+        ExclusiveMaximum
+        MultipleOf
+        MaxItems
+        MinItems
+
+        Null
+        Boolean
+        Array
+        Object
+        String
+        Integer
+        Pattern
+        Number
+
+        Required
+
+        Not
+
+        MaxProperties
+        MinProperties
+
+        OneOf
+        AllOf
+        AnyOf
+
+        MaxLength
+        MinLength
+
+        Items
+        AdditionalItems
+
+        Properties
+        PatternProperties
+        AdditionalProperties
+
+        Dependencies
+        Dependency
+
+        Enum
+
+        UniqueItems
+
+
+
+=cut
 
 use strict;
 use warnings;
