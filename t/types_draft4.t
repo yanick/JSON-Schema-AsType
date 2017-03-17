@@ -59,6 +59,9 @@ test_type( MinProperties[2],
     [ { foo => 1, bar => 2 }, "banana" ], [ { 1..2} ]
 );
 
+test_type( OneOf[ Integer, Boolean ],
+    [ 1, JSON::true ], [ "banana", [] ] );
+
 done_testing;
 
 sub test_type {

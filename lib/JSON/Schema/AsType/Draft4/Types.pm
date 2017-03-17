@@ -36,9 +36,20 @@ use Type::Library
 
         MaxProperties
         MinProperties
+
+        OneOf
     );
 
 use List::MoreUtils qw/ all /;
+
+declare OneOf,
+    constraint_generator => sub {
+        my @types = @_;
+        sub {
+            my $v = $_;
+            1 == grep { $_->check($v) } @types;
+        }
+    };
 
 declare MaxProperties,
     constraint_generator => sub {

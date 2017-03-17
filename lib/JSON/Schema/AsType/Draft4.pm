@@ -187,12 +187,7 @@ sub _keyword_not {
 sub _keyword_oneOf {
     my( $self, $options ) = @_;
 
-    my @x = map { $self->sub_schema( $_ ) } @$options;
-
-    declare 'OneOf', where {
-        my $t = $_;
-        1 == grep { $_->check($t) } @x
-    };
+    OneOf[ map { $self->sub_schema( $_ ) } @$options ];
 }
 
 
