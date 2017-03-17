@@ -4,16 +4,24 @@ Revision history for JSON-Schema-AsType
   [ API CHANGES ]
 
   [ BUG FIXES ]
-  - Only giving a schema url resulted in an infinite recursion. (GH#8)
 
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
-  - All keywords of Draft4 turned into types. (GH#1)
 
   [ NEW FEATURES ]
 
   [ STATISTICS ]
+
+0.2.0 2017-03-17
+  [ BUG FIXES ]
+    - Only giving a schema url resulted in an infinite recursion. (GH#8)
+
+  [ ENHANCEMENTS ]
+    - All keywords of Draft4 turned into types. (GH#1)
+
+  [ STATISTICS ]
+    - code churn: 78 files changed, 1285 insertions(+), 5306 deletions(-)
 
 0.1.0 2015-12-22
   [ ENHANCEMENTS ]
