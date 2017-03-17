@@ -48,13 +48,62 @@ use Type::Library
         AdditionalItems
 
         Properties
+        PatternProperties
+        AdditionalProperties
 
         Dependencies
         Dependency
+
+        Enum
+
+        UniqueItems
     );
 
-use List::MoreUtils qw/ all any zip /;
-use List::Util qw/ pairs pairmap reduce /;
+use List::MoreUtils qw/ all any zip none /;
+use List::Util qw/ pairs pairmap reduce uniq /;
+
+use JSON qw/ to_json /;
+
+declare AdditionalProperties,
+    constraint_generator => sub {
+        my( $known_properties, $type_or_boolean ) = @_;
+
+        sub {
+            return 1 unless Object->check($_);
+            my @add_keys = grep { 
+                my $key = $_;
+                none {
+                    ref $_ ? $key =~ $_ : $key eq $_
+                } @$known_properties
+            } keys %$_;
+
+            if ( eval { $type_or_boolean->can('check') } ) {
+                my $obj = $_;
+                return all { $type_or_boolean->check($obj->{$_}) } @add_keys;
+            }
+            else {
+                return not( @add_keys and not $type_or_boolean );
+            }
+        }
+    };
+
+declare UniqueItems,
+    where {
+        return 1 unless Array->check($_);
+        @$_ == uniq map { to_json $_ , { allow_nonref => 1 } } @$_
+    };
+
+declare Enum,
+    constraint_generator => sub {
+        my @items = map { to_json( 
+            ( StrictNum->check($_) ? 0+$_ : $_)
+            => { allow_nonref => 1, canonical => 1 } ) } @_;
+
+        sub {
+            my $j = to_json $_ => { allow_nonref => 1, canonical => 1 };
+            any { $_ eq $j } @items;
+        }
+    };
 
     # Dependencies[ foo => $type, bar => [ 'baz' ] ]
 # TODO name of generated type should be better
@@ -82,6 +131,22 @@ declare Dependency,
         }
     };
 
+declare PatternProperties,
+    constraint_generator => sub {
+        my %props = @_;
+
+        sub {
+            return 1 unless Object->check($_);
+
+            my $obj = $_;
+            for my $key ( keys %props ) {
+                return unless all { $props{$key}->check($obj->{$_}) } grep { /$key/ } keys %$_;
+            }
+
+            return 1;
+
+        }
+    };
 declare Properties,
     constraint_generator => sub {
         my @types = @_;

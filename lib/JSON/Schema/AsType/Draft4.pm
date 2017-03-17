@@ -53,17 +53,8 @@ sub _keyword_pattern {
 
 sub _keyword_enum {
     my( $self, $enum ) = @_;
-
-    my @enum = map { to_json $_ => { allow_nonref => 1, canonical => 1 } } @$enum;
-
-    declare 'Enum' => where {
-        my $j = to_json $_ => { allow_nonref => 1, canonical => 1 };
-        any { $_ eq $j } @enum;
-    }, message {
-        my $j = to_json $_ => { allow_nonref => 1, canonical => 1 };
-        "Value '$j' doesn't match any of the enum items:" . join " ", map { "'$_'" } @enum;
-    };
-
+ 
+    Enum[@$enum];
 }
 
 sub _keyword_uniqueItems {
@@ -71,18 +62,11 @@ sub _keyword_uniqueItems {
 
     return unless $unique;  # unique false? all is good
 
-    declare 'UniqueItems',
-        where {
-            my $size = eval { @$_ } or return 1;
-            $size == uniq map { to_json $_ , { allow_nonref => 1 } } @$_
-        };
-
+    return UniqueItems;
 }
 
 sub _keyword_dependencies {
     my( $self, $dependencies ) = @_;
-
-    my $type = Any;
 
     return Dependencies[
         pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b) : $b } %$dependencies
@@ -96,20 +80,11 @@ sub _keyword_additionalProperties {
     my $add_schema;
     $add_schema = $self->sub_schema($addi) if ref $addi eq 'HASH';
 
-    ~Object | declare where { 
-        my $obj = $_;
+    my @known_keys = (
+        eval { keys %{ $self->schema->{properties} } },
+        map { qr/$_/ } eval { keys %{ $self->schema->{patternProperties} } } );
 
-        my @keys = keys %$obj;
-        @keys = grep { 
-            my $key = $_;
-            none { $key eq $_ } eval { keys %{ $self->schema->{properties} } }
-                and none { $key =~ /$_/ } eval { keys %{ $self->schema->{patternProperties} } }
-        }  @keys;
-
-        return all { $add_schema->check($obj->{$_}) } @keys if $add_schema;
-
-        return not( @keys and not $addi );
-    }
+    return AdditionalProperties[ \@known_keys, $add_schema ? $add_schema->type : $addi ];
 }
 
 sub _keyword_patternProperties {
@@ -119,20 +94,7 @@ sub _keyword_patternProperties {
         $a => $self->sub_schema($b)->type
     } %$properties;
 
-    my $type = Any;
-
-    while( my($p,$s)= each%prop_schemas ) {
-        $type = declare as $type,
-            where { 
-                my @keys = grep { /$p/ } keys %$_;
-                for my $k ( @keys ) {
-                    return 0 unless $s->check($_->{$k});
-                }
-                return 1;
-            };
-    }
-
-    return (~Object) | $type;
+    return PatternProperties[ %prop_schemas ];
 }
 
 sub _keyword_properties {
@@ -206,8 +168,8 @@ sub _keyword_type {
 
     return Null if $struct_type eq 'null';
 
-    if( my @types = eval { @$struct_type } ) {
-        return reduce { $a | $b } map { $self->_keyword_type($_) } @types;
+    if( ref $struct_type eq 'ARRAY' ) {
+        return AnyOf[map { $self->_keyword_type($_) } @$struct_type];
     }
 
     die "unknown type '$struct_type'";

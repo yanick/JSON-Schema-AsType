@@ -85,14 +85,38 @@ test_type(
     [ [1], [1,2], ["banana"] ], [ [1..3,'x'] ],
 );
 
+
 test_type(
-    Properties[ foo => Number, bar => Array ],
+    PatternProperties[ f => Number, b => Array ],
     [ { foo => 1 }, { bar => [] } ], [ { foo => 'x' } ]
 );
 
 test_type(
     Dependencies[ foo => ['bar'], baz => MaxProperties[2] ],
     [ { foo => 1, bar => 1 }, { baz => [] } ], [ { foo => 'x' }, { baz => 1, 1..4 } ]
+);
+
+test_type(
+    Enum[ 'foo', { x => 1 } ],
+    [ 'foo', { x => 1 } ], [ { foo => 'x' }, { baz => 1, x => 1 } ]
+);
+
+test_type(
+    Enum[ 1..3 ],
+    [ 1 ]
+);
+
+test_type( UniqueItems,
+    [ [1..4] ], [ [1,1,2,3] ] );
+
+test_type(
+    Properties[ foo => Number, bar => Array ],
+    [ { foo => 1 }, { bar => [] } ], [ { foo => 'x' } ]
+);
+
+test_type(
+    AdditionalProperties[ [ 'foo', qr/b/ ], 0 ],
+    [ { foo => 1 }, { bar => [] } ], [ { quux => 'x' } ]
 );
 
 done_testing;
