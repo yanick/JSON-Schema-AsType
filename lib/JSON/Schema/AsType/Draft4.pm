@@ -255,7 +255,7 @@ sub _keyword_items {
     # TODO forward declaration not workie
     my @types;
     for ( @$items ) {
-        push @types, $self->sub_schema($_);
+        push @types, $self->sub_schema($_)->type;
     }
 
     return Items[\@types];
