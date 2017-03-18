@@ -28,6 +28,15 @@ use JSON;
 
 use JSON::Schema::AsType;
 
+around _process_keyword => sub {
+    my( $orig, $self, $keyword ) = @_;
+
+    # $ref trumps all
+    return if $self->schema->{'$ref'} and $keyword ne '$ref';
+
+    $orig->($self,$keyword);
+};
+
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
 
