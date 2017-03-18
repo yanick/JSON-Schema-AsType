@@ -15,6 +15,7 @@ use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object 
 use Type::Utils;
 use LWP::Simple;
 use Clone 'clone';
+use URI;
 use Class::Load qw/ load_class /;
 
 use Moose::Util qw/ apply_all_roles /;
@@ -49,13 +50,22 @@ has parent_schema => ();
 sub fetch {
     my( $self, $url ) = @_;
 
+    $DB::single = 1;
+
     unless ( $url =~ m#^\w+://# ) { # doesn't look like an uri
-        $url = $self->schema->{id} . $url;
+        my $id =$self->schema->{id};
+        $id =~ s#/\w+\.js(?:on)?$#/#;
+        $id .= '/' if $id and $id !~ m#\/$#;
+        $url = $id . $url;
             # such that the 'id's can cascade
         if ( my $p = $self->parent_schema ) {
             return $p->fetch( $url );
         }
     }
+
+    $url = URI->new($url);
+    $url->path( $url->path =~ y#/#/#sr );
+    $url = $url->canonical;
 
     return $EXTERNAL_SCHEMAS{$url} if eval { $EXTERNAL_SCHEMAS{$url}->has_schema };
 
@@ -164,13 +174,27 @@ sub resolve_reference {
     return $self->references->{$ref} if $self->references->{$ref};
 
     my $s = $self->schema;
+    my $absolute_id = $self->schema->{id};
 
     for ( map { $self->_unescape_ref($_) } grep { length $_ } split '/', $ref ) {
-        $s = ref $s eq 'ARRAY' ? $s->[$_] : $s->{$_} or last;
+        my $is_array = ref $s eq 'ARRAY';
+        $s = $is_array ? $s->[$_] : $s->{$_} or last;
+
+        if( ref $s eq 'HASH' ) {
+        if( my $local_id = $s->{id} ) {
+            if ( $local_id !~ /^#/ ) {
+                $absolute_id =~ s#/\w+\.js(?:on)?#/#;
+                $absolute_id .= '/' unless m#/$#;
+                $absolute_id .= $local_id;
+            }
+        }
+        }
+
     }
 
     my $x;
     if($s) {
+        $s->{id} //= $absolute_id;
         $x = $self->sub_schema($s);
     }
 
