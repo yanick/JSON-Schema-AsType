@@ -335,10 +335,10 @@ declare Pattern,
 declare Object => as HashRef ,where sub { ref eq 'HASH' };
 
 declare Required,
-    as Object,
     constraint_generator => sub {
         my @keys = @_;
         sub {
+            return 1 unless Object->check($_);
             my $obj = $_;
             all { exists $obj->{$_} } @keys;
         }
