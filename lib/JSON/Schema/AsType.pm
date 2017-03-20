@@ -30,27 +30,31 @@ no warnings 'uninitialized';
 
 our %EXTERNAL_SCHEMAS;
 
-has type   => ( is => 'rwp', handles => [ qw/ check validate validate_explain / ], builder => 1, lazy => 1 );
+has type => ( 
+    is => 'rwp',
+    handles => [ qw/ check validate validate_explain / ], 
+    builder => 1, 
+    lazy => 1 
+);
 
 has schema => ( 
     isa => 'HashRef', 
     predicate => 'has_schema',
     lazy => 1,
     default => sub {
-    my $self = shift;
-        
-    my $uri = $self->uri or die "schema or uri required";
+        my $self = shift;
+            
+        my $uri = $self->uri or die "schema or uri required";
 
-    return $self->fetch($uri)->schema;
-});
+        return $self->fetch($uri)->schema;
+    }
+);
 
 
 has parent_schema => ();
 
 sub fetch {
     my( $self, $url ) = @_;
-
-    $DB::single = 1;
 
     unless ( $url =~ m#^\w+://# ) { # doesn't look like an uri
         my $id =$self->schema->{id};
