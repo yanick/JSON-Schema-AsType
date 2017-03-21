@@ -44,7 +44,11 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
-                $self->resolve_reference($ref)->check($_);
+                $DB::single = 1;
+                
+                warn $ref;
+                my $r = $self->resolve_reference($ref);
+                $r->check($_);
             },
             message => sub { 
                 my $schema = $self->resolve_reference($ref);
@@ -53,6 +57,21 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             }
         );
 } );
+
+sub _keyword_id {
+    my( $self, $id ) = @_;
+
+    $self->uri($id);
+#    $self->register_schema( $id => $self );
+
+    return Any;
+}
+
+sub _keyword_definitions {
+    my( $self, $defs ) = @_;
+
+    $self->sub_schema( $_ ) for values %$defs;
+};
 
 sub _keyword_pattern {
     my( $self, $pattern ) = @_;
