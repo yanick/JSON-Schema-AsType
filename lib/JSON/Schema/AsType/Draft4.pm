@@ -182,22 +182,15 @@ sub _keyword_allOf {
     AllOf[ map { $self->sub_schema($_)->type } @$options ];
 }
 
+my %keyword_map = map {
+    lc $_->name => $_
+} Integer, Number, String, Object, Array, Boolean, Null;
+
 sub _keyword_type {
     my( $self, $struct_type ) = @_;
 
-    return Integer if $struct_type eq 'integer';
-
-    return Number if $struct_type eq 'number'; 
-
-    return String if $struct_type eq 'string';
-
-    return Object if $struct_type eq 'object';
-
-    return Array if $struct_type eq 'array';
-
-    return Boolean if $struct_type eq 'boolean';
-
-    return Null if $struct_type eq 'null';
+    return $keyword_map{$struct_type}
+        if $keyword_map{$struct_type};
 
     if( ref $struct_type eq 'ARRAY' ) {
         return AnyOf[map { $self->_keyword_type($_) } @$struct_type];
