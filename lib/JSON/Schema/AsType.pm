@@ -176,14 +176,18 @@ sub _build_type {
 
     $self->_set_type('');
 
-    $self->_process_keyword($_) 
-        for sort {
-            $a eq 'id' ? -1 : $b eq 'id' ? 1 : $a cmp $b
-        } map { /^_keyword_(.*)/ } $self->meta->get_method_list;
+    my @types =
+        grep { $_ and $_->name ne 'Any' }
+        map  { $self->_process_keyword($_) } 
+             $self->all_keywords;
 
-    $self->_set_type(Any) unless $self->type;
+    return @types ? reduce { $a & $b } @types : Any
+}
 
-    $self->references->{''} = $self->type;
+sub all_keywords {
+    my $self = shift;
+
+    return sort map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 }
 
 sub _process_keyword {
@@ -193,9 +197,7 @@ sub _process_keyword {
 
     my $method = "_keyword_$keyword";
 
-    my $type = $self->$method($value) or return;
-
-    $self->_add_to_type($type);
+    $self->$method($value);
 }
 
 # returns the first defined parent uri
@@ -229,7 +231,7 @@ sub resolve_reference {
     
     $ref =~ s/^#//;
 
-    return $self->references->{$ref} if $self->references->{$ref};
+#    return $self->references->{$ref} if $self->references->{$ref};
 
     my $s = $self->schema;
     my $absolute_id = $self->uri;

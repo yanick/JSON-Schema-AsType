@@ -28,13 +28,13 @@ use JSON;
 
 use JSON::Schema::AsType;
 
-around _process_keyword => sub {
-    my( $orig, $self, $keyword ) = @_;
-
+override all_keywords => sub {
+    my $self = shift;
+    
     # $ref trumps all
-    return if $self->schema->{'$ref'} and $keyword ne '$ref';
+    return '$ref' if $self->schema->{'$ref'};
 
-    $orig->($self,$keyword);
+    return uniq 'id', super();
 };
 
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
@@ -65,15 +65,15 @@ sub _keyword_id {
         $self->uri($id);
     }
 
-#    $self->register_schema( $id => $self );
-
-    return Any;
+    return;
 }
 
 sub _keyword_definitions {
     my( $self, $defs ) = @_;
 
     $self->sub_schema( $_ ) for values %$defs;
+
+    return;
 };
 
 sub _keyword_pattern {
@@ -203,7 +203,7 @@ sub _keyword_multipleOf {
     my( $self, $num ) = @_;
 
     MultipleOf[$num];
-}
+};
 
 sub _keyword_maxItems {
     my( $self, $max ) = @_;
