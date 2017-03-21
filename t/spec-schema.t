@@ -21,7 +21,7 @@ subtest "good schema" => sub {
 };
 
 subtest "bad schema" => sub {
-    my $bad = { properties => { foo => 'meh' } };
+    my $bad = { id => []  };
 
     ok( JSON::Schema::AsType->new( schema => $bad )->validate_schema );
     ok( JSON::Schema::AsType->new( schema => $bad )->validate_explain_schema );

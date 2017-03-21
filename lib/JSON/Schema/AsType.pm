@@ -159,13 +159,27 @@ sub sub_schema {
     $self->new( schema => $subschema, parent_schema => $self );
 }
 
+sub absolute_id {
+    my( $self, $new_id ) = @_;
+
+    return $new_id if $new_id =~ m#://#; # looks absolute to me
+
+    my $base = $self->ancestor_uri;
+
+    $base =~ s#[^/]+$##;
+
+    return $base . $new_id;
+}
+
 sub _build_type {
     my $self = shift;
 
     $self->_set_type('');
 
     $self->_process_keyword($_) 
-        for sort map { /^_keyword_(.*)/ } $self->meta->get_method_list;
+        for sort {
+            $a eq 'id' ? -1 : $b eq 'id' ? 1 : $a cmp $b
+        } map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 
     $self->_set_type(Any) unless $self->type;
 
@@ -195,11 +209,11 @@ sub ancestor_uri {
 sub resolve_reference {
     my( $self, $ref ) = @_;
 
-    $DB::single = 1;
+    $DB::single = $ref =~ /folderInt/;
     
     $ref = join '/', '#', map { $self->_escape_ref($_) } @$ref
         if ref $ref;
-    
+
     if ( $ref =~ s/^([^#]+)// ) {
         my $base = $1;
         unless( $base =~ m#://# ) {
@@ -220,30 +234,28 @@ sub resolve_reference {
     my $s = $self->schema;
     my $absolute_id = $self->uri;
 
-    for ( map { $self->_unescape_ref($_) } grep { length $_ } split '/', $ref ) {
+    my @refs = map { $self->_unescape_ref($_) } grep { length $_ } split '/', $ref;
+
+    while( @refs ) {
+        my $ref = shift @refs;
         my $is_array = ref $s eq 'ARRAY';
-        $s = $is_array ? $s->[$_] : $s->{$_} or last;
+
+        $s = $is_array ? $s->[$ref] : $s->{$ref} or last;
 
         if( ref $s eq 'HASH' ) {
-        if( my $local_id = $s->{id} ) {
-            if ( $local_id !~ /^#/ ) {
-                $absolute_id =~ s#/\w+\.js(?:on)?#/#;
-                $absolute_id .= '/' unless m#/$#;
-                $absolute_id .= $local_id;
+            if( my $local_id = $s->{id} ) {
+                my $id  = $self->absolute_id($local_id);
+                $DB::single = 1;
+                warn "fetching $id";
+                $self = $self->fetch( $self->absolute_id($id) );
+                
+                return $self->resolve_reference(\@refs);
             }
         }
-        }
 
     }
 
-    my $x;
-    if($s) {
-        $x = $self->sub_schema($s);
-    }
-
-    $self->references->{$ref} = $x;
-
-    $x;
+    return ref $s eq 'HASH' ?  $self->sub_schema($s) : Any;
 }
 
 sub _unescape_ref {

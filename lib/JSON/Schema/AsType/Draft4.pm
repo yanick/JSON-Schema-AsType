@@ -44,9 +44,6 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
-                $DB::single = 1;
-                
-                warn $ref;
                 my $r = $self->resolve_reference($ref);
                 $r->check($_);
             },
@@ -61,7 +58,13 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
 sub _keyword_id {
     my( $self, $id ) = @_;
 
-    $self->uri($id);
+    $DB::single = $id =~ /folder/;
+    
+    unless( $self->uri ) {
+        my $id = $self->absolute_id($id);
+        $self->uri($id);
+    }
+
 #    $self->register_schema( $id => $self );
 
     return Any;
