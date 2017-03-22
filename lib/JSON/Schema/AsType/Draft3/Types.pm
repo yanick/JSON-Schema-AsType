@@ -59,9 +59,10 @@ use JSON qw/ to_json from_json /;
 
 use JSON::Schema::AsType;
 
-use JSON::Schema::AsType::Draft4::Types 'Not', 'Integer', 'MultipleOf';
+use JSON::Schema::AsType::Draft4::Types 'Not', 'Integer', 'MultipleOf',
+    'Boolean', 'Number', 'String';
 
-__PACKAGE__->meta->add_type( Integer );
+__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String;
 
 declare Disallow => 
     constraint_generator => sub {

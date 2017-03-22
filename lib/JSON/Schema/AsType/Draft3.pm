@@ -62,10 +62,16 @@ sub _keyword_extends {
     return Extends[ map { $self->sub_schema($_)->type } @extends];
 }
 
+my %type_map = map {
+    lc $_->name => $_
+} Integer Boolean Number
+
 sub _keyword_type {
     my( $self, $struct_type ) = @_;
 
     return if $struct_type eq 'any';
+
+    return $type_map{$struct_type} if $type_map{$struct_type};
 
     my $notBoolean = declare as Any, where { ref( $_ ) !~ /JSON/ };
     my $notNumber = declare as Any, where { not StrictNum->check($_) };
