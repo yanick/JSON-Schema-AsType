@@ -85,25 +85,10 @@ sub _keyword_divisibleBy {
 sub _keyword_dependencies {
     my( $self, $dependencies ) = @_;
 
-    my $type = Any;
+    return Dependencies[
+        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b)->type : $b } %$dependencies
+    ];
 
-    while( my ( $key, $deps ) = each %$dependencies ) {
-        $deps = $self->sub_schema( $deps) if ref $deps eq 'HASH';
-        $type = declare as $type,
-            where { 
-                my $obj = $_;
-
-                return 1 if ref ne 'HASH' or ! $_->{$key};
-
-                if ( ref $deps eq 'ARRAY' ) {
-                    return all { exists $obj->{$_} } @$deps;
-                }
-
-                return ref $deps ? $deps->check($obj) : exists $obj->{$deps};
-            };
-    }
-
-    return $type;
 }
 
 JSON::Schema::AsType->new(

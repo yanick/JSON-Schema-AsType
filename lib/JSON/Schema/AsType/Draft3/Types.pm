@@ -52,6 +52,8 @@ use Type::Library
         DivisibleBy
 
         Properties
+
+        Dependencies Dependency
     );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -65,6 +67,30 @@ use JSON::Schema::AsType::Draft4::Types 'Not', 'Integer', 'MultipleOf',
     'Boolean', 'Number', 'String', 'Null', 'Object', 'Array';
 
 __PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array;
+
+declare Dependencies,
+    constraint_generator => sub {
+        my %deps = @_;
+
+        return reduce { $a & $b } pairmap { Dependency[$a => $b] } %deps;
+    };
+
+declare Dependency,
+    constraint_generator => sub {
+        my( $property, $dep) = @_;
+
+        sub {
+            return 1 unless Object->check($_);
+            return 1 unless exists $_->{$property};
+
+            my $obj = $_;
+
+            return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
+            return exists $obj->{$dep} unless ref $dep;
+
+            return $dep->check($_);
+        }
+    };
 
 declare Properties =>
     constraint_generator => sub {
