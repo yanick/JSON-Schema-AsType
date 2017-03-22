@@ -12,6 +12,7 @@ cpanfile
 doap.xml
 lib/JSON/Schema/AsType.pm
 lib/JSON/Schema/AsType/Draft3.pm
+lib/JSON/Schema/AsType/Draft3/Types.pm
 lib/JSON/Schema/AsType/Draft4.pm
 lib/JSON/Schema/AsType/Draft4/Types.pm
 t/00-compile.t
@@ -132,5 +133,6 @@ t/json-schema-test-suite/tox.ini
 t/recurse.t
 t/register_uris.t
 t/spec-schema.t
+t/types_draft3.t
 t/types_draft4.t
 xt/release/unused-vars.t
