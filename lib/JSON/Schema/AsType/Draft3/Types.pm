@@ -49,6 +49,7 @@ use Type::Library
     -declare => qw(
         Disallow
         Extends
+        DivisibleBy
     );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -58,7 +59,7 @@ use JSON qw/ to_json from_json /;
 
 use JSON::Schema::AsType;
 
-use JSON::Schema::AsType::Draft4::Types 'Not', 'Integer';
+use JSON::Schema::AsType::Draft4::Types 'Not', 'Integer', 'MultipleOf';
 
 __PACKAGE__->meta->add_type( Integer );
 
@@ -70,6 +71,11 @@ declare Disallow =>
 declare Extends => 
     constraint_generator => sub {
         reduce { $a & $b } @_;
+    };
+
+declare DivisibleBy =>
+    constraint_generator => sub {
+        MultipleOf[shift];
     };
 
 

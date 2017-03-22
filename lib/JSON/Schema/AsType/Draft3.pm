@@ -90,7 +90,7 @@ sub _keyword_type {
 sub _keyword_divisibleBy {
     my( $self, $divisibleBy ) = @_;
 
-    return $self->_keyword_multipleOf($divisibleBy);
+    DivisibleBy[$divisibleBy];
 }
 
 sub _keyword_dependencies {
