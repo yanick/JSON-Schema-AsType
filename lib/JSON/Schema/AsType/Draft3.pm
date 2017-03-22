@@ -28,6 +28,8 @@ use JSON;
 
 my $JsonObject = declare 'JsonObject', as HashRef() & ~Object();
 
+use JSON::Schema::AsType::Draft3::Types '-all';
+
 with 'JSON::Schema::AsType::Draft4' => {
     -excludes => [qw/ _keyword_properties _keyword_required _keyword_type /]
 };
@@ -48,7 +50,7 @@ sub _keyword_properties {
 }
 
 sub _keyword_disallow {
-    ~ $_[0]->_keyword_type($_[1]);
+    Disallow[ $_[0]->_keyword_type($_[1]) ];
 }
 
 
@@ -57,7 +59,7 @@ sub _keyword_extends {
 
     my @extends = ref $extends eq 'ARRAY' ? @$extends : ( $extends );
 
-    return reduce { $a & $b } map { $self->sub_schema($_)->type } @extends; 
+    return Extends[ map { $self->sub_schema($_)->type } @extends];
 }
 
 sub _keyword_type {
