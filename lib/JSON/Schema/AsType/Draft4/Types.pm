@@ -15,52 +15,21 @@ package JSON::Schema::AsType::Draft4::Types;
 
 =head1 EXPORTED TYPES
 
-        Minimum
-        ExclusiveMinimum
-        Maximum
-        ExclusiveMaximum
-        MultipleOf
-        MaxItems
-        MinItems
+        Null Boolean Array Object String Integer Pattern Number Enum
 
-        Null
-        Boolean
-        Array
-        Object
-        String
-        Integer
-        Pattern
-        Number
+        OneOf AllOf AnyOf 
 
-        Required
+        Required Not
 
-        Not
+        Minimum ExclusiveMinimum Maximum ExclusiveMaximum MultipleOf
 
-        MaxProperties
-        MinProperties
+        MaxLength MinLength
 
-        OneOf
-        AllOf
-        AnyOf
+        Items AdditionalItems MaxItems MinItems UniqueItems
 
-        MaxLength
-        MinLength
+        Properties PatternProperties AdditionalProperties MaxProperties MinProperties
 
-        Items
-        AdditionalItems
-
-        Properties
-        PatternProperties
-        AdditionalProperties
-
-        Dependencies
-        Dependency
-
-        Enum
-
-        UniqueItems
-
-
+        Dependencies Dependency
 
 =cut
 

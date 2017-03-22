@@ -56,10 +56,10 @@ be added to a schema cache. There is currently no way to prevent this.
 If this is an issue for you, you can manipulate the cache by accessing 
 C<%JSON::Schema::AsType::EXTERNAL_SCHEMAS> directly.
 
-=item specification => $version
+=item draft_version => $version
 
-The version of the JSON-Schema specification to use. Defaults to 'draft4' 
-(and doesn't accept anything else  at the moment).
+The version of the JSON-Schema specification to use. Accepts C<3>  or C<4>,
+defaults to '4'. 
 
 
 =back
@@ -97,8 +97,17 @@ Like C<validate>, but validates the schema itself against its specification.
 
 Like C<validate_explain>, but validates the schema itself against its specification.
 
+=method draft_version
 
+Returns the draft version used by the object.
 
+=method spec 
+
+Returns the L<JSON::Schema::AsType> object associated with the
+specs of this object's schema. 
+
+I.e., if the current object is a draft4 schema, C<spec> will
+return the schema definining draft4.
 
 =cut
 
