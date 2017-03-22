@@ -22,19 +22,19 @@ use List::Util qw/ reduce pairmap pairs /;
 use List::MoreUtils qw/ any all none uniq zip /;
 use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int slurpy Dict Optional slurpy /; 
 
-use JSON::Schema::AsType::Draft4::Types '-all';
-
 use JSON;
 
 use JSON::Schema::AsType;
 
-around _process_keyword => sub {
-    my( $orig, $self, $keyword ) = @_;
+use JSON::Schema::AsType::Draft4::Types '-all';
 
+override all_keywords => sub {
+    my $self = shift;
+    
     # $ref trumps all
-    return if $self->schema->{'$ref'} and $keyword ne '$ref';
+    return '$ref' if $self->schema->{'$ref'};
 
-    $orig->($self,$keyword);
+    return uniq 'id', super();
 };
 
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
@@ -65,15 +65,15 @@ sub _keyword_id {
         $self->uri($id);
     }
 
-#    $self->register_schema( $id => $self );
-
-    return Any;
+    return;
 }
 
 sub _keyword_definitions {
     my( $self, $defs ) = @_;
 
     $self->sub_schema( $_ ) for values %$defs;
+
+    return;
 };
 
 sub _keyword_pattern {
@@ -182,22 +182,15 @@ sub _keyword_allOf {
     AllOf[ map { $self->sub_schema($_)->type } @$options ];
 }
 
+my %keyword_map = map {
+    lc $_->name => $_
+} Integer, Number, String, Object, Array, Boolean, Null;
+
 sub _keyword_type {
     my( $self, $struct_type ) = @_;
 
-    return Integer if $struct_type eq 'integer';
-
-    return Number if $struct_type eq 'number'; 
-
-    return String if $struct_type eq 'string';
-
-    return Object if $struct_type eq 'object';
-
-    return Array if $struct_type eq 'array';
-
-    return Boolean if $struct_type eq 'boolean';
-
-    return Null if $struct_type eq 'null';
+    return $keyword_map{$struct_type}
+        if $keyword_map{$struct_type};
 
     if( ref $struct_type eq 'ARRAY' ) {
         return AnyOf[map { $self->_keyword_type($_) } @$struct_type];
@@ -210,7 +203,7 @@ sub _keyword_multipleOf {
     my( $self, $num ) = @_;
 
     MultipleOf[$num];
-}
+};
 
 sub _keyword_maxItems {
     my( $self, $max ) = @_;
@@ -447,5 +440,6 @@ our $SpecSchema = JSON::Schema::AsType->new(
     "default": {}
 }
 END_JSON
+
 
 1;
