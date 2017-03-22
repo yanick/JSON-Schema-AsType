@@ -10,8 +10,7 @@ use List::MoreUtils qw/ any /;
 
 use Test::More;
 
-
-my $explain = 0;
+my $explain = 1;
 
 my $jsts_dir = path( __FILE__ )->parent->child( 'json-schema-test-suite' );
 
@@ -54,16 +53,21 @@ sub run_schema_test {
         my $schema = JSON::Schema::AsType->new( 
             draft_version => 6,
             schema => $test->{schema});
+
+        diag explain $test->{schema} if $explain;
+
         for ( @{ $test->{tests} } ) {
             my $desc = $_->{description};
             local $TODO = 'known to fail'
                 if any { $desc eq $_ } 
                     'a string is still not an integer, even if it looks like one',
-                    'a string is still a string, even if it looks like a number',
                     'a string is still not a number, even if it looks like one'; 
 
             is !!$schema->check($_->{data}) => !!$_->{valid}, $_->{description} 
-                or diag join "\n", @{$schema->validate_explain($_->{data})||[]};
+                or do {
+                    diag explain $_->{data};
+                    diag join "\n", @{$schema->validate_explain($_->{data})||[]};
+                };
 
             diag join "\n", @{ $schema->validate_explain($_->{data}) }
                 unless $_->{valid} or not $explain;

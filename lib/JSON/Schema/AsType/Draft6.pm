@@ -48,6 +48,12 @@ override _build_type => sub {
     
 };
 
+sub _keyword_propertyNames {
+    my( $self, $schema ) = @_;
+
+    PropertyNames[ $self->sub_schema($schema)->type ];
+}
+
 sub _keyword_items {
     my( $self, $items ) = @_;
 

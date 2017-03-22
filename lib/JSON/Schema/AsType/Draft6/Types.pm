@@ -47,6 +47,7 @@ use Types::Standard qw/
 use Type::Library
     -base,
     -declare => qw(
+        PropertyNames
     );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -59,6 +60,19 @@ use JSON::Schema::AsType;
 use JSON::Schema::AsType::Draft4::Types '-all';
 
 __PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, Items;
+
+declare PropertyNames, 
+    constraint_generator => sub {
+        my $type = shift;
+        return sub {
+            return 1 unless Object->check($_);
+
+            return 1 if $type eq Any;
+            return !keys %$_ if $type eq ~Any;
+
+            return all { $type->check($_) } keys %$_;
+        };
+    };
 
 declare Dependencies,
     constraint_generator => sub {
