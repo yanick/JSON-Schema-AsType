@@ -59,7 +59,7 @@ use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types '-all';
 
-__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, Items;
+__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, Items, ExclusiveMaximum, ExclusiveMinimum;
 
 declare PropertyNames, 
     constraint_generator => sub {

@@ -69,7 +69,7 @@ sub run_schema_test {
                     diag join "\n", @{$schema->validate_explain($_->{data})||[]};
                 };
 
-            diag join "\n", @{ $schema->validate_explain($_->{data}) }
+            diag join "\n", @{ $schema->validate_explain($_->{data}) ||[] }
                 unless $_->{valid} or not $explain;
         }
     };

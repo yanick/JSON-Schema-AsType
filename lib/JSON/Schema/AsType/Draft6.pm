@@ -48,6 +48,18 @@ override _build_type => sub {
     
 };
 
+sub _keyword_exclusiveMaximum {
+    my( $self, $maximum ) = @_;
+
+    ExclusiveMaximum[$maximum];
+}
+
+sub _keyword_exclusiveMinimum {
+    my( $self, $maximum ) = @_;
+
+    ExclusiveMinimum[$maximum];
+}
+
 sub _keyword_propertyNames {
     my( $self, $schema ) = @_;
 
