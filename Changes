@@ -9,6 +9,7 @@ Revision history for JSON-Schema-AsType
 
   [ ENHANCEMENTS ]
   - Code brought up to speed with the latest official draft04 tests.
+  - Draft3 and Draft4 types in JSON::Schema::AsType::Draft*::Types.
 
   [ NEW FEATURES ]
 
