@@ -28,6 +28,15 @@ use JSON;
 
 use JSON::Schema::AsType;
 
+around _process_keyword => sub {
+    my( $orig, $self, $keyword ) = @_;
+
+    # $ref trumps all
+    return if $self->schema->{'$ref'} and $keyword ne '$ref';
+
+    $orig->($self,$keyword);
+};
+
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
 
@@ -35,7 +44,8 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
-                $self->resolve_reference($ref)->check($_);
+                my $r = $self->resolve_reference($ref);
+                $r->check($_);
             },
             message => sub { 
                 my $schema = $self->resolve_reference($ref);
@@ -44,6 +54,27 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             }
         );
 } );
+
+sub _keyword_id {
+    my( $self, $id ) = @_;
+
+    $DB::single = $id =~ /folder/;
+    
+    unless( $self->uri ) {
+        my $id = $self->absolute_id($id);
+        $self->uri($id);
+    }
+
+#    $self->register_schema( $id => $self );
+
+    return Any;
+}
+
+sub _keyword_definitions {
+    my( $self, $defs ) = @_;
+
+    $self->sub_schema( $_ ) for values %$defs;
+};
 
 sub _keyword_pattern {
     my( $self, $pattern ) = @_;
@@ -255,7 +286,7 @@ sub _keyword_items {
     # TODO forward declaration not workie
     my @types;
     for ( @$items ) {
-        push @types, $self->sub_schema($_);
+        push @types, $self->sub_schema($_)->type;
     }
 
     return Items[\@types];

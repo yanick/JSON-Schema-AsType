@@ -72,6 +72,7 @@ use Types::Standard qw/
     Str StrictNum HashRef ArrayRef 
     Int
     Dict slurpy Optional Any
+    Tuple
 /;
 
 use Type::Library
@@ -82,8 +83,6 @@ use Type::Library
         Maximum
         ExclusiveMaximum
         MultipleOf
-        MaxItems
-        MinItems
 
         Null
         Boolean
@@ -98,9 +97,6 @@ use Type::Library
 
         Not
 
-        MaxProperties
-        MinProperties
-
         OneOf
         AllOf
         AnyOf
@@ -110,10 +106,15 @@ use Type::Library
 
         Items
         AdditionalItems
+        MaxItems
+        MinItems
 
         Properties
         PatternProperties
         AdditionalProperties
+        MaxProperties
+        MinProperties
+
 
         Dependencies
         Dependency
@@ -232,13 +233,14 @@ declare Items,
     constraint_generator => sub {
         my $types = shift;
 
-        sub {
-            return 1 unless Array->check($_);
+        my $type =  ref $types eq 'ARRAY'
+            ? Tuple[ ( map { Optional[$_] } @$types ), slurpy Any ]
+            : Tuple[ slurpy ArrayRef[ $types ] ];
 
-            return  ref $types eq 'ARRAY'
-                ?  all { (! defined $_->[0]) or $_->[0]->check($_->[1]) } pairs zip @$types, @$_
-                :  all { $types->check($_) } @$_
-                ;
+        sub {
+            return 1 unless ArrayRef->check($_);
+
+            $type->check($_);
         }
 
     };
@@ -335,10 +337,10 @@ declare Pattern,
 declare Object => as HashRef ,where sub { ref eq 'HASH' };
 
 declare Required,
-    as Object,
     constraint_generator => sub {
         my @keys = @_;
         sub {
+            return 1 unless Object->check($_);
             my $obj = $_;
             all { exists $obj->{$_} } @keys;
         }
