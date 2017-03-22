@@ -5,9 +5,9 @@ use Test::More tests => 4;
 
 use JSON::Schema::AsType;
 
-for ( qw/ draft3 draft4 / ) {
+for ( 3..4 ) {
     isa_ok( 
-        JSON::Schema::AsType->new( spec => $_ )->specification_schema 
+        JSON::Schema::AsType->new( draft_version => $_ )->spec
             => 'JSON::Schema::AsType', $_ 
     );
 }

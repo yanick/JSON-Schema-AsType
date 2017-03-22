@@ -115,10 +115,10 @@ sub _keyword_dependencies {
     return $type;
 }
 
-our $SpecSchema = JSON::Schema::AsType->new(
-    specification => 'draft3',
+JSON::Schema::AsType->new(
+    draft_version => '3',
     uri           => 'http://json-schema.org/draft-03/schema',
-    schema        => from_json <<'END_JSON' );
+    schema        => from_json <<'END_JSON' )->type;
 {
     "$schema": "http://json-schema.org/draft-03/schema#",
     "id": "http://json-schema.org/draft-03/schema#",

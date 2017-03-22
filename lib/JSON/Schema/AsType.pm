@@ -56,6 +56,24 @@ has type => (
     lazy => 1 
 );
 
+has draft_version => (
+    is => 'ro',
+    lazy => 1,
+    default => sub { 
+        $_[0]->has_specification ? $_[0]->specification  =~ /(\d+)/ && $1 
+            : eval { $_[0]->parent_schema->draft_version } || 4;
+    },
+    isa => enum([ 3, 4 ]),
+);
+
+has spec => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        $_[0]->fetch( sprintf "http://json-schema.org/draft-%02d/schema", $_[0]->draft_version );
+    },
+);
+
 has schema => ( 
     isa => 'HashRef', 
     predicate => 'has_schema',
@@ -76,8 +94,6 @@ has parent_schema => (
 sub fetch {
     my( $self, $url ) = @_;
 
-    $DB::single = 1;
-    
     unless ( $url =~ m#^\w+://# ) { # doesn't look like an uri
         my $id =$self->uri;
         $id =~ s#[^/]*$##;
@@ -116,32 +132,29 @@ has references => sub {
 };
 
 has specification => (
+    predicate => 1,
     is => 'ro',
     lazy => 1,
-    default => sub { eval { $_[0]->parent_schema->specification } || 'draft4' },
+    default => sub { 
+        return 'draft'.$_[0]->draft_version;
+        eval { $_[0]->parent_schema->specification } || 'draft4' },
     isa => enum 'JsonSchemaSpecification', [ qw/ draft3 draft4 / ],
 );
 
 sub specification_schema {
     my $self = shift;
 
-    my $spec = $self->specification;
-
-    my $class  = "JSON::Schema::AsType::" . ucfirst $spec;
-
-    load_class( $class );
-
-    return eval '$'.$class . "::SpecSchema";
+    $self->spec->schema;
 }
 
 sub validate_schema {
     my $self = shift;
-    $self->specification_schema->validate($self->schema);
+    $self->spec->validate($self->schema);
 }
 
 sub validate_explain_schema {
     my $self = shift;
-    $self->specification_schema->validate_explain($self->schema);
+    $self->spec->validate_explain($self->schema);
 }
 
 sub root_schema {
@@ -211,8 +224,6 @@ sub ancestor_uri {
 sub resolve_reference {
     my( $self, $ref ) = @_;
 
-    $DB::single = $ref =~ /folderInt/;
-    
     $ref = join '/', '#', map { $self->_escape_ref($_) } @$ref
         if ref $ref;
 
@@ -247,8 +258,6 @@ sub resolve_reference {
         if( ref $s eq 'HASH' ) {
             if( my $local_id = $s->{id} ) {
                 my $id  = $self->absolute_id($local_id);
-                $DB::single = 1;
-                warn "fetching $id";
                 $self = $self->fetch( $self->absolute_id($id) );
                 
                 return $self->resolve_reference(\@refs);
@@ -301,6 +310,8 @@ sub _add_to_type {
 
 sub BUILD {
     my $self = shift;
+    # TODO rename specification to  draft_version 
+    # and have specifications renamed to spec
     apply_all_roles( $self, 'JSON::Schema::AsType::' . ucfirst $self->specification );
 
     # TODO move the role into a trait, which should take care of this

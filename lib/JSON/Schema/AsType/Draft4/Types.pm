@@ -421,10 +421,11 @@ declare ExclusiveMaximum,
     };
 
 
-0 and declare 'JsonSchemav4', as => JSON::Schema::AsType->new(
-    specification => 'draft4',
-    uri           => 'http://json-schema.org/draft-04/schema',
-    schema        => from_json <<'END_JSON' )->type;
+sub JsonSchema {
+    JSON::Schema::AsType->new(
+        specification => 'draft4',
+        uri           => 'http://json-schema.org/draft-04/schema',
+        schema        => from_json <<'END_JSON' )->type;
 {
     "id": "http://json-schema.org/draft-04/schema#",
     "$schema": "http://json-schema.org/draft-04/schema#",
@@ -576,5 +577,6 @@ declare ExclusiveMaximum,
     "default": {}
 }
 END_JSON
+}
 
 1;

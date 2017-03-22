@@ -22,11 +22,11 @@ use List::Util qw/ reduce pairmap pairs /;
 use List::MoreUtils qw/ any all none uniq zip /;
 use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int slurpy Dict Optional slurpy /; 
 
-use JSON::Schema::AsType::Draft4::Types '-all';
-
 use JSON;
 
 use JSON::Schema::AsType;
+
+use JSON::Schema::AsType::Draft4::Types '-all';
 
 override all_keywords => sub {
     my $self = shift;
@@ -440,5 +440,6 @@ our $SpecSchema = JSON::Schema::AsType->new(
     "default": {}
 }
 END_JSON
+
 
 1;
