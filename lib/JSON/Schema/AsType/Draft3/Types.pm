@@ -50,6 +50,8 @@ use Type::Library
         Disallow
         Extends
         DivisibleBy
+
+        Properties
     );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -60,9 +62,18 @@ use JSON qw/ to_json from_json /;
 use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types 'Not', 'Integer', 'MultipleOf',
-    'Boolean', 'Number', 'String';
+    'Boolean', 'Number', 'String', 'Null', 'Object', 'Array';
 
-__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String;
+__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array;
+
+declare Properties =>
+    constraint_generator => sub {
+        my $type = Dict[@_, slurpy Any];
+
+        sub {
+            ! Object->check($_) or $type->check($_)
+        }
+    };
 
 declare Disallow => 
     constraint_generator => sub {

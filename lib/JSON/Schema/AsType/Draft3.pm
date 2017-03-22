@@ -20,15 +20,13 @@ use Type::Utils;
 use Scalar::Util qw/ looks_like_number /;
 use List::Util qw/ reduce pairmap pairs /;
 use List::MoreUtils qw/ any all none uniq zip /;
-use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object slurpy Dict Optional slurpy /; 
 
 use JSON::Schema::AsType;
 
 use JSON;
 
-my $JsonObject = declare 'JsonObject', as HashRef() & ~Object();
-
 use JSON::Schema::AsType::Draft3::Types '-all';
+use Types::Standard 'Optional';
 
 with 'JSON::Schema::AsType::Draft4' => {
     -excludes => [qw/ _keyword_properties _keyword_required _keyword_type /]
@@ -39,14 +37,12 @@ sub _keyword_properties {
 
     my @props = pairmap { {
         my $schema = $self->sub_schema($b);
-        my $p = declare "Property", as $schema->type;
+        my $p = $schema->type;
         $p = Optional[$p] unless $b->{required};
         $a => $p
     }}  %$properties;
 
-    my $type = Dict[@props,slurpy Any];
-
-    return (~$JsonObject) | $type;
+    return Properties[@props];
 }
 
 sub _keyword_disallow {
@@ -64,7 +60,7 @@ sub _keyword_extends {
 
 my %type_map = map {
     lc $_->name => $_
-} Integer Boolean Number
+} Integer, Boolean, Number, String, Null, Object, Array;
 
 sub _keyword_type {
     my( $self, $struct_type ) = @_;
@@ -72,19 +68,6 @@ sub _keyword_type {
     return if $struct_type eq 'any';
 
     return $type_map{$struct_type} if $type_map{$struct_type};
-
-    my $notBoolean = declare as Any, where { ref( $_ ) !~ /JSON/ };
-    my $notNumber = declare as Any, where { not StrictNum->check($_) };
-    my $Boolean = declare as Any, where { ref($_) =~ /JSON/ };
-    my $Null = declare as Any, where { ! defined $_ };
-
-    return declare "TypeInteger", as Int & $notBoolean if $struct_type eq 'integer';
-    return StrictNum & $notBoolean if $struct_type eq 'number';
-    return  Str & $notNumber if $struct_type eq 'string';
-    return  HashRef if $struct_type eq 'object';
-    return  ArrayRef if $struct_type eq 'array';
-    return  $Boolean if $struct_type eq 'boolean';
-    return  $Null if $struct_type eq 'null';
 
     if( my @types = eval { @$struct_type } ) {
         return reduce { $a | $b } map { ref $_ ? $self->sub_schema($_)->type : $self->_keyword_type($_) } @types;
