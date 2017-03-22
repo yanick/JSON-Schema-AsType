@@ -44,6 +44,8 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
+                $DB::single = $ref eq 'node';
+                
                 my $r = $self->resolve_reference($ref);
                 $r->check($_);
             },
