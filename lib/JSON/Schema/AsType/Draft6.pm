@@ -48,6 +48,24 @@ override _build_type => sub {
     
 };
 
+sub _keyword_const {
+    my $self = shift;
+
+    use DDP;
+    p @_;
+    
+    $self->_keyword_enum([@_]);
+}
+
+sub _keyword_contains {
+   my( $self, $type ) = @_;
+
+   return Contains[
+       $self->sub_schema($type)->type
+   ];
+    
+};
+
 sub _keyword_exclusiveMaximum {
     my( $self, $maximum ) = @_;
 

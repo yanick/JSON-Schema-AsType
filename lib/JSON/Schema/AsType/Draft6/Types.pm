@@ -48,6 +48,7 @@ use Type::Library
     -base,
     -declare => qw(
         PropertyNames
+        Contains
     );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -60,6 +61,22 @@ use JSON::Schema::AsType;
 use JSON::Schema::AsType::Draft4::Types '-all';
 
 __PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, Items, ExclusiveMaximum, ExclusiveMinimum;
+
+declare Contains,
+    constraint_generator => sub{
+        my $type = shift;
+
+        return sub {
+            return 1 unless Array->check($_);
+
+            if( Boolean->check($type) ) {
+            }
+
+            return any { 
+                $type->check($_);
+            } @$_;
+        }
+    };
 
 declare PropertyNames, 
     constraint_generator => sub {

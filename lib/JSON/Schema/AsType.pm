@@ -208,7 +208,9 @@ sub all_keywords {
 sub _process_keyword {
     my( $self, $keyword ) = @_;
 
-    my $value = $self->schema->{$keyword} // return;
+    return unless exists $self->schema->{$keyword};
+
+    my $value = $self->schema->{$keyword};
 
     my $method = "_keyword_$keyword";
 
