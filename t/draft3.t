@@ -5,10 +5,12 @@ use warnings;
 
 use JSON;
 use Path::Tiny 0.062;
-use JSON::Schema::AsType;
 use List::MoreUtils qw/ any /;
 
 use Test::More;
+
+use JSON::Schema::AsType;
+$JSON::Schema::AsType::strict_string = 1;
 
 my $explain = 0;
 

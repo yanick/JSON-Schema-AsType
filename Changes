@@ -10,6 +10,8 @@ Revision history for JSON-Schema-AsType
   [ ENHANCEMENTS ]
   - Code brought up to speed with the latest official draft04 tests.
   - Draft3 and Draft4 types in JSON::Schema::AsType::Draft*::Types.
+  - Let the user decide if they want strict Strings or lax Strings.
+        (GH#12)
 
   [ NEW FEATURES ]
 

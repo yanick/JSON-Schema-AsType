@@ -18,6 +18,30 @@
 This module takes in a JSON Schema (L<http://json-schema.org/>) and turns it into a
 L<Type::Tiny> type.
 
+=head2 Strings and Numbers
+
+JSON schemas distinguish between strings and numbers, while Perl is more...
+fuzzy about the distinction between the two.
+
+By default, C<JSON::Schema::AsType> follows the usual Perl
+behavior and considers the JSON schema type C<String>
+to be a superset of C<Number>. That is:
+
+    value    String?  Number?
+      "a"      yes      no 
+       1       yes      yes
+      "1"      yes      yes
+
+If you prefer the JSON schema separation of strings and numbers, set 
+C<$JSON::Schema::AsType::strict_string> to C<true>, in which case you'll get the following behavior:
+
+    value    String?  Number?
+      "a"      yes      no 
+       1       no       yes
+      "1"      no       yes
+
+Note that C<strict_string> will not behave as expected if the string looks
+just like a number. 
 
 =head1 SEE ALSO
 
