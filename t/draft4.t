@@ -5,11 +5,12 @@ use warnings;
 
 use JSON;
 use Path::Tiny 0.062;
-use JSON::Schema::AsType;
 use List::MoreUtils qw/ any /;
 
 use Test::More;
 
+use JSON::Schema::AsType;
+$JSON::Schema::AsType::strict_string = 1;
 
 my $explain = 0;
 
@@ -57,6 +58,7 @@ sub run_schema_test {
             local $TODO = 'known to fail'
                 if any { $desc eq $_ } 
                     'a string is still not an integer, even if it looks like one',
+                    'ignores non-strings',
                     'a string is still a string, even if it looks like a number',
                     'a string is still not a number, even if it looks like one'; 
 

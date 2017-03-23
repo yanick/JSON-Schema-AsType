@@ -133,6 +133,7 @@ t/json-schema-test-suite/tox.ini
 t/recurse.t
 t/register_uris.t
 t/spec-schema.t
+t/string_number.t
 t/types_draft3.t
 t/types_draft4.t
 xt/release/unused-vars.t

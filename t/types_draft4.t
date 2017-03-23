@@ -15,8 +15,8 @@ test_type( ExclusiveMinimum[5], [ 6, 'banana' ], [ 5, 4 ] );
 test_type( Maximum[5], [ 4, 'banana', 5 ], [ 6 ] );
 test_type( ExclusiveMaximum[5], [ 4, 'banana' ], [ 5, 6 ] );
 
-test_type( MinLength[5], [ 6, 'banana', {} ], [ 'foo' ] );
-test_type( MaxLength[5], [ 6, 'foo', {} ], [ 'banana' ] );
+test_type( MinLength[5], [ 'banana', {} ], [ 'foo' ] );
+test_type( MaxLength[5], [ 'foo', {} ], [ 'banana' ] );
 
 test_type( MultipleOf[5], [ 10, 'banana' ], [ 3 ] );
 
@@ -32,13 +32,13 @@ subtest types => sub {
 
     test_type( Object, [ {} ], [ [], 1 ] );
 
-    test_type( String, [ "foo" ], [ [], 1 ] );
+    test_type( String, [ "foo" ], [ [] ] );
 
     test_type( Integer, [ 1 ], [ 1.3, [], "foo", JSON::true ] );
 
     test_type( Number, [ 1, 1.3 ], [ [], "foo", JSON::true ] );
 
-    test_type( Pattern[qr/foo/], [ 1, 'fool', 'foo' ], [ 'potato' ] );
+    test_type( Pattern[qr/foo/], [ 'fool', 'foo' ], [ 'potato' ] );
 };
 
 test_type( Required['foo'],
@@ -118,6 +118,19 @@ test_type(
     AdditionalProperties[ [ 'foo', qr/b/ ], 0 ],
     [ { foo => 1 }, { bar => [] } ], [ { quux => 'x' } ]
 );
+
+subtest anyof => sub {
+    my $type = AnyOf[ Integer, Minimum[2] ];
+    ok !$type->check(1.5);
+};
+
+subtest not => sub {
+    my $type = Not[ Integer ];
+#    use Types::Standard 'Int';
+#    my $type = Int & Number & ~ Boolean;
+#    ok $type->check(1);
+    ok !$type->check(1);
+};
 
 done_testing;
 

@@ -293,7 +293,6 @@ declare Not,
         sub { not $type->check($_) },
     };
 
-declare String => as Str & ~StrictNum;
 
 # ~Str or ~String?
 declare Pattern,
@@ -321,7 +320,14 @@ declare Boolean => where sub { ref =~ /JSON/ };
 
 declare Number => as StrictNum & ~Boolean;
 
-declare Integer => as Int & ~Boolean;
+declare Integer => as Int & Number;
+
+declare String => as Str,
+    where sub {
+        $JSON::Schema::AsType::strict_string 
+            ? !Number->check($_)
+            : 1;
+    };
 
 declare Null => where sub { not defined };
 
@@ -348,7 +354,7 @@ declare 'MultipleOf',
         my $num =shift;
 
         return sub {
-            !StrictNum->check($_)
+            !Number->check($_)
                 or ($_ / $num) !~ /\./;
         }
     };
@@ -357,7 +363,7 @@ declare Minimum,
     constraint_generator => sub {
         my $minimum = shift;
         return sub {
-            ! StrictNum->check($_)
+            ! Number->check($_)
                 or $_ >= $minimum;
         };
     };
