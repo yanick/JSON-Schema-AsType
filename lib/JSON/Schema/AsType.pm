@@ -270,7 +270,11 @@ sub resolve_reference {
 
     }
 
-    return ref $s eq 'HASH' ?  $self->sub_schema($s) : Any;
+    return ( 
+        ( ref $s eq 'HASH' or ref $s eq 'JSON::PP::Boolean' ) 
+            ?  $self->sub_schema($s) 
+            : Any );
+
 }
 
 sub _unescape_ref {

@@ -44,16 +44,14 @@ override _build_type => sub {
 
     return super() if ref $self->schema eq 'HASH';
 
-    return $self->schema ? Any : ~Any;
+    use JSON;
+    return( ( $self->schema eq JSON::true) ? Any : ~Any );
     
 };
 
 sub _keyword_const {
     my $self = shift;
 
-    use DDP;
-    p @_;
-    
     $self->_keyword_enum([@_]);
 }
 
@@ -89,7 +87,7 @@ sub _keyword_items {
 
     if ( Boolean->check($items) ) {
         return if $items;
-        return Items[Any];
+        return Items[JSON::false];
     }
 
     if( ref $items eq 'HASH' ) {

@@ -135,12 +135,12 @@ use List::AllUtils qw/ zip none uniq /;
 
 sub same_structs {
     my @s = @_;
-    use DDP;
-    p @s;
 
     my @refs = grep { $_ } map { ref } @s;
 
     return if @refs == 1;
+
+    no warnings 'uninitialized';
 
     return $s[0] eq $s[1] unless @refs;
 
@@ -158,13 +158,8 @@ declare Enum,
     constraint_generator => sub {
         my @items = @_;
 
-            use DDP;
-            p @items;
-
         sub {
             my $j = $_;
-            p @items;
-            p $j;
             any { same_structs($_,$j) } @items;
         }
     };
@@ -228,6 +223,10 @@ declare Properties,
 declare Items,
     constraint_generator => sub {
         my $types = shift;
+
+        if ( Boolean->check($types) ) {
+            return $types ? Any : sub { !@$_ };
+        }
 
         my $type =  ref $types eq 'ARRAY'
             ? Tuple[ ( map { Optional[$_] } @$types ), slurpy Any ]

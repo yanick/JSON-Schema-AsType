@@ -44,9 +44,9 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
-                $DB::single = $ref eq 'node';
                 
                 my $r = $self->resolve_reference($ref);
+
                 $r->check($_);
             },
             message => sub { 
@@ -271,6 +271,10 @@ sub _keyword_additionalItems {
 
 sub _keyword_items {
     my( $self, $items ) = @_;
+
+    if ( Boolean->check($items) ) {
+        return Items[$items];
+    }
 
     if( ref $items eq 'HASH' ) {
         my $type = $self->sub_schema($items)->type;
