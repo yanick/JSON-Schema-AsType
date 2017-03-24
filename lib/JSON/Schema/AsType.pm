@@ -249,7 +249,6 @@ sub resolve_reference {
 #    return $self->references->{$ref} if $self->references->{$ref};
 
     my $s = $self->schema;
-    my $absolute_id = $self->uri;
 
     my @refs = map { $self->_unescape_ref($_) } grep { length $_ } split '/', $ref;
 
