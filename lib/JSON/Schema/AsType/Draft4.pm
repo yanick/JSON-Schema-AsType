@@ -198,7 +198,7 @@ sub _keyword_type {
         return AnyOf[map { $self->_keyword_type($_) } @$struct_type];
     }
 
-    die "unknown type '$struct_type'";
+    return;
 }
 
 sub _keyword_multipleOf {
@@ -291,10 +291,10 @@ sub _keyword_items {
     return Items[\@types];
 }
 
-our $SpecSchema = JSON::Schema::AsType->new(
-    specification => 'draft4',
-    uri           => 'http://json-schema.org/draft-04/schema',
-    schema        => from_json <<'END_JSON' );
+JSON::Schema::AsType->new(
+        specification => 'draft4',
+        uri           => 'http://json-schema.org/draft-04/schema',
+        schema        => from_json <<'END_JSON' )->type;
 {
     "id": "http://json-schema.org/draft-04/schema#",
     "$schema": "http://json-schema.org/draft-04/schema#",
@@ -446,6 +446,5 @@ our $SpecSchema = JSON::Schema::AsType->new(
     "default": {}
 }
 END_JSON
-
 
 1;
