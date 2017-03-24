@@ -130,15 +130,37 @@ declare UniqueItems,
         @$_ == uniq map { to_json $_ , { allow_nonref => 1 } } @$_
     };
 
+my $json = JSON->new->allow_nonref->canonical;
+use List::AllUtils qw/ zip none uniq /;
+
+sub same_structs {
+    my @s = @_;
+
+    my @refs = grep { $_ } map { ref } @s;
+
+    return if @refs == 1;
+
+    no warnings 'uninitialized';
+
+    return $s[0] eq $s[1] unless @refs;
+
+    @refs = uniq @refs;
+    return unless @refs == 1;
+
+    if ( ref $s[0] eq 'ARRAY' ) {
+        return all { same_structs($a,$b) } zip @{$s[0]}, @{$s[1]};
+    }
+
+    all { same_structs($s[0]{$_},$s[1]{$_}) } uniq map { keys %$_ } @s;
+}
+
 declare Enum,
     constraint_generator => sub {
-        my @items = map { to_json( 
-            ( StrictNum->check($_) ? 0+$_ : $_)
-            => { allow_nonref => 1, canonical => 1 } ) } @_;
+        my @items = @_;
 
         sub {
-            my $j = to_json $_ => { allow_nonref => 1, canonical => 1 };
-            any { $_ eq $j } @items;
+            my $j = $_;
+            any { same_structs($_,$j) } @items;
         }
     };
 
@@ -201,6 +223,10 @@ declare Properties,
 declare Items,
     constraint_generator => sub {
         my $types = shift;
+
+        if ( Boolean->check($types) ) {
+            return $types ? Any : sub { !@$_ };
+        }
 
         my $type =  ref $types eq 'ARRAY'
             ? Tuple[ ( map { Optional[$_] } @$types ), slurpy Any ]

@@ -15,6 +15,8 @@ lib/JSON/Schema/AsType/Draft3.pm
 lib/JSON/Schema/AsType/Draft3/Types.pm
 lib/JSON/Schema/AsType/Draft4.pm
 lib/JSON/Schema/AsType/Draft4/Types.pm
+lib/JSON/Schema/AsType/Draft6.pm
+lib/JSON/Schema/AsType/Draft6/Types.pm
 t/00-compile.t
 t/00-report-prereqs.dd
 t/00-report-prereqs.t
@@ -22,6 +24,7 @@ t/basic.t
 t/corpus/settlers.json
 t/draft3.t
 t/draft4.t
+t/draft6.t
 t/json-schema-test-suite/LICENSE
 t/json-schema-test-suite/README.md
 t/json-schema-test-suite/bin/jsonschema_suite
@@ -130,6 +133,7 @@ t/json-schema-test-suite/tests/draft6/required.json
 t/json-schema-test-suite/tests/draft6/type.json
 t/json-schema-test-suite/tests/draft6/uniqueItems.json
 t/json-schema-test-suite/tox.ini
+t/lib/TestUtils.pm
 t/recurse.t
 t/register_uris.t
 t/spec-schema.t

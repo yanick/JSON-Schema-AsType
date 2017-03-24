@@ -63,7 +63,7 @@ has draft_version => (
         $_[0]->has_specification ? $_[0]->specification  =~ /(\d+)/ && $1 
             : eval { $_[0]->parent_schema->draft_version } || 4;
     },
-    isa => enum([ 3, 4 ]),
+    isa => enum([ 3, 4, 6 ]),
 );
 
 has spec => (
@@ -75,7 +75,6 @@ has spec => (
 );
 
 has schema => ( 
-    isa => 'HashRef', 
     predicate => 'has_schema',
     lazy => 1,
     default => sub {
@@ -114,6 +113,9 @@ sub fetch {
 
     my $schema = eval { from_json LWP::Simple::get($url) };
 
+    $DB::single = not ref $schema;
+    
+
     die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
 
     return $self->register_schema( $url => $self->new( uri => $url, schema => $schema ) );
@@ -138,7 +140,7 @@ has specification => (
     default => sub { 
         return 'draft'.$_[0]->draft_version;
         eval { $_[0]->parent_schema->specification } || 'draft4' },
-    isa => enum 'JsonSchemaSpecification', [ qw/ draft3 draft4 / ],
+    isa => enum 'JsonSchemaSpecification', [ qw/ draft3 draft4 draft6 / ],
 );
 
 sub specification_schema {
@@ -206,7 +208,9 @@ sub all_keywords {
 sub _process_keyword {
     my( $self, $keyword ) = @_;
 
-    my $value = $self->schema->{$keyword} // return;
+    return unless exists $self->schema->{$keyword};
+
+    my $value = $self->schema->{$keyword};
 
     my $method = "_keyword_$keyword";
 
@@ -256,7 +260,7 @@ sub resolve_reference {
         $s = $is_array ? $s->[$ref] : $s->{$ref} or last;
 
         if( ref $s eq 'HASH' ) {
-            if( my $local_id = $s->{id} ) {
+            if( my $local_id = $s->{id} || $s->{'$id'} ) {
                 my $id  = $self->absolute_id($local_id);
                 $self = $self->fetch( $self->absolute_id($id) );
                 
@@ -266,7 +270,11 @@ sub resolve_reference {
 
     }
 
-    return ref $s eq 'HASH' ?  $self->sub_schema($s) : Any;
+    return ( 
+        ( ref $s eq 'HASH' or ref $s eq 'JSON::PP::Boolean' ) 
+            ?  $self->sub_schema($s) 
+            : Any );
+
 }
 
 sub _unescape_ref {
