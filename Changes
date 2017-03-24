@@ -13,6 +13,7 @@ Revision history for JSON-Schema-AsType
   - Let the user decide if they want strict Strings or lax Strings.
         (GH#12)
   - Add support for Draft6.
+  - Add 'Schema' types.
 
   [ NEW FEATURES ]
 
