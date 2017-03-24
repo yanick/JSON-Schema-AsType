@@ -136,6 +136,7 @@ t/json-schema-test-suite/tox.ini
 t/lib/TestUtils.pm
 t/recurse.t
 t/register_uris.t
+t/schema-coerce.t
 t/spec-schema.t
 t/string_number.t
 t/types_draft3.t
