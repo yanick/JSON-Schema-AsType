@@ -443,7 +443,7 @@ declare ExclusiveMaximum,
 my $schema = JSON::Schema::AsType->new(
         specification => 'draft4',
         uri           => 'http://json-schema.org/draft-04/schema',
-        schema        => from_json <<'END_JSON' )->type;
+        schema        => from_json <<'END_JSON' );
 {
     "id": "http://json-schema.org/draft-04/schema#",
     "$schema": "http://json-schema.org/draft-04/schema#",

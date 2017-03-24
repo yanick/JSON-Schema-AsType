@@ -48,8 +48,6 @@ Can coerce the value from a hashref defining the schema.
 
 =cut
 
-=cut
-
 use strict;
 use warnings;
 
@@ -175,6 +173,5 @@ coerce Schema,
 
         $schema->type 
     };
-
 
 1;
