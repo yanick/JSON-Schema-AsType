@@ -198,7 +198,7 @@ sub _keyword_type {
         return AnyOf[map { $self->_keyword_type($_) } @$struct_type];
     }
 
-    die "unknown type '$struct_type'";
+    return;
 }
 
 sub _keyword_multipleOf {

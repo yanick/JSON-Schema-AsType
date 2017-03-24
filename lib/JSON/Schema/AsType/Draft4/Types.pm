@@ -31,6 +31,21 @@ package JSON::Schema::AsType::Draft4::Types;
 
         Dependencies Dependency
 
+=head2 Schema
+
+Only verifies that the variable is a L<Type::Tiny>. 
+
+Can coerce the value from a hashref defining the schema.
+
+    my $schema = Schema->coerce( \%schema );
+
+    # equivalent to
+
+    $schema = JSON::Schema::AsType::Draft4->new(
+        draft_version => 4,
+        schema => \%schema;
+    )->type;
+
 =cut
 
 use strict;
@@ -42,6 +57,8 @@ use Types::Standard qw/
     Int
     Dict slurpy Optional Any
     Tuple
+    ConsumerOf
+    InstanceOf
 /;
 
 use Type::Library
@@ -91,6 +108,8 @@ use Type::Library
         Enum
 
         UniqueItems
+
+        Schema
 
     );
 
@@ -421,9 +440,7 @@ declare ExclusiveMaximum,
         }
     };
 
-
-sub JsonSchema {
-    JSON::Schema::AsType->new(
+my $schema = JSON::Schema::AsType->new(
         specification => 'draft4',
         uri           => 'http://json-schema.org/draft-04/schema',
         schema        => from_json <<'END_JSON' )->type;
@@ -578,6 +595,19 @@ sub JsonSchema {
     "default": {}
 }
 END_JSON
-}
+
+declare Schema, as InstanceOf['Type::Tiny'];
+
+coerce Schema,
+    from HashRef,
+    via { 
+        my $schema = JSON::Schema::AsType->new( draft_version => 4, schema => $_ );
+
+        if ( $schema->validate_schema ) {
+            die "not a valid draft4 json schema\n";
+        }
+
+        $schema->type 
+    };
 
 1;

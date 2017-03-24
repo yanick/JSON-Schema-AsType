@@ -31,6 +31,21 @@ package JSON::Schema::AsType::Draft3::Types;
 
         Dependencies Dependency
 
+=head2 Schema
+
+Only verifies that the variable is a L<Type::Tiny>. 
+
+Can coerce the value from a hashref defining the schema.
+
+    my $schema = Schema->coerce( \%schema );
+
+    # equivalent to
+
+    $schema = JSON::Schema::AsType::Draft4->new(
+        draft_version => 3,
+        schema => \%schema;
+    )->type;
+
 =cut
 
 use strict;
@@ -38,6 +53,7 @@ use warnings;
 
 use Type::Utils -all;
 use Types::Standard qw/ 
+    InstanceOf
     Str StrictNum HashRef ArrayRef 
     Int
     Dict slurpy Optional Any
@@ -54,6 +70,8 @@ use Type::Library
         Properties
 
         Dependencies Dependency
+
+        Schema
     );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -116,5 +134,18 @@ declare DivisibleBy =>
         MultipleOf[shift];
     };
 
+declare Schema, as InstanceOf['Type::Tiny'];
+
+coerce Schema,
+    from HashRef,
+    via { 
+        my $schema = JSON::Schema::AsType->new( draft_version => 3, schema => $_ );
+
+        if ( $schema->validate_schema ) {
+            die "not a valid draft3 json schema\n";
+        }
+
+        $schema->type 
+    };
 
 1;
