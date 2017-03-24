@@ -1,3 +1,0 @@
-[submodule "t/json-schema-test-suite"]
-	path = t/json-schema-test-suite
-	url = gh:json-schema-org/JSON-Schema-Test-Suite
