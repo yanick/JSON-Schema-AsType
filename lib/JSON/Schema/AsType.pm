@@ -29,6 +29,8 @@ use MooseX::ClassAttribute;
 
 no warnings 'uninitialized';
 
+our $strict_string = 1;
+
 class_has schema_registry => (
     is => 'ro',
     lazy => 1,
