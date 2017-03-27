@@ -20,4 +20,8 @@ for ( 3,4 ) {
         draft_version => $_,
         schema => { type => 'string' },
     )->check( "123" ), "v$_" );
+    ok( JSON::Schema::AsType->new(
+        draft_version => $_,
+        schema => { type => 'string' },
+    )->check( "1" ), "v$_" );
 }
