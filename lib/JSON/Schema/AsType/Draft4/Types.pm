@@ -369,7 +369,7 @@ declare Number =>
 
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
-        return $flags & ( B::SVp_IOK | B::SVp_NOK ) and not ($flags & B::SVp_POK);
+        return( $flags & ( B::SVp_IOK | B::SVp_NOK ) and not ($flags & B::SVp_POK) );
     };
 
 declare Integer =>
@@ -378,7 +378,7 @@ declare Integer =>
 
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
-        return $flags & B::SVp_IOK and not ($flags & B::SVp_POK);
+        return( $flags & B::SVp_IOK and not ($flags & B::SVp_POK) );
     };
 
 declare String => as Str,
