@@ -58,12 +58,19 @@ sub _keyword_extends {
     return Extends[ map { $self->sub_schema($_)->type } @extends];
 }
 
-my %type_map = map {
-    lc $_->name => $_
-} Integer, Boolean, Number, String, Null, Object, Array;
-
 sub _keyword_type {
     my( $self, $struct_type ) = @_;
+
+    my %type_map = map {
+        lc $_->name => $_
+    } Integer, Boolean, Number, String, Null, Object, Array;
+
+    unless( $self->strict_string ) {
+        $type_map{number} = LaxNumber;
+        $type_map{integer} = LaxInteger;
+        $type_map{string} = LaxString;
+    }
+
 
     return if $struct_type eq 'any';
 

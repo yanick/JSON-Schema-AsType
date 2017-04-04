@@ -363,30 +363,40 @@ declare Array => as ArrayRef;
 
 declare Boolean => where sub { ref =~ /JSON/ };
 
+declare LaxNumber =>
+    as StrictNum,
+    where sub {
+        return !(!defined || ref);
+    };
+
 declare Number =>
     where sub {
         return 0 if !defined || ref;
-        return StrictNum->check($_) unless $JSON::Schema::AsType::strict_string;
 
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
         return( $flags & ( B::SVp_IOK | B::SVp_NOK ) and not ($flags & B::SVp_POK) );
     };
 
+declare LaxInteger => 
+    as Int,
+    where sub { return !(!defined || ref ) };
+
 declare Integer =>
     where sub {
         return 0 if !defined || ref;
-        return Int->check($_) unless $JSON::Schema::AsType::strict_string;
 
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
         return( $flags & B::SVp_IOK and not ($flags & B::SVp_POK) );
     };
 
+declare LaxString => as Str,
+    where sub { return defined && not ref; };
+
 declare String => as Str,
     where sub {
         return 0 if !defined || ref;
-        return 1 unless $JSON::Schema::AsType::strict_string;
 
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;

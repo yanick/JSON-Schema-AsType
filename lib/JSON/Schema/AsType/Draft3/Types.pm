@@ -82,9 +82,9 @@ use JSON qw/ to_json from_json /;
 use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types 'Not', 'Integer', 'MultipleOf',
-    'Boolean', 'Number', 'String', 'Null', 'Object', 'Array';
+    'Boolean', 'Number', 'String', 'Null', 'Object', 'Array', 'LaxNumber', 'LaxInteger', 'LaxString';
 
-__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array;
+__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, LaxNumber, LaxInteger, LaxString;
 
 declare Dependencies,
     constraint_generator => sub {

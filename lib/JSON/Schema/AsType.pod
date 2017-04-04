@@ -38,7 +38,9 @@ to be a superset of C<Number>. That is:
        1       yes      yes
       "1"      yes      yes
 
-Then you can set C<$JSON::Schema::AsType::strict_string> to C<0>.
+Then you can set the object's attribute C<strict_string> to C<0>. 
+Setting the global variable C<$JSON::Schema::AsType::strict_string> to C<0>
+will work too, but that's deprecated and will eventually go away.
 
 =head1 SEE ALSO
 

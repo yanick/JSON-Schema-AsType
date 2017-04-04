@@ -184,12 +184,19 @@ sub _keyword_allOf {
     AllOf[ map { $self->sub_schema($_)->type } @$options ];
 }
 
-my %keyword_map = map {
-    lc $_->name => $_
-} Integer, Number, String, Object, Array, Boolean, Null;
-
 sub _keyword_type {
     my( $self, $struct_type ) = @_;
+
+    my %keyword_map = map {
+        lc $_->name => $_
+    } Integer, Number, String, Object, Array, Boolean, Null;
+
+    unless( $self->strict_string ) {
+        $keyword_map{number} = LaxNumber;
+        $keyword_map{integer} = LaxInteger;
+        $keyword_map{string} = LaxString;
+    }
+
 
     return $keyword_map{$struct_type}
         if $keyword_map{$struct_type};

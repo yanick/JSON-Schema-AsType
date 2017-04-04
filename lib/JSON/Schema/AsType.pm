@@ -92,6 +92,18 @@ has parent_schema => (
     clearer => 1,
 );
 
+has strict_string => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self  = shift;
+
+        $self->parent_schema->strict_string if $self->parent_schema;
+
+        return $JSON::Schema::AsType::strict_string;
+    },
+);
+
 sub fetch {
     my( $self, $url ) = @_;
 
