@@ -366,6 +366,7 @@ declare Boolean => where sub { ref =~ /JSON/ };
 declare Number =>
     where sub {
         return 0 if !defined || ref;
+        return StrictNum->check($_) unless $JSON::Schema::AsType::strict_string;
 
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
@@ -375,6 +376,7 @@ declare Number =>
 declare Integer =>
     where sub {
         return 0 if !defined || ref;
+        return Int->check($_) unless $JSON::Schema::AsType::strict_string;
 
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
@@ -383,9 +385,8 @@ declare Integer =>
 
 declare String => as Str,
     where sub {
-        return 1 unless $JSON::Schema::AsType::strict_string;
-
         return 0 if !defined || ref;
+        return 1 unless $JSON::Schema::AsType::strict_string;
 
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
