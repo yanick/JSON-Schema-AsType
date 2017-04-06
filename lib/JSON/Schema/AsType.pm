@@ -29,6 +29,8 @@ use MooseX::ClassAttribute;
 
 no warnings 'uninitialized';
 
+our $strict_string = 1;
+
 class_has schema_registry => (
     is => 'ro',
     lazy => 1,
@@ -88,6 +90,18 @@ has schema => (
 
 has parent_schema => (
     clearer => 1,
+);
+
+has strict_string => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self  = shift;
+
+        $self->parent_schema->strict_string if $self->parent_schema;
+
+        return $JSON::Schema::AsType::strict_string;
+    },
 );
 
 sub fetch {

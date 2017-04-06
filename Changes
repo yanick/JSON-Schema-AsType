@@ -8,6 +8,8 @@ Revision history for JSON-Schema-AsType
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
+  - Fine-tune the behavior of strings-vs-numbers. Can be strict,
+    JSON Schema-style, or lax, like Perl. (lots of help from Ruslan Zakirov)
 
   [ NEW FEATURES ]
 
