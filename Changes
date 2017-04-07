@@ -8,12 +8,18 @@ Revision history for JSON-Schema-AsType
   [ DOCUMENTATION ]
 
   [ ENHANCEMENTS ]
-  - Fine-tune the behavior of strings-vs-numbers. Can be strict,
-    JSON Schema-style, or lax, like Perl. (lots of help from Ruslan Zakirov)
 
   [ NEW FEATURES ]
 
   [ STATISTICS ]
+
+0.4.0 2017-04-06
+  [ ENHANCEMENTS ]
+    - Fine-tune the behavior of strings-vs-numbers. Can be strict, JSON
+      Schema-style, or lax, like Perl. (lots of help from Ruslan Zakirov)
+
+  [ STATISTICS ]
+    - code churn: 8 files changed, 186 insertions(+), 48 deletions(-)
 
 0.3.0 2017-03-24
   [ ENHANCEMENTS ]
