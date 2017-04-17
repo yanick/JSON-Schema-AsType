@@ -1,11 +1,6 @@
 Revision history for JSON-Schema-AsType
 
 {{$NEXT}}
-  - now running on TravisCI
-  - set the minimal perl version to 5.14 (GH#13)
-  - change some types that had their `validation_explain` explode for perl
-    +5.22.
-
   [ API CHANGES ]
 
   [ BUG FIXES ]
@@ -17,6 +12,15 @@ Revision history for JSON-Schema-AsType
   [ NEW FEATURES ]
 
   [ STATISTICS ]
+
+0.4.1 2017-04-16
+  - now running on TravisCI
+  - set the minimal perl version to 5.14 (GH#13)
+  - change some types that had their `validation_explain` explode for perl
+    +5.22.
+
+  [ STATISTICS ]
+    - code churn: 7 files changed, 104 insertions(+), 9 deletions(-)
 
 0.4.0 2017-04-06
   [ ENHANCEMENTS ]
