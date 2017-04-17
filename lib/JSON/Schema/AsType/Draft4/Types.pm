@@ -251,11 +251,7 @@ declare Items,
             ? Tuple[ ( map { Optional[$_] } @$types ), slurpy Any ]
             : Tuple[ slurpy ArrayRef[ $types ] ];
 
-        sub {
-            return 1 unless ArrayRef->check($_);
-
-            $type->check($_);
-        }
+        return ~ArrayRef | $type;
 
     };
 
