@@ -18,7 +18,7 @@ requires "Type::Tiny::Class" => "0";
 requires "Type::Utils" => "0";
 requires "Types::Standard" => "0";
 requires "URI" => "0";
-requires "perl" => "v5.10.0";
+requires "perl" => "v5.14.0";
 requires "strict" => "0";
 requires "warnings" => "0";
 
