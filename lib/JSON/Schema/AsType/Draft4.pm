@@ -52,7 +52,7 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             message => sub { 
                 my $schema = $self->resolve_reference($ref);
 
-                join "\n", "ref schema is " . to_json($schema->schema), @{$schema->validate_explain($_)} 
+                join "\n", "ref schema is " . to_json($schema->schema, { allow_nonref => 1 }), @{$schema->validate_explain($_)} 
             }
         );
 } );
