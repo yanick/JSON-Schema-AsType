@@ -1,7 +1,0 @@
-^dist.ini
-^MANIFEST.SKIP
-JSON-Schema-AsType.*
-^\.gitignore
-^\.git
-^\.build
-
