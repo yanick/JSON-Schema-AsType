@@ -60,8 +60,6 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
 sub _keyword_id {
     my( $self, $id ) = @_;
 
-    $DB::single = $id =~ /folder/;
-    
     unless( $self->uri ) {
         my $id = $self->absolute_id($id);
         $self->uri($id);
