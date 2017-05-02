@@ -71,8 +71,6 @@ use Type::Library
 use List::MoreUtils qw/ all any zip none /;
 use List::Util qw/ pairs pairmap reduce uniq /;
 
-use JSON qw/ to_json from_json /;
-
 use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types qw/
