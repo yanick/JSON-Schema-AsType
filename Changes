@@ -4,7 +4,6 @@ Revision history for JSON-Schema-AsType
   [ API CHANGES ]
 
   [ BUG FIXES ]
-  - add 'allow-nonref' for JSON serializing (GH#14, Ben Hutton)
 
   [ DOCUMENTATION ]
 
@@ -13,6 +12,13 @@ Revision history for JSON-Schema-AsType
   [ NEW FEATURES ]
 
   [ STATISTICS ]
+
+0.4.2 2017-05-01
+  [ BUG FIXES ]
+    - add 'allow-nonref' for JSON serializing (GH#14, Ben Hutton)
+
+  [ STATISTICS ]
+    - code churn: 3 files changed, 11 insertions(+), 10 deletions(-)
 
 0.4.1 2017-04-16
   - now running on TravisCI
