@@ -4,6 +4,7 @@ Revision history for JSON-Schema-AsType
   [ API CHANGES ]
 
   [ BUG FIXES ]
+  - add 'allow-nonref' for JSON serializing (GH#14, Ben Hutton)
 
   [ DOCUMENTATION ]
 
