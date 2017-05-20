@@ -58,6 +58,21 @@ has type => (
     lazy => 1 
 );
 
+use JSON::Schema::AsType::MooseType;
+use Moose::Util::TypeConstraints 'register_type_constraint';
+
+has moose_type => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        JSON::Schema::AsType::MooseType->new( json_type => shift );
+    },
+    trigger => sub {
+        my( $self,$val ) = @_;
+        register_type_constraint($val);
+    },
+);
+
 has draft_version => (
     is => 'ro',
     lazy => 1,
@@ -210,7 +225,11 @@ sub _build_type {
         map  { $self->_process_keyword($_) } 
              $self->all_keywords;
 
-    return @types ? reduce { $a & $b } @types : Any
+    return Any unless @types;
+
+    my $final = reduce { $a & $b } @types;
+
+    return $final;
 }
 
 sub all_keywords {
