@@ -63,7 +63,6 @@ use Moose::Util::TypeConstraints 'register_type_constraint';
 
 has moose_type => (
     is => 'ro',
-    lazy => 1,
     default => sub {
         JSON::Schema::AsType::MooseType->new( json_type => shift );
     },

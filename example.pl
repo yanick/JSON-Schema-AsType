@@ -5,16 +5,16 @@ package Spaceship {
     use Moose;
     use Types::Standard qw/ Str /;
 
-    use JSON::Schema::AsType;
+    use JSON::Schema::AsType::Util qw/ json_schema_type /;
 
-    my $Coords = JSON::Schema::AsType->new( schema => {
+    my $Coords = json_schema_type {
             type => 'array',
             items => {
                 type => 'number',
             },
             maxItems => 2,
             minItems => 2,
-    });
+    };
 
     has name => (
         is => 'ro',
@@ -27,53 +27,18 @@ package Spaceship {
     );
 }
 
+# change values and see the validation fail
 my $ship = Spaceship->new(
     coords => [0,0],
     name => 'Musclebound Desolation',
 );
 
 use DDP;
+use JSON::Schema::AsType::Util qw/ generate_schema /;
+
 p generate_schema( 'Spaceship' );
 
 
-use experimental 'signatures', 'switch';
-
-sub generate_schema($class) {
-    my $meta = $class->meta;
-
-    # for now assume all classes are of type 'object'
-    my $schema = {
-        name => $meta->name,
-        type => 'object', 
-    };
-
-
-    for my $attr ( $meta->get_all_attributes ) {
-        my %subschema;
-
-        # if there is no constraint, it can be aaaanything
-        if ( my $type = $attr->type_constraint ) {
-            
-            if ( $type->isa( 'Type::Tiny' ) ) {
-                given( $type->name ) {
-                    when( 'Str' ) {
-                        $subschema{type} = 'string';
-                    }
-                    default {
-                        die "I don't know how to deal with ", $type->name;
-                    }
-                }
-            }
-            elsif( $type->isa( 'JSON::Schema::AsType::MooseType' ) ) {
-                %subschema = %{ $type->json_type->schema };
-            }
-        }
-
-        $schema->{properties}{ $attr->name } = \%subschema;
-    }
-
-    return $schema;
-}
 
 
 
