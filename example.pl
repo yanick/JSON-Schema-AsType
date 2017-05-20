@@ -37,8 +37,21 @@ use DDP;
 use JSON::Schema::AsType::Util qw/ generate_schema /;
 
 p generate_schema( 'Spaceship' );
-
-
-
-
+# \ {
+#     name         "Spaceship",
+#     properties   {
+#         coords   {
+#             items      {
+#                 type   "number"
+#             },
+#             maxItems   2,
+#             minItems   2,
+#             type       "array"
+#         },
+#         name     {
+#             type   "string"
+#         }
+#     },
+#     type         "object"
+# }
 
