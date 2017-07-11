@@ -122,13 +122,10 @@ sub fetch {
     $url = $url->canonical;
 
     if ( my $schema = $self->registered_schema($url) ) {
-        return $schema;
+        return $schema if $schema->has_schema;
     }
 
     my $schema = eval { from_json LWP::Simple::get($url) };
-
-    $DB::single = not ref $schema;
-    
 
     die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
 
