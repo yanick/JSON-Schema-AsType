@@ -4,6 +4,8 @@ Revision history for JSON-Schema-AsType
   [ API CHANGES ]
 
   [ BUG FIXES ]
+  - Generating the schema from an url was causing infinite recursion. (GH#17,
+    reported by William Cox)
 
   [ DOCUMENTATION ]
 
