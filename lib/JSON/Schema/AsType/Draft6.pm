@@ -1,15 +1,7 @@
 package JSON::Schema::AsType::Draft6;
+our $AUTHORITY = 'cpan:YANICK';
 # ABSTRACT: Role processing draft6 JSON Schema 
-
-=head1 DESCRIPTION
-
-This role is not intended to be used directly. It is used internally
-by L<JSON::Schema::AsType> objects.
-
-Importing this module auto-populate the Draft4 schema in the
-L<JSON::Schema::AsType> schema cache.
-
-=cut
+$JSON::Schema::AsType::Draft6::VERSION = '0.4.3';
 
 use strict;
 use warnings;
@@ -122,3 +114,38 @@ __PACKAGE__->meta->add_method( '_keyword_$id' => sub {
 } );
 
 1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+JSON::Schema::AsType::Draft6 - Role processing draft6 JSON Schema 
+
+=head1 VERSION
+
+version 0.4.3
+
+=head1 DESCRIPTION
+
+This role is not intended to be used directly. It is used internally
+by L<JSON::Schema::AsType> objects.
+
+Importing this module auto-populate the Draft4 schema in the
+L<JSON::Schema::AsType> schema cache.
+
+=head1 AUTHOR
+
+Yanick Champoux <yanick@babyl.dyndns.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2017, 2015 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

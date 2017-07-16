@@ -1,52 +1,7 @@
 package JSON::Schema::AsType::Draft3::Types;
+our $AUTHORITY = 'cpan:YANICK';
 # ABSTRACT: JSON-schema v3 keywords as types
-
-=head1  SYNOPSIS
-
-    use JSON::Schema::AsType::Draft3::Types '-all';
-
-    my $type = Object & 
-        Properties[
-            foo => Minimum[3]
-        ];
-
-    $type->check({ foo => 5 });  # => 1
-    $type->check({ foo => 1 });  # => 0
-
-=head1 EXPORTED TYPES
-
-        Null Boolean Array Object String Integer Pattern Number Enum
-
-        OneOf AllOf AnyOf 
-
-        Not
-
-        Minimum ExclusiveMinimum Maximum ExclusiveMaximum MultipleOf
-
-        MaxLength MinLength
-
-        Items AdditionalItems MaxItems MinItems UniqueItems
-
-        PatternProperties AdditionalProperties MaxProperties MinProperties
-
-        Dependencies Dependency
-
-=head2 Schema
-
-Only verifies that the variable is a L<Type::Tiny>. 
-
-Can coerce the value from a hashref defining the schema.
-
-    my $schema = Schema->coerce( \%schema );
-
-    # equivalent to
-
-    $schema = JSON::Schema::AsType::Draft4->new(
-        draft_version => 3,
-        schema => \%schema;
-    )->type;
-
-=cut
+$JSON::Schema::AsType::Draft3::Types::VERSION = '0.4.3';
 
 use strict;
 use warnings;
@@ -149,3 +104,75 @@ coerce Schema,
     };
 
 1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+JSON::Schema::AsType::Draft3::Types - JSON-schema v3 keywords as types
+
+=head1 VERSION
+
+version 0.4.3
+
+=head1 SYNOPSIS
+
+    use JSON::Schema::AsType::Draft3::Types '-all';
+
+    my $type = Object & 
+        Properties[
+            foo => Minimum[3]
+        ];
+
+    $type->check({ foo => 5 });  # => 1
+    $type->check({ foo => 1 });  # => 0
+
+=head1 EXPORTED TYPES
+
+        Null Boolean Array Object String Integer Pattern Number Enum
+
+        OneOf AllOf AnyOf 
+
+        Not
+
+        Minimum ExclusiveMinimum Maximum ExclusiveMaximum MultipleOf
+
+        MaxLength MinLength
+
+        Items AdditionalItems MaxItems MinItems UniqueItems
+
+        PatternProperties AdditionalProperties MaxProperties MinProperties
+
+        Dependencies Dependency
+
+=head2 Schema
+
+Only verifies that the variable is a L<Type::Tiny>. 
+
+Can coerce the value from a hashref defining the schema.
+
+    my $schema = Schema->coerce( \%schema );
+
+    # equivalent to
+
+    $schema = JSON::Schema::AsType::Draft4->new(
+        draft_version => 3,
+        schema => \%schema;
+    )->type;
+
+=head1 AUTHOR
+
+Yanick Champoux <yanick@babyl.dyndns.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2017, 2015 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
