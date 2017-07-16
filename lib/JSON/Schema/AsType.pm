@@ -16,7 +16,6 @@ use Type::Utils;
 use LWP::Simple;
 use Clone 'clone';
 use URI;
-use Class::Load qw/ load_class /;
 
 use Moose::Util qw/ apply_all_roles /;
 
