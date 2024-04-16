@@ -298,8 +298,8 @@ sub _keyword_items {
 
 JSON::Schema::AsType->new(
         specification => 'draft4',
-        uri           => 'http://json-schema.org/draft-04/schema',
-        schema        => from_json <<'END_JSON' )->type;
+        uri           => "http${_}://json-schema.org/draft-04/schema",
+        schema        => from_json <<'END_JSON' )->type for '', 's';
 {
     "id": "http://json-schema.org/draft-04/schema#",
     "$schema": "http://json-schema.org/draft-04/schema#",

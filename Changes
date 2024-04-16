@@ -4,6 +4,7 @@ Revision history for JSON-Schema-AsType
   [ API CHANGES ]
 
   [ BUG FIXES ]
+  - Draft 6 url is https, not http.
 
   [ DOCUMENTATION ]
 

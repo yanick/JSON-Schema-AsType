@@ -100,8 +100,8 @@ sub _keyword_dependencies {
 
 JSON::Schema::AsType->new(
     draft_version => '3',
-    uri           => 'http://json-schema.org/draft-03/schema',
-    schema        => from_json <<'END_JSON' )->type;
+    uri           => "http${_}://json-schema.org/draft-03/schema",
+    schema        => from_json <<'END_JSON' )->type for '', 's';
 {
     "$schema": "http://json-schema.org/draft-03/schema#",
     "id": "http://json-schema.org/draft-03/schema#",
@@ -277,3 +277,5 @@ JSON::Schema::AsType->new(
     "default": {}
 }
 END_JSON
+
+1;

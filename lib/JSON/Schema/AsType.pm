@@ -71,7 +71,7 @@ has spec => (
     is => 'ro',
     lazy => 1,
     default => sub {
-        $_[0]->fetch( sprintf "http://json-schema.org/draft-%02d/schema", $_[0]->draft_version );
+        $_[0]->fetch( sprintf "https://json-schema.org/draft-%02d/schema", $_[0]->draft_version );
     },
 );
 
