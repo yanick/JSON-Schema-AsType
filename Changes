@@ -5,6 +5,7 @@ Revision history for JSON-Schema-AsType
 
   [ BUG FIXES ]
   - Draft 6 url is https, not http.
+  - 'zip' was imported twice. (GH#18, thanks uniejo)
 
   [ DOCUMENTATION ]
 

@@ -115,6 +115,7 @@ use Type::Library
 
 use List::MoreUtils qw/ all any zip none /;
 use List::Util qw/ pairs pairmap reduce uniq /;
+use List::AllUtils qw/ none uniq /;
 
 use JSON qw/ to_json from_json /;
 
@@ -150,7 +151,6 @@ declare UniqueItems,
     };
 
 my $json = JSON->new->allow_nonref->canonical;
-use List::AllUtils qw/ zip none uniq /;
 
 sub same_structs {
     my @s = @_;
