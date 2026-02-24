@@ -201,6 +201,10 @@ sub _build_type {
 
     $self->_set_type('');
 
+	# $ref trumps all
+	return $self->_process_keyword('$ref')
+		if $self->schema->{'$ref'}; 
+
     my @types =
         grep { $_ and $_->name ne 'Any' }
         map  { $self->_process_keyword($_) } 

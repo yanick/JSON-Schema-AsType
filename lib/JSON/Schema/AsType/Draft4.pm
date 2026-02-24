@@ -31,10 +31,10 @@ use JSON::Schema::AsType::Draft4::Types '-all';
 override all_keywords => sub {
     my $self = shift;
     
-    # $ref trumps all
-    return '$ref' if $self->schema->{'$ref'};
-
-    return uniq 'id', super();
+	# 'id' has to be first
+    return sort { 
+		$a eq 'id' ? -1 : $b eq 'id' ? 1 : $a cmp $b
+	} super();
 };
 
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
