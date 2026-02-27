@@ -1,4 +1,4 @@
-package JSON::Schema::AsType::Draft6;
+package JSON::Schema::AsType::Draft6::Keywords;
 # ABSTRACT: Role processing draft6 JSON Schema 
 
 =head1 DESCRIPTION
@@ -28,7 +28,7 @@ use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft6::Types '-all';
 
-with 'JSON::Schema::AsType::Draft4';
+with 'JSON::Schema::AsType::Draft4::Keywords';
 
 override all_keywords => sub {
     my $self = shift;
