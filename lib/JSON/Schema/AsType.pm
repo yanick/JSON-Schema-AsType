@@ -285,6 +285,8 @@ sub BUILD {
 
     # TODO move the role into a trait, which should take care of this
     $self->type if $self->has_schema;
+
+	$self->register_schema($self->uri,$self) if $self->uri;
 }
 
 1;

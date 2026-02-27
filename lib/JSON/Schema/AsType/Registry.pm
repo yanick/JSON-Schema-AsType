@@ -9,9 +9,12 @@ use warnings;
 
 use JSON;
 use LWP::Simple;
+use Module::Runtime qw/ use_module /;
 
+# TODO class instead?
 use Moose::Role;
 
+# TODO per-object
 our $registry = {};
 
 has schema_registry => (
@@ -36,6 +39,13 @@ around register_schema => sub {
 
 sub fetch {
     my( $self, $url ) = @_;
+
+	# is it one of the spec schemas?
+	if( $url =~ qr[^https?://json-schema.org/draft-0?(.*)/schema] ) {
+		return $self->register_schema( $url => 
+			use_module('JSON::Schema::AsType::Draft'. $1)->new 
+		);
+	}
 
     unless ( $url =~ m#^\w+://# ) { # doesn't look like an uri
         my $id =$self->uri;

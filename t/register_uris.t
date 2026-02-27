@@ -35,11 +35,10 @@ my $schema = JSON::Schema::AsType->new( schema => from_json  <<'JSON' );
 }
 JSON
 
-$schema->type;
+$schema->spec;
 
 cmp_deeply [ $schema->all_schema_uris ], bag(
     qw'
-        http://json-schema.org/draft-04/schema
         https://json-schema.org/draft-04/schema
         http://localhost:1234/node
         http://localhost:1234/tree
@@ -53,5 +52,3 @@ ok $schema->check({
             subtree => { meta => "child", "nodes" => [ ] }
         }]
 });
-
-#diag explain $schema->all_schemas;
