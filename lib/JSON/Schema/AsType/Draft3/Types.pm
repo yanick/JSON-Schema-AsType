@@ -41,7 +41,7 @@ Can coerce the value from a hashref defining the schema.
 
     # equivalent to
 
-    $schema = JSON::Schema::AsType::Draft4->new(
+    $schema = JSON::Schema::AsType::Draft3->new(
         draft_version => 3,
         schema => \%schema;
     )->type;
