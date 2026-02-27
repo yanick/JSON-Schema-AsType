@@ -8,6 +8,7 @@ use strict;
 use warnings;
 
 use JSON;
+use LWP::Simple;
 
 use Moose::Role;
 
