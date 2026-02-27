@@ -1,4 +1,4 @@
-package JSON::Schema::AsType::Draft4;
+package JSON::Schema::AsType::Draft4::Keywords;
 # ABSTRACT: Role processing draft4 JSON Schema 
 
 =head1 DESCRIPTION

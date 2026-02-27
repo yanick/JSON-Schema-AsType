@@ -13,7 +13,6 @@ use List::Util qw/ reduce pairmap pairs /;
 use List::MoreUtils qw/ any all none uniq zip /;
 use Types::Standard qw/InstanceOf HashRef StrictNum Any Str ArrayRef Int Object slurpy Dict Optional slurpy /; 
 use Type::Utils;
-use LWP::Simple;
 use Clone 'clone';
 use URI;
 
@@ -282,7 +281,7 @@ sub BUILD {
     my $self = shift;
     # TODO rename specification to  draft_version 
     # and have specifications renamed to spec
-    apply_all_roles( $self, 'JSON::Schema::AsType::' . ucfirst $self->specification );
+    apply_all_roles( $self, 'JSON::Schema::AsType::' . ucfirst( $self->specification ) . '::Keywords' );
 
     # TODO move the role into a trait, which should take care of this
     $self->type if $self->has_schema;

@@ -1,4 +1,4 @@
-package JSON::Schema::AsType::Draft3;
+package JSON::Schema::AsType::Draft3::Keywords;
 # ABSTRACT: Role processing draft3 JSON Schema 
 
 =head1 DESCRIPTION
@@ -28,7 +28,7 @@ use JSON;
 use JSON::Schema::AsType::Draft3::Types '-all';
 use Types::Standard 'Optional';
 
-with 'JSON::Schema::AsType::Draft4' => {
+with 'JSON::Schema::AsType::Draft4::Keywords' => {
     -excludes => [qw/ _keyword_properties _keyword_required _keyword_type /]
 };
 
