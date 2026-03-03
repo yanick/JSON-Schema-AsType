@@ -22,6 +22,8 @@ use Moose::Util qw/ apply_all_roles /;
 
 use JSON;
 
+use JSON::Schema::AsType::Registry;
+
 use Moose;
 
 use MooseX::MungeHas 'is_ro';
@@ -30,7 +32,11 @@ no warnings 'uninitialized';
 
 our $strict_string = 1;
 
-with 'JSON::Schema::AsType::Registry';
+has registry => (
+    is => 'ro',
+    lazy => 1,
+    default => sub { JSON::Schema::AsType::Registry->new },
+);
 
 has type => (
 	is      => 'rwp',
@@ -138,7 +144,7 @@ sub is_root_schema {
 
 sub sub_schema {
 	my ( $self, $subschema ) = @_;
-	$self->new( schema => $subschema, parent_schema => $self );
+	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry );
 }
 
 sub absolute_id {

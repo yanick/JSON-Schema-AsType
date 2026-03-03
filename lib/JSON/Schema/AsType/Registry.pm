@@ -2,7 +2,7 @@ package JSON::Schema::AsType::Registry;
 
 use 5.42.0;
 
-use feature ':5.42';
+use feature 'signatures';
 
 use strict;
 use warnings;
@@ -11,26 +11,24 @@ use JSON;
 use LWP::Simple;
 use Module::Runtime qw/ use_module /;
 
-# TODO class instead?
-use Moose::Role;
+use Moose;
 
-# TODO per-object
-our $registry = {};
-
-has schema_registry => (
+has registry => (
     is => 'ro',
     lazy => 1,
-    default => sub { $registry },
+    default => sub { +{} },
     traits => [ 'Hash' ],
     handles => {
-        all_schemas       => 'elements',
-        all_schema_uris       => 'keys',
-        registered_schema => 'get',
-        register_schema   => 'set',
+        all_uris       => 'keys',
+        add   => 'set',
     },
 );
 
-around register_schema => sub {
+before add => sub {
+	# TODO check if it's already there
+};
+
+around add => sub {
     # TODO Use a type instead to coerce into canonical
     my( $orig, $self, $uri, $schema ) = @_;
     $uri =~ s/#$//;
