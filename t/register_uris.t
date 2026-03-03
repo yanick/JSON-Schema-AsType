@@ -35,11 +35,8 @@ my $schema = JSON::Schema::AsType->new( schema => from_json  <<'JSON' );
 }
 JSON
 
-$schema->spec;
-
-cmp_deeply [ $schema->all_schema_uris ], bag(
+cmp_deeply [ $schema->registry->all_uris ], bag(
     qw'
-        https://json-schema.org/draft-04/schema
         http://localhost:1234/node
         http://localhost:1234/tree
     '

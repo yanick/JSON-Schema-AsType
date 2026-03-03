@@ -17,12 +17,13 @@ use Types::Standard
 use Type::Utils;
 use Clone 'clone';
 use URI;
+use Module::Runtime qw/ use_module /;
 
 use Moose::Util qw/ apply_all_roles /;
+use JSON::Schema::AsType::Registry;
 
 use JSON;
 
-use JSON::Schema::AsType::Registry;
 
 use Moose;
 
@@ -32,11 +33,7 @@ no warnings 'uninitialized';
 
 our $strict_string = 1;
 
-has registry => (
-    is => 'ro',
-    lazy => 1,
-    default => sub { JSON::Schema::AsType::Registry->new },
-);
+with 'JSON::Schema::AsType::Registry';
 
 has type => (
 	is      => 'rwp',
@@ -67,6 +64,7 @@ has spec => (
 
 has schema => (
 	predicate => 'has_schema',
+	is => 'ro',
 	lazy      => 1,
 	default   => sub {
 		my $self = shift;
@@ -76,6 +74,8 @@ has schema => (
 		return $self->fetch($uri)->schema;
 	},
 );
+
+sub _schema_trigger {}
 
 has parent_schema => ( clearer => 1, );
 
@@ -92,7 +92,7 @@ has strict_string => (
 );
 
 has uri => (
-	is      => 'rw',
+	is      => 'ro',
 	trigger => sub {
 		my ( $self, $uri ) = @_;
 		$self->register_schema( $uri, $self );
@@ -143,8 +143,8 @@ sub is_root_schema {
 }
 
 sub sub_schema {
-	my ( $self, $subschema ) = @_;
-	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry );
+	my ( $self, $subschema, $uri ) = @_;
+	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, ( uri => $uri ) x !!$uri );
 }
 
 sub absolute_id {
@@ -297,14 +297,12 @@ sub _add_to_type {
 sub BUILD {
 	my $self = shift;
 
-	# TODO rename specification to  draft_version
-	# and have specifications renamed to spec
-	apply_all_roles( $self,
-			'JSON::Schema::AsType::'
-		  . ucfirst( $self->specification )
-		  . '::Keywords' );
+	use_module(
+		'JSON::Schema::AsType::' . ucfirst( $self->specification )
+	)->meta->rebless_instance( $self );
 
 	# TODO move the role into a trait, which should take care of this
+	$self->_schema_trigger($self->schema) if $self->has_schema;
 	$self->type if $self->has_schema;
 
 	$self->register_schema( $self->uri, $self ) if $self->uri;

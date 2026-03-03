@@ -58,14 +58,7 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
 } );
 
 sub _keyword_id {
-    my( $self, $id ) = @_;
-
-    unless( $self->uri ) {
-        my $id = $self->absolute_id($id);
-        $self->uri($id);
-    }
-
-    return;
+	# done as part of the initial visit
 }
 
 sub _keyword_definitions {
@@ -268,7 +261,7 @@ sub _keyword_additionalItems {
 
     my $schema = $self->sub_schema($s);
 
-    my $to_skip  = @{ $self->schema->{items} };
+    my $to_skip  = ($self->schema->{items}||[])->@*;
 
     return AdditionalItems[$to_skip,$schema];
 

@@ -1,20 +1,43 @@
 use Test2::V1 -Pip;
 
-use JSON::Schema::AsType::Registry;
+use JSON::Schema::AsType;
 
 subtest basic => sub {
-	my $registry = JSON::Schema::AsType::Registry->new;
+	my $schema = JSON::Schema::AsType->new;
 
 	my $uri = 'http://something.com/foo';
-	my $schema = { type => 'boolean' };
+	my $s = { type => 'boolean' };
 
-	$registry->add( $uri, $schema );
+	$schema->register_schema( $uri, $s );
 
-	is [ $registry->all_uris ], bag {
+	is [ $schema->all_schema_uris ], bag {
 		item $uri;
 	};
 
-}
+	isa_ok $schema->registered_schema($uri) => 'JSON::Schema::AsType';
+};
+
+subtest 'ids' => sub {
+	my $schema = JSON::Schema::AsType->new;
+
+	my $uri = 'http://something.com/foo';
+	my $s = { 
+		type => 'boolean',
+		definitions => {
+			bar => {
+				id => 'http://somethingelse.com/baz',
+				type => 'string',
+			}
+		}
+	};
+
+	$schema->register_schema( $uri, $s );
+
+	is [ $schema->all_schema_uris ], bag {
+		item $uri;
+		item 'http://somethingelse.com/baz';
+	};
+};
 
 done_testing;
 

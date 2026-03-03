@@ -8,10 +8,10 @@ use strict;
 use warnings;
 
 use JSON;
-use LWP::Simple;
+use LWP::Simple qw//;
 use Module::Runtime qw/ use_module /;
 
-use Moose;
+use Moose::Role;
 
 has registry => (
     is => 'ro',
@@ -19,21 +19,31 @@ has registry => (
     default => sub { +{} },
     traits => [ 'Hash' ],
     handles => {
-        all_uris       => 'keys',
-        add   => 'set',
+        all_schema_uris   => 'keys',
+        register_schema   => 'set',
     },
 );
 
-before add => sub {
+before register_schema => sub {
 	# TODO check if it's already there
 };
 
-around add => sub {
+around register_schema => sub {
     # TODO Use a type instead to coerce into canonical
     my( $orig, $self, $uri, $schema ) = @_;
     $uri =~ s/#$//;
+
+	unless( $schema isa JSON::Schema::AsType ) {
+		$schema = JSON::Schema::AsType->new( schema => $schema, registry => $self->registry );
+	}
+
     $orig->($self,$uri,$schema);
 };
+
+sub registered_schema($self,$uri) {
+	return $self->registry->{$uri};
+
+}
 
 sub fetch {
     my( $self, $url ) = @_;
