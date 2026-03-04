@@ -35,7 +35,8 @@ has '+spec' => (
 has '+uri' => default => sub($self) {
 	return unless $self->has_schema;
 	my $id = $self->schema->{id} or return;
-	$self->register_schema->( $id, $self );
+	warn $id;
+	$self->register_schema( $id, $self );
 	$self->clear_parent_schema;
 };
 

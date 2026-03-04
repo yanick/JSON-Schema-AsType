@@ -24,13 +24,11 @@ has registry => (
     },
 );
 
-before register_schema => sub {
-	# TODO check if it's already there
-};
 
 around register_schema => sub {
     # TODO Use a type instead to coerce into canonical
     my( $orig, $self, $uri, $schema ) = @_;
+
     $uri =~ s/#$//;
 
 	unless( $schema isa JSON::Schema::AsType ) {
@@ -53,6 +51,10 @@ sub fetch {
 		return $self->register_schema( $url => 
 			use_module('JSON::Schema::AsType::Draft'. $1)->new 
 		);
+	}
+
+	if(!$self->uri) {
+		$DB::single = 1;
 	}
 
     unless ( $url =~ m#^\w+://# ) { # doesn't look like an uri
@@ -78,4 +80,35 @@ sub fetch {
     die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
 
     return $self->register_schema( $url => $self->new( uri => $url, schema => $schema ) );
+}
+
+sub _resolve_uri {
+	my ($uri,$base) = map { ref ? $_ : URI->new($_) } @_;
+
+	return $uri unless $base;
+
+	my $result = URI->new($uri)->abs($base)->canonical;
+
+	# let's look at those fragments
+	my $uri_doc = $uri->clone;
+	$uri_doc->fragment(undef);
+	my $base_doc = $base->clone;
+	$base_doc->fragment(undef);
+
+	# not the same documents? fragment stays the same
+	unless( $uri_doc->eq($base_doc) ) {
+		no warnings qw/ uninitialized /;
+		my $fragment = $uri->fragment =~ s/^#//r;
+		my $base_fragment = $base->fragment =~ s/^#//r;
+		$base_fragment .= '/' unless m[/$] ;
+
+		my $path = URI->new($fragment);
+		$path = $path->abs($base_fragment) if $base_fragment;
+		$path = $path->canonical;
+
+		$result->fragment($path) unless $path eq '/';
+	}
+
+	return $result;
+
 }

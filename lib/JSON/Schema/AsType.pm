@@ -7,6 +7,7 @@ use 5.14.0;
 use strict;
 use warnings;
 
+use PerlX::Maybe;
 use Type::Tiny;
 use Type::Tiny::Class;
 use Scalar::Util    qw/ looks_like_number /;
@@ -144,7 +145,7 @@ sub is_root_schema {
 
 sub sub_schema {
 	my ( $self, $subschema, $uri ) = @_;
-	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, ( uri => $uri ) x !!$uri );
+	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
 }
 
 sub absolute_id {

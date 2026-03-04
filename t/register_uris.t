@@ -35,7 +35,7 @@ my $schema = JSON::Schema::AsType->new( schema => from_json  <<'JSON' );
 }
 JSON
 
-cmp_deeply [ $schema->registry->all_uris ], bag(
+cmp_deeply [ $schema->all_schema_uris ], bag(
     qw'
         http://localhost:1234/node
         http://localhost:1234/tree
