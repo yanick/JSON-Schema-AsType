@@ -145,6 +145,9 @@ sub is_root_schema {
 
 sub sub_schema {
 	my ( $self, $subschema, $uri ) = @_;
+
+	$uri = $self->resolve_uri($uri) if $uri;
+
 	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
 }
 

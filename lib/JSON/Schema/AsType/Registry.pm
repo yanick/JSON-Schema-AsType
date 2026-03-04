@@ -82,6 +82,10 @@ sub fetch {
     return $self->register_schema( $url => $self->new( uri => $url, schema => $schema ) );
 }
 
+sub resolve_uri($self,$uri,$base=undef) {
+	return _resolve_uri($uri,$base//$self->uri);
+}
+
 sub _resolve_uri {
 	my ($uri,$base) = map { ref ? $_ : URI->new($_) } @_;
 
