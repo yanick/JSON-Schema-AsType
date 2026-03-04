@@ -1,5 +1,7 @@
 package JSON::Schema::AsType::Visit;
 
+use Carp;
+
 sub visit {
     my ( $ref, $fcn ) = @_;
     my $ctx = { _depth => 0 };

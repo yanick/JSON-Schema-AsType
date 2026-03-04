@@ -68,6 +68,7 @@ has schema => (
 	is => 'ro',
 	lazy      => 1,
 	default   => sub {
+		return +{};
 		my $self = shift;
 
 		my $uri = $self->uri or die "schema or uri required";
@@ -96,6 +97,8 @@ has uri => (
 	is      => 'ro',
 	trigger => sub {
 		my ( $self, $uri ) = @_;
+		$uri = URI->new($uri);
+		return if $uri->fragment;
 		$self->register_schema( $uri, $self );
 		$self->clear_parent_schema;
 	}

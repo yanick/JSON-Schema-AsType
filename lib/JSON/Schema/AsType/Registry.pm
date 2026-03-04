@@ -7,6 +7,7 @@ use feature 'signatures';
 use strict;
 use warnings;
 
+use JSON::Pointer;
 use JSON;
 use LWP::Simple qw//;
 use Module::Runtime qw/ use_module /;
@@ -29,7 +30,7 @@ around register_schema => sub {
     # TODO Use a type instead to coerce into canonical
     my( $orig, $self, $uri, $schema ) = @_;
 
-    $uri =~ s/#$//;
+    $uri = URI->new($uri)->canonical;
 
 	unless( $schema isa JSON::Schema::AsType ) {
 		$schema = JSON::Schema::AsType->new( schema => $schema, registry => $self->registry );
@@ -39,8 +40,8 @@ around register_schema => sub {
 };
 
 sub registered_schema($self,$uri) {
+	$uri = URI->new($uri)->canonical;
 	return $self->registry->{$uri};
-
 }
 
 sub fetch {
@@ -48,14 +49,43 @@ sub fetch {
 
 	# is it one of the spec schemas?
 	if( $url =~ qr[^https?://json-schema.org/draft-0?(.*)/schema] ) {
+		# TODO get the metaschema
 		return $self->register_schema( $url => 
 			use_module('JSON::Schema::AsType::Draft'. $1)->new 
 		);
 	}
 
-	if(!$self->uri) {
-		$DB::single = 1;
+	$url = $self->resolve_uri($url, $self->root_schema->uri);
+
+	if( my $schema = $self->registered_schema($url) ) {
+		return $schema;
 	}
+
+	my $root_uri = $url->clone;
+	$root_uri->fragment(undef);
+	
+	my $schema = $self->registered_schema($root_uri);
+
+	if($schema) {
+		$schema = JSON::Pointer->get($schema->schema,$url->fragment);
+		return $self->register_schema( $url => $schema );
+	}
+	warn $schema;
+
+
+
+	die "sadness";
+
+
+	if( '#' eq substr $url, 0, 1 ) {
+		$url = $self->resolve_uri($url);
+		my $doc = $self->root_schema;
+		my @steps = grep { $_ ne '#' } split '/', $url->fragment;
+		$doc = $doc->{$_} for @steps;
+
+		return $self->sub_schema($doc, $url);
+	}
+
 
     unless ( $url =~ m#^\w+://# ) { # doesn't look like an uri
         my $id =$self->uri;

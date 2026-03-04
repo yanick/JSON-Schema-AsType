@@ -61,14 +61,6 @@ sub _keyword_id {
 	# done as part of the initial visit
 }
 
-sub _keyword_definitions {
-    my( $self, $defs ) = @_;
-
-    $self->sub_schema( $_ ) for values %$defs;
-
-    return;
-};
-
 sub _keyword_pattern {
     my( $self, $pattern ) = @_;
 

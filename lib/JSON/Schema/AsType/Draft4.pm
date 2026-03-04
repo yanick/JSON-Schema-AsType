@@ -33,14 +33,15 @@ has '+spec' => (
 );
 
 has '+uri' => default => sub($self) {
-	return unless $self->has_schema;
-	my $id = $self->schema->{id} or return;
-	warn $id;
+	state $i = 1;
+	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$i++;
 	$self->register_schema( $id, $self );
 	$self->clear_parent_schema;
+	return $id;
 };
 
 sub _schema_trigger($self,$schema,@) {
+	return unless $schema; # TODO
 	JSON::Schema::AsType::Visit::visit( $schema, sub {
 		my ( $key, $valueref, $context ) = @_;
 
