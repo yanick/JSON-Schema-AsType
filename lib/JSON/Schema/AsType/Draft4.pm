@@ -35,7 +35,6 @@ has '+spec' => (
 my $_uri_port = 1;
 has '+uri' => default => sub($self) {
 	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$_uri_port++;
-	warn "default uri is $id";
 	$self->clear_parent_schema;
 	return $id;
 };

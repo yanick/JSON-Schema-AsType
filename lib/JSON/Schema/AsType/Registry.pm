@@ -30,9 +30,6 @@ around register_schema => sub {
 	# TODO Use a type instead to coerce into canonical
 	my ( $orig, $self, $uri, $schema ) = @_;
 
-	warn "registering for $uri with\n";
-	use DDP; p $schema->schema;
-
 	$uri = URI->new($uri)->canonical;
 
 	die "schema $uri already registered\n" if $self->registered_schema($uri);

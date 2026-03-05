@@ -124,7 +124,7 @@ sub _keyword_properties {
 
     Properties[
         pairmap { 
-            my $schema = $self->sub_schema($b);
+            my $schema = $self->sub_schema($b, "#./properties/$a");
             $a => $schema->type;
         }  %$properties
     ];
