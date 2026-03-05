@@ -40,18 +40,15 @@ override all_keywords => sub {
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
 
+		my $schema = $self->resolve_reference($ref);
+
         return Type::Tiny->new(
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
-                
-                my $r = $self->resolve_reference($ref);
-
-                $r->check($_);
+                $schema->check($_);
             },
             message => sub { 
-                my $schema = $self->resolve_reference($ref);
-
                 join "\n", "ref schema is " . to_json($schema->schema, { allow_nonref => 1 }), @{$schema->validate_explain($_)} 
             }
         );
@@ -60,6 +57,15 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
 sub _keyword_id {
 	# done as part of the initial visit
 }
+
+sub _keyword_definitions {
+    my( $self, $defs ) = @_;
+
+	warn "registering!!!";
+    $self->sub_schema( $defs->{$_}, "#./definitions/$_" ) for keys %$defs;
+
+    return;
+};
 
 sub _keyword_pattern {
     my( $self, $pattern ) = @_;
@@ -267,15 +273,16 @@ sub _keyword_items {
     }
 
     if( ref $items eq 'HASH' ) {
-        my $type = $self->sub_schema($items)->type;
+        my $type = $self->sub_schema($items,'#./items')->type;
 
         return Items[$type];
     }
 
     # TODO forward declaration not workie
     my @types;
+	my $i = 0;
     for ( @$items ) {
-        push @types, $self->sub_schema($_)->type;
+        push @types, $self->sub_schema($_,'#./items/'.$i++)->type;
     }
 
     return Items[\@types];

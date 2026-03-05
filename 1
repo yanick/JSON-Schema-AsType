@@ -1,0 +1,1116 @@
+"my" variable $schema masks earlier declaration in same scope at lib/JSON/Schema/AsType/Registry.pm line 118.
+registering for http://localhost:1234/name.json with
+[0;38;2;199;146;234mJSON::Schema::AsType[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mMoose::Object[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Registry[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (88):
+        [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mmeta[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (9): [0;38;2;130;170;255m_add_reference[m, [0;38;2;130;170;255m_add_to_type[m, [0;38;2;130;170;255m_build_references[m, [0;38;2;130;170;255m_build_type[m, [0;38;2;130;170;255m_escape_ref[m, [0;38;2;130;170;255m_process_keyword[m, [0;38;2;130;170;255m_schema_trigger[m, [0;38;2;130;170;255m_set_type[m, [0;38;2;130;170;255m_unescape_ref[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mschema[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mdefinitions[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+                [0;38;2;121;134;203morNull[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+                    [0;38;2;121;134;203manyOf[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m[[m
+                        [0;38;2;161;187;197m[0] [m[0;38;2;102;217;239m{[m
+                                [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mnull[m[0;38;2;102;217;239m"[m
+                            [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+                        [0;38;2;161;187;197m[1] [m[0;38;2;102;217;239m{[m
+                                [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#[m[0;38;2;102;217;239m"[m
+                            [0;38;2;102;217;239m}[m
+                    [0;38;2;102;217;239m][m
+                [0;38;2;102;217;239m}[m
+            [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mtype[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mstring[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m   [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://localhost:1234/name.json[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:1 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mparent_schema[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://localhost:1234/name.json[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mnull[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:1 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:1/[m            [0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://localhost:1234/name.json[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mnull[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mstrict_string[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m1[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mNull (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://254.0.0.1:1[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:2 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mschema[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{}[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:2 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mparent_schema[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:1/[m            [0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://localhost:1234/name.json[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mRef(#) (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://254.0.0.1:2[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://localhost:1234/name.json#/definitions/orNull with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mparent_schema[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:1/[m            [0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:2/[m            [0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://localhost:1234/name.json[m[0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar{parent_schema}[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203manyOf[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m[[m
+                [0;38;2;161;187;197m[0] [m[0;38;2;102;217;239m{[m
+                        [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mnull[m[0;38;2;102;217;239m"[m
+                    [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+                [0;38;2;161;187;197m[1] [m[0;38;2;102;217;239m{[m
+                        [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#[m[0;38;2;102;217;239m"[m
+                    [0;38;2;102;217;239m}[m
+            [0;38;2;102;217;239m][m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mAnyOf[Null,Ref(#)] (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;199;146;234mhttp://localhost:1234/name.json#/definitions/orNull (URI::http)[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://localhost:1234/name.json with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:1/[m                                [0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:2/[m                                [0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://localhost:1234/name.json[m                    [0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://localhost:1234/name.json#/definitions/orNull[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mdefinitions[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+                [0;38;2;121;134;203morNull[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+                    [0;38;2;121;134;203manyOf[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m[[m
+                        [0;38;2;161;187;197m[0] [m[0;38;2;102;217;239m{[m
+                                [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mnull[m[0;38;2;102;217;239m"[m
+                            [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+                        [0;38;2;161;187;197m[1] [m[0;38;2;102;217;239m{[m
+                                [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#[m[0;38;2;102;217;239m"[m
+                            [0;38;2;102;217;239m}[m
+                    [0;38;2;102;217;239m][m
+                [0;38;2;102;217;239m}[m
+            [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mtype[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mstring[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mstrict_string[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m1[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mString (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://localhost:1234/name.json[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://localhost:1234/subSchemas.json with
+[0;38;2;199;146;234mJSON::Schema::AsType[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mMoose::Object[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Registry[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (88):
+        [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mmeta[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (9): [0;38;2;130;170;255m_add_reference[m, [0;38;2;130;170;255m_add_to_type[m, [0;38;2;130;170;255m_build_references[m, [0;38;2;130;170;255m_build_type[m, [0;38;2;130;170;255m_escape_ref[m, [0;38;2;130;170;255m_process_keyword[m, [0;38;2;130;170;255m_schema_trigger[m, [0;38;2;130;170;255m_set_type[m, [0;38;2;130;170;255m_unescape_ref[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mschema[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203minteger[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+                [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+            [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mrefToInteger[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+                [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#/integer[m[0;38;2;102;217;239m"[m
+            [0;38;2;102;217;239m}[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m   [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://localhost:1234/subSchemas.json[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://localhost:1234/subSchemas.json with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://localhost:1234/subSchemas.json[m[0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203minteger[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+                [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+            [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mrefToInteger[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+                [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#/integer[m[0;38;2;102;217;239m"[m
+            [0;38;2;102;217;239m}[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mAny (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://localhost:1234/subSchemas.json[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://localhost:1234/integer.json with
+[0;38;2;199;146;234mJSON::Schema::AsType[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mMoose::Object[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Registry[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (88):
+        [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mmeta[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (9): [0;38;2;130;170;255m_add_reference[m, [0;38;2;130;170;255m_add_to_type[m, [0;38;2;130;170;255m_build_references[m, [0;38;2;130;170;255m_build_type[m, [0;38;2;130;170;255m_escape_ref[m, [0;38;2;130;170;255m_process_keyword[m, [0;38;2;130;170;255m_schema_trigger[m, [0;38;2;130;170;255m_set_type[m, [0;38;2;130;170;255m_unescape_ref[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mschema[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m   [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://localhost:1234/integer.json[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://localhost:1234/integer.json with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://localhost:1234/integer.json[m[0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mstrict_string[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m1[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mInteger (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://localhost:1234/integer.json[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://localhost:1234/folder/folderInteger.json with
+[0;38;2;199;146;234mJSON::Schema::AsType[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mMoose::Object[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Registry[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (88):
+        [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mmeta[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (9): [0;38;2;130;170;255m_add_reference[m, [0;38;2;130;170;255m_add_to_type[m, [0;38;2;130;170;255m_build_references[m, [0;38;2;130;170;255m_build_type[m, [0;38;2;130;170;255m_escape_ref[m, [0;38;2;130;170;255m_process_keyword[m, [0;38;2;130;170;255m_schema_trigger[m, [0;38;2;130;170;255m_set_type[m, [0;38;2;130;170;255m_unescape_ref[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mschema[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m   [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://localhost:1234/folder/folderInteger.json[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://localhost:1234/folder/folderInteger.json with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://localhost:1234/folder/folderInteger.json[m[0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mstrict_string[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m1[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mInteger (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://localhost:1234/folder/folderInteger.json[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+# Subtest: t/json-schema-test-suite/tests/draft4/ref.json
+    # Subtest: relative pointer ref to array
+registering for http://254.0.0.1:3 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mitems[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m[[m
+                [0;38;2;161;187;197m[0] [m[0;38;2;102;217;239m{[m
+                        [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+                    [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+                [0;38;2;161;187;197m[1] [m[0;38;2;102;217;239m{[m
+                        [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#/items/0[m[0;38;2;102;217;239m"[m
+                    [0;38;2;102;217;239m}[m
+            [0;38;2;102;217;239m][m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:4 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mparent_schema[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:3/[m[0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar{parent_schema}[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:4 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:3/[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:4/[m[0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mstrict_string[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m1[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mInteger (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://254.0.0.1:4[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:5 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mschema[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m{}[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:5 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mparent_schema[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:3/[m[0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar{parent_schema}[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:4/[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#/items/0[m[0;38;2;102;217;239m"[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234mRef(#/items/0) (Type::Tiny)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://254.0.0.1:5[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+registering for http://254.0.0.1:3 with
+[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m  [0;38;2;102;217;239m{[m
+    parents: [0;38;2;199;146;234mJSON::Schema::AsType[m
+    roles (1): [0;38;2;199;146;234mJSON::Schema::AsType::Draft4::Keywords[m
+    attributes (10): [0;38;2;130;170;255mdraft_version[m, [0;38;2;130;170;255mparent_schema[m, [0;38;2;130;170;255mreferences[m, [0;38;2;130;170;255mregistry[m, [0;38;2;130;170;255mschema[m, [0;38;2;130;170;255mspec[m, [0;38;2;130;170;255mspecification[m, [0;38;2;130;170;255mstrict_string[m, [0;38;2;130;170;255mtype[m, [0;38;2;130;170;255muri[m
+    public methods (89):
+        [0;38;2;130;170;255mall_keywords[m, [0;38;2;130;170;255mmeta[m
+        Carp:
+            [0;38;2;130;170;255mconfess[m
+        Clone:
+            [0;38;2;130;170;255mclone[m
+        JSON:
+            [0;38;2;130;170;255mfrom_json[m, [0;38;2;130;170;255mjsonToObj[m, [0;38;2;130;170;255mobjToJson[m, [0;38;2;130;170;255mto_json[m
+        JSON::Schema::AsType:
+            [0;38;2;130;170;255mabsolute_id[m, [0;38;2;130;170;255mall_schema_uris[m, [0;38;2;130;170;255mancestor_uri[m, [0;38;2;130;170;255mBUILD[m, [0;38;2;130;170;255mcheck[m, [0;38;2;130;170;255mclear_parent_schema[m, [0;38;2;130;170;255mhas_schema[m, [0;38;2;130;170;255mhas_specification[m, [0;38;2;130;170;255mis_root_schema[m, [0;38;2;130;170;255mregister_schema[m, [0;38;2;130;170;255mresolve_reference[m, [0;38;2;130;170;255mroot_schema[m, [0;38;2;130;170;255mspecification_schema[m, [0;38;2;130;170;255msub_schema[m, [0;38;2;130;170;255mvalidate[m, [0;38;2;130;170;255mvalidate_explain[m, [0;38;2;130;170;255mvalidate_explain_schema[m, [0;38;2;130;170;255mvalidate_schema[m
+        JSON::Schema::AsType::Registry:
+            [0;38;2;130;170;255mfetch[m, [0;38;2;130;170;255mregistered_schema[m, [0;38;2;130;170;255mresolve_uri[m
+        JSON::XS:
+            [0;38;2;130;170;255mdecode_json[m, [0;38;2;130;170;255mencode_json[m
+        List::MoreUtils::XS:
+            [0;38;2;130;170;255mall[m, [0;38;2;130;170;255many[m, [0;38;2;130;170;255mmesh[m, [0;38;2;130;170;255mnone[m, [0;38;2;130;170;255muniq[m
+        List::Util:
+            [0;38;2;130;170;255mpairmap[m, [0;38;2;130;170;255mpairs[m, [0;38;2;130;170;255mreduce[m
+        Module::Runtime:
+            [0;38;2;130;170;255muse_module[m
+        Moose:
+            [0;38;2;130;170;255mafter[m, [0;38;2;130;170;255maround[m, [0;38;2;130;170;255maugment[m, [0;38;2;130;170;255mbefore[m, [0;38;2;130;170;255mextends[m, [0;38;2;130;170;255mhas[m, [0;38;2;130;170;255minner[m, [0;38;2;130;170;255moverride[m, [0;38;2;130;170;255msuper[m, [0;38;2;130;170;255mwith[m
+        Moose::Object:
+            [0;38;2;130;170;255mBUILDALL[m, [0;38;2;130;170;255mBUILDARGS[m, [0;38;2;130;170;255mDEMOLISHALL[m, [0;38;2;130;170;255mDESTROY[m, [0;38;2;130;170;255mdoes[m, [0;38;2;130;170;255mDOES[m, [0;38;2;130;170;255mdump[m, [0;38;2;130;170;255mnew[m
+        Moose::Util:
+            [0;38;2;130;170;255mapply_all_roles[m
+        PerlX::Maybe:
+            [0;38;2;130;170;255mmaybe[m
+        Scalar::Util:
+            [0;38;2;130;170;255mlooks_like_number[m
+        Type::Utils:
+            [0;38;2;130;170;255mas[m, [0;38;2;130;170;255mclass_type[m, [0;38;2;130;170;255mcoerce[m, [0;38;2;130;170;255mdeclare[m, [0;38;2;130;170;255mdeclare_coercion[m, [0;38;2;130;170;255mduck_type[m, [0;38;2;130;170;255menum[m, [0;38;2;130;170;255mfrom[m, [0;38;2;130;170;255minline_as[m, [0;38;2;130;170;255mintersection[m, [0;38;2;130;170;255mmessage[m, [0;38;2;130;170;255mrole_type[m, [0;38;2;130;170;255mto_type[m, [0;38;2;130;170;255munion[m, [0;38;2;130;170;255mvia[m, [0;38;2;130;170;255mwhere[m
+        Types::Standard:
+            [0;38;2;130;170;255mAny[m, [0;38;2;130;170;255mArrayRef[m, [0;38;2;130;170;255mDict[m, [0;38;2;130;170;255mHashRef[m, [0;38;2;130;170;255mInstanceOf[m, [0;38;2;130;170;255mInt[m, [0;38;2;130;170;255mObject[m, [0;38;2;130;170;255mOptional[m, [0;38;2;130;170;255mslurpy[m, [0;38;2;130;170;255mStr[m, [0;38;2;130;170;255mStrictNum[m
+        builtin:
+            [0;38;2;130;170;255mblessed[m
+    private methods (1): [0;38;2;130;170;255m_schema_trigger[m
+    method modifiers (1):
+        around register_schema: [0;38;2;79;90;97msub { ... }[m
+    internals: [0;38;2;102;217;239m{[m
+        [0;38;2;121;134;203mdraft_version[m[0;38;2;102;217;239m   [m[0;38;2;247;140;106m4[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mregistry[m     [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:3/[m[0;38;2;102;217;239m   [m[0;38;2;240;113;120mvar[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:4/[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m[0;38;2;102;217;239m,[m
+            [0;38;2;121;134;203mhttp://254.0.0.1:5/[m[0;38;2;102;217;239m   [m[0;38;2;199;146;234mJSON::Schema::AsType::Draft4[m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mschema[m       [0;38;2;102;217;239m   [m[0;38;2;102;217;239m{[m
+            [0;38;2;121;134;203mitems[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m[[m
+                [0;38;2;161;187;197m[0] [m[0;38;2;102;217;239m{[m
+                        [0;38;2;121;134;203mtype[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90minteger[m[0;38;2;102;217;239m"[m
+                    [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+                [0;38;2;161;187;197m[1] [m[0;38;2;102;217;239m{[m
+                        [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#/items/0[m[0;38;2;102;217;239m"[m
+                    [0;38;2;102;217;239m}[m
+            [0;38;2;102;217;239m][m
+        [0;38;2;102;217;239m}[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mspecification[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mdraft4[m[0;38;2;102;217;239m"[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203mtype[m         [0;38;2;102;217;239m   [m[0;38;2;199;146;234m~ArrayRef|Tuple[Optional[Integer],Optional[Ref(#/items/0)],Slurpy[Any]] (Type::Tiny::Union)[m[0;38;2;102;217;239m,[m
+        [0;38;2;121;134;203muri[m          [0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90mhttp://254.0.0.1:3[m[0;38;2;102;217;239m"[m
+    [0;38;2;102;217;239m}[m
+[0;38;2;102;217;239m}[m
+Fetching http://254.0.0.1:5/#/items/0 at lib/JSON/Schema/AsType/Registry.pm line 56.
+[0;38;2;102;217;239m{[m
+    [0;38;2;121;134;203m$ref[m[0;38;2;102;217;239m   [m[0;38;2;102;217;239m"[m[0;38;2;144;181;90m#/items/0[m[0;38;2;102;217;239m"[m
+[0;38;2;102;217;239m}[m
+        1..0
+        # No tests run!
+    not ok 1 - No tests run for subtest "relative pointer ref to array"
+    #   Failed test 'No tests run for subtest "relative pointer ref to array"'
+    #   at t/draft4.t line 85.
+    1..1
+    # Looks like you failed 1 test of 1.
+not ok 1 - t/json-schema-test-suite/tests/draft4/ref.json
+#   Failed test 't/json-schema-test-suite/tests/draft4/ref.json'
+#   at t/draft4.t line 51.
+reference /items/0 not found at lib/JSON/Schema/AsType/Registry.pm line 82.
+# Tests were run but no plan was declared and done_testing() was not seen.
+# Looks like your test exited with 255 just after 1.

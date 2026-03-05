@@ -4,6 +4,8 @@ package JSON::Schema::AsType;
 
 use 5.14.0;
 
+use feature 'signatures';
+
 use strict;
 use warnings;
 
@@ -99,7 +101,6 @@ has uri => (
 		my ( $self, $uri ) = @_;
 		$uri = URI->new($uri);
 		return if $uri->fragment;
-		$self->register_schema( $uri, $self );
 		$self->clear_parent_schema;
 	}
 );
@@ -146,9 +147,9 @@ sub is_root_schema {
 	return not $self->parent_schema;
 }
 
-sub sub_schema {
-	my ( $self, $subschema, $uri ) = @_;
+sub sub_schema($self,$subschema,$uri) {
 
+	warn "registering ==> $uri";
 	$uri = $self->resolve_uri($uri) if $uri;
 
 	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
@@ -212,54 +213,13 @@ sub ancestor_uri {
 sub resolve_reference {
 	my ( $self, $ref ) = @_;
 
-	$ref = join '/', '#', map { $self->_escape_ref($_) } @$ref
-	  if ref $ref;
+	my $uri = $self->resolve_uri($ref);
 
-	if ( $ref =~ s/^([^#]+)// ) {
-		my $base = $1;
-		unless ( $base =~ m#://# ) {
-			my $base_uri = $self->ancestor_uri;
-			$base_uri =~ s#[^/]+$##;
-			$base = $base_uri . $base;
-		}
-		return $self->fetch($base)->resolve_reference($ref);
-	}
+	my $schema = $self->fetch($uri) or die "couldn't retrieve schema $uri\n";
 
-	$self = $self->root_schema;
-	return $self if $ref eq '#';
+	warn $schema;
 
-	$ref =~ s/^#//;
-
-	#    return $self->references->{$ref} if $self->references->{$ref};
-
-	my $s = $self->schema;
-
-	my @refs = map { $self->_unescape_ref($_) } grep { length $_ } split '/',
-	  $ref;
-
-	while (@refs) {
-		my $ref      = shift @refs;
-		my $is_array = ref $s eq 'ARRAY';
-
-		$s = $is_array ? $s->[$ref] : $s->{$ref} or last;
-
-		if ( ref $s eq 'HASH' ) {
-			if ( my $local_id = $s->{id} || $s->{'$id'} ) {
-				my $id = $self->absolute_id($local_id);
-				$self = $self->fetch( $self->absolute_id($id) );
-
-				return $self->resolve_reference( \@refs );
-			}
-		}
-
-	}
-
-	return (
-		( ref $s eq 'HASH' or ref $s eq 'JSON::PP::Boolean' )
-		? $self->sub_schema($s)
-		: Any
-	);
-
+	return $schema;
 }
 
 sub _unescape_ref {
@@ -308,11 +268,13 @@ sub BUILD {
 		'JSON::Schema::AsType::' . ucfirst( $self->specification )
 	)->meta->rebless_instance( $self );
 
+	# make it available early for the potential $refs
+	$self->register_schema( $self->uri, $self ) if $self->uri;
+
 	# TODO move the role into a trait, which should take care of this
 	$self->_schema_trigger($self->schema) if $self->has_schema;
 	$self->type if $self->has_schema;
 
-	$self->register_schema( $self->uri, $self ) if $self->uri;
 }
 
 1;

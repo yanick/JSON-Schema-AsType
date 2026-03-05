@@ -32,10 +32,10 @@ has '+spec' => (
 	}
 );
 
+my $_uri_port = 1;
 has '+uri' => default => sub($self) {
-	state $i = 1;
-	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$i++;
-	$self->register_schema( $id, $self );
+	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$_uri_port++;
+	warn "default uri is $id";
 	$self->clear_parent_schema;
 	return $id;
 };
@@ -47,7 +47,10 @@ sub _schema_trigger($self,$schema,@) {
 
 		return unless ref $_ eq 'HASH';
 
-		return unless $_->{id};
+		my $id = $_->{id} or return;
+
+		# that doesn't look like a 'id' for the schema, buddy
+		return if ref $id;
 
 		$self->sub_schema($_,$_->{id});
 	});
