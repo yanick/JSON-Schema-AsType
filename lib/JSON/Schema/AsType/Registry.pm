@@ -7,6 +7,7 @@ use feature 'signatures';
 use strict;
 use warnings;
 
+use Test::Deep::NoTest;
 use JSON::Pointer;
 use JSON;
 use LWP::Simple     qw//;
@@ -32,7 +33,15 @@ around register_schema => sub {
 
 	$uri = URI->new($uri)->canonical;
 
-	die "schema $uri already registered\n" if $self->registered_schema($uri);
+	if ( my $already =  $self->registered_schema($uri) ) {
+		my $s = $schema;
+		$s = $s->schema if $s isa JSON::Schema::AsType;
+		return if eq_deeply( $s, $already->schema );
+		use DDP;
+		p $s;
+		p $already->schema;
+		die "schema $uri already registered\n";
+	}
 
 	unless ( $schema isa JSON::Schema::AsType ) {
 		$schema = JSON::Schema::AsType->new(
@@ -54,13 +63,13 @@ sub fetch {
 
 	warn "Fetching $url";
 
-	# is it one of the spec schemas?
-	if ( $url =~ qr[^https?://json-schema.org/draft-0?(.*)/schema] ) {
+	# # is it one of the spec schemas?
+	# if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {
 
-		# TODO get the metaschema
-		return $self->register_schema(
-			$url => use_module( 'JSON::Schema::AsType::Draft' . $1 )->new );
-	}
+	# 	# TODO get the metaschema
+	# 	my $module = 'JSON::Schema::AsType::Draft' . $1;
+	# 	use_module($module)->metaschema;
+	# }
 
 	$url = $self->resolve_uri( $url, $self->root_schema->uri );
 
@@ -77,9 +86,12 @@ sub fetch {
 			use DDP;
 			warn $schema->uri;
 			p $schema->schema;
-		$schema = JSON::Pointer->get( $schema->schema, $url->fragment );
+			$DB::single = 1 if $url->fragment =~ /schemaArray/;
+			my $fragment = $url->fragment;
+			$fragment =~ s#/$##;
+		$schema = JSON::Pointer->get( $schema->schema, $fragment );
 		unless($schema) {
-			die "reference " . $url->fragment . ' not found';
+			die "reference " . $fragment . ' not found';
 		}
 		return $self->register_schema( $url => $schema );
 	}

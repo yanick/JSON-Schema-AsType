@@ -61,7 +61,6 @@ sub _keyword_id {
 sub _keyword_definitions {
     my( $self, $defs ) = @_;
 
-	warn "registering!!!";
     $self->sub_schema( $defs->{$_}, "#./definitions/$_" ) for keys %$defs;
 
     return;
@@ -113,7 +112,7 @@ sub _keyword_patternProperties {
     my( $self, $properties ) = @_;
 
     my %prop_schemas = pairmap {
-        $a => $self->sub_schema($b)->type
+        $a => $self->sub_schema($b, "#./patternProperties/$a")->type
     } %$properties;
 
     return PatternProperties[ %prop_schemas ];
@@ -170,7 +169,8 @@ sub _keyword_anyOf {
 sub _keyword_allOf {
     my( $self, $options ) = @_;
 
-    AllOf[ map { $self->sub_schema($_)->type } @$options ];
+	my $i = 0;
+    AllOf[ map { $self->sub_schema($_,"#./allOf/".$i++)->type } @$options ];
 }
 
 sub _keyword_type {
