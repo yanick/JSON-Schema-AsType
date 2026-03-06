@@ -15,10 +15,12 @@ my @cases = (
 	[ ['#/this/that','http://other.com'], 'http://other.com/#/this/that' ],
 	[ ['#/this/that','http://other.com/#/elsewhere'], 'http://other.com/#/this/that'],
 	[ ['#./this/that','http://other.com/#/elsewhere'],
-	'http://other.com/#/elsewhere/this/that'],
+	'http://other.com/#/elsewhere/this/that', 'relative fragment'],
+ [ [ 'node' , 'http://localhost:1234/tree#/properties/nodes/items'] => 
+ 	'http://localhost:1234/node' ]
 );
 
-is resolve_uri( $_->[0]->@* ) => $_->[1], $_->[2] 
+is resolve_uri( $_->[0]->@* ) => $_->[1], $_->[2] // join ' + ', $_->[0]->@*
 	for @cases;
 
 done_testing;

@@ -33,6 +33,12 @@ around register_schema => sub {
 
 	$uri = URI->new($uri)->canonical;
 
+	#warn "registering $uri with "; use DDP; p $schema->schema;
+	
+	my $fragment = $uri->fragment;
+	warn $fragment;
+
+
 	if ( my $already =  $self->registered_schema($uri) ) {
 		my $s = $schema;
 		$s = $s->schema if $s isa JSON::Schema::AsType;
@@ -105,6 +111,13 @@ sub resolve_uri( $self, $uri, $base = undef ) {
 	return _resolve_uri( $uri, $base // $self->uri );
 }
 
+around resolve_uri => sub ($orig, $self, $uri, $base = undef ) {
+	my $result = $orig->($self,$uri,$base);
+	$base //= $self->uri;
+	warn "==> $uri + $base = $result\n";
+	return $result;
+};
+
 sub _resolve_uri {
 	my ( $uri, $base ) = @_;
 	$uri = URI->new($uri);
@@ -120,22 +133,21 @@ sub _resolve_uri {
 	my $base_doc = $base->clone;
 	$base_doc->fragment(undef);
 
-	if ( $uri_doc->eq($base_doc) ) {
+	if ( !"$uri_doc" or $uri_doc->eq($base_doc) ) {
 		no warnings qw/ uninitialized /;
-		my $fragment      = $uri->fragment  =~ s/^#//r;
-		my $base_fragment = $base->fragment =~ s/^#//r;
+		my $fragment      = $uri->fragment;
+		my $base_fragment = $base->fragment;
 		$base_fragment .= '/' unless m[/$];
 
 		my $path = URI->new($fragment);
 		$path = $path->abs($base_fragment) if $base_fragment;
 		$path = $path->canonical;
-		$path =~ s[^\./][/];
 
 		$result->fragment($path) unless $path eq '/';
 	} else {
 		# not the same documents? fragment stays the same
 		no warnings 'uninitialized';
-		$result->fragment($uri->fragment=~ s[^\./][/]r);
+		$result->fragment($uri->fragment||undef);
 	}
 
 	return $result;
