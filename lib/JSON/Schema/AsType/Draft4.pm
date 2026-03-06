@@ -21,11 +21,15 @@ use feature qw/ signatures /;
 has '+draft_version' => default => 4;
 
 has '+spec' => (
-	default => sub($self) { metaschema() }
+	default => sub($self) { 
+		my $schema = metaschema();
+		return $schema;
+	}
 );
 
 my $_uri_port = 1;
 has '+uri' => default => sub($self) {
+	die if $_uri_port > 3;
 	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$_uri_port++;
 	$self->clear_parent_schema;
 	return $id;
@@ -50,8 +54,9 @@ sub _schema_trigger($self,$schema,@) {
 sub metaschema {
 	state $METASCHEMA = __PACKAGE__->new(
 		uri => "https://json-schema.org/draft-04/schema",
-		schema => from_json join '', <DATA>
+		schema => from_json join '', <DATA>,
 	);
+
 	return $METASCHEMA;
 }
 

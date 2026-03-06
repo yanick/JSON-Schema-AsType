@@ -36,21 +36,21 @@ around register_schema => sub {
 	#warn "registering $uri with "; use DDP; p $schema->schema;
 	
 	my $fragment = $uri->fragment;
-	warn $fragment;
-
 
 	if ( my $already =  $self->registered_schema($uri) ) {
 		my $s = $schema;
 		$s = $s->schema if $s isa JSON::Schema::AsType;
-		return if eq_deeply( $s, $already->schema );
+		return $already if eq_deeply( $s, $already->schema );
 		use DDP;
 		p $s;
 		p $already->schema;
 		die "schema $uri already registered\n";
 	}
 
+	debug("registering %s",$uri);
 	unless ( $schema isa JSON::Schema::AsType ) {
 		$schema = JSON::Schema::AsType->new(
+			uri => $uri,
 			schema   => $schema,
 			registry => $self->registry
 		);
@@ -67,15 +67,23 @@ sub registered_schema( $self, $uri ) {
 sub fetch {
 	my ( $self, $url ) = @_;
 
+	debug("fetching %s", $url);
+	$DB::single = 1;
 	# # is it one of the spec schemas?
 	# if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {
 
 	# 	# TODO get the metaschema
-	# 	my $module = 'JSON::Schema::AsType::Draft' . $1;
+	# 	my $module = 'JSON::Schema::AsType::Draft' . $1
 	# 	use_module($module)->metaschema;
 	# }
 
 	$url = $self->resolve_uri( $url, $self->root_schema->uri );
+
+	# urgh...
+	$url->scheme("https") if $url->host eq 'json-schema.org';
+
+	my $fragment = $url->fragment;
+	$url->fragment( $fragment =~ s[/+$][]r ) if $fragment;
 
 	if ( my $schema = $self->registered_schema($url) ) {
 		return $schema;
@@ -85,17 +93,31 @@ sub fetch {
 	$root_uri->fragment(undef);
 
 	my $schema = $self->registered_schema($root_uri);
+	use JSON::Schema::AsType::Debug;
+	debug( "got the root schema for $root_uri and it's %s", !!$schema);
 
 	if ($schema) {
 			my $fragment = $url->fragment;
-			$fragment =~ s#/$##;
+			$fragment =~ s#/+$##;
+			$url->fragment($fragment);
 		my $s= JSON::Pointer->get( $schema->schema, $fragment );
 		unless($s) {
 			die "reference #" . $fragment . ' not found';
 		}
-		return $self->register_schema( $url => $s);
+		debug( "registering for $url?");
+		my $x = $self->register_schema( $url => $s);
+		warn $x;
+		return $x;
 	}
-	warn $schema;
+
+	if( $root_uri->host eq 'json-schema.org' and $root_uri->path =~ m#/draft-0?(\d+)# ) {
+	 	my $module = 'JSON::Schema::AsType::Draft' . $1;
+	 	my $ms = use_module($module)->metaschema;
+		$self->register_schema( $ms->uri => $ms );
+		goto __SUB__;
+	}
+	debug( $self->all_schema_uris );
+	debug($root_uri);
 
 	die "sadness";
 
@@ -108,15 +130,9 @@ sub fetch {
 }
 
 sub resolve_uri( $self, $uri, $base = undef ) {
+	warn "resolving $uri";
 	return _resolve_uri( $uri, $base // $self->uri );
 }
-
-around resolve_uri => sub ($orig, $self, $uri, $base = undef ) {
-	my $result = $orig->($self,$uri,$base);
-	$base //= $self->uri;
-	warn "==> $uri + $base = $result\n";
-	return $result;
-};
 
 sub _resolve_uri {
 	my ( $uri, $base ) = @_;
@@ -136,14 +152,21 @@ sub _resolve_uri {
 	if ( !"$uri_doc" or $uri_doc->eq($base_doc) ) {
 		no warnings qw/ uninitialized /;
 		my $fragment      = $uri->fragment;
-		my $base_fragment = $base->fragment;
-		$base_fragment .= '/' unless m[/$];
 
-		my $path = URI->new($fragment);
-		$path = $path->abs($base_fragment) if $base_fragment;
-		$path = $path->canonical;
+		if( $fragment =~ m[^\.] ) {
+			my $base_fragment = $base->fragment;
+			$base_fragment .= '/' unless m[/$];
 
-		$result->fragment($path) unless $path eq '/';
+			my $path = URI->new($fragment);
+			$path = $path->abs($base_fragment) if $base_fragment;
+			$path = $path->canonical;
+
+			$result->fragment($path) unless $path eq '/';
+		}
+		else {
+			$result->fragment($fragment||undef);
+		}
+
 	} else {
 		# not the same documents? fragment stays the same
 		no warnings 'uninitialized';

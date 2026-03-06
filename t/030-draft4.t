@@ -20,7 +20,6 @@ my $jsts_dir = path( __FILE__ )->parent->child( 'json-schema-test-suite' );
 my $remote_dir = $jsts_dir->child('remotes');
 
 $remote_dir->visit(sub{
-		return;
     my $path = shift;
     return unless $path =~ qr/\.json$/;
 
@@ -36,7 +35,7 @@ $remote_dir->visit(sub{
 },{recurse => 1});
 
 
-my @files = @ARGV ? $jsts_dir->child('tests','draft4',shift @ARGV) : grep { $_->is_file } $jsts_dir->child( 'tests','draft4')->children;
+my @files = @ARGV ? $jsts_dir->child('tests','draft4',shift @ARGV) : sort grep { $_->is_file } $jsts_dir->child( 'tests','draft4')->children;
 
 run_tests_for(path($_)) for @files;
 
@@ -56,7 +55,7 @@ sub run_schema_test {
     my $test = shift;
 
     subtest $test->{description} => sub {
-        my $schema = JSON::Schema::AsType->new( schema => $test->{schema});
+        my $schema = JSON::Schema::AsType->new( draft_version => 4, schema => $test->{schema});
         for ( @{ $test->{tests} } ) {
             my $desc = $_->{description};
             local $TODO = 'known to fail'

@@ -138,7 +138,7 @@ sub validate_explain_schema {
 
 sub root_schema {
 	my $self = shift;
-	eval { $self->parent_schema->root_schema } || $self;
+	eval { $self->parent_schema and $self->parent_schema->root_schema } || $self;
 }
 
 sub is_root_schema {
@@ -213,6 +213,8 @@ sub resolve_reference {
 	my ( $self, $ref ) = @_;
 
 	my $uri = $self->resolve_uri($ref);
+	use JSON::Schema::AsType::Debug;
+	debug("resolve_reference for: $uri");
 
 	my $schema = $self->fetch($uri) or die "couldn't retrieve schema $uri\n";
 
@@ -270,7 +272,6 @@ sub BUILD {
 
 	# TODO move the role into a trait, which should take care of this
 	$self->_schema_trigger($self->schema) if $self->has_schema;
-	$self->type if $self->has_schema;
 
 }
 

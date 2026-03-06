@@ -300,7 +300,7 @@ declare AnyOf,
         my @types = @_;
         sub {
             my $v = $_;
-            any { $_->check($v) } @types;
+            any { warn "!!"; $_->check($v) } @types;
         }
     };
 

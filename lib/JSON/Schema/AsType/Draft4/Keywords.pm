@@ -11,6 +11,8 @@ L<JSON::Schema::AsType> schema cache.
 
 =cut
 
+use 5.42.0;
+
 use strict;
 use warnings;
 
@@ -27,6 +29,8 @@ use JSON;
 use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types '-all';
+
+use builtin qw/ indexed /;
 
 override all_keywords => sub {
     my $self = shift;
@@ -45,6 +49,8 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
+				use JSON::Schema::AsType::Debug;
+				debug( 'in ref for %s', $ref );
 				my $schema = $self->resolve_reference($ref);
                 $schema->check($_);
             },
@@ -157,7 +163,7 @@ sub _keyword_not {
 sub _keyword_oneOf {
     my( $self, $options ) = @_;
 
-    OneOf[ map { $self->sub_schema( $_ ) } @$options ];
+    OneOf[ pairmap { $self->sub_schema( $b, "#./oneOf/$a" ) } indexed @$options ];
 }
 
 
@@ -259,7 +265,7 @@ sub _keyword_additionalItems {
         return AdditionalItems[$size];
     }
 
-    my $schema = $self->sub_schema($s);
+    my $schema = $self->sub_schema($s,'#./additionalItems');
 
     my $to_skip  = ($self->schema->{items}||[])->@*;
 

@@ -5,6 +5,7 @@ use Test2::V1 -Pip;
 use experimental qw/ refaliasing /;
 
 use JSON::Schema::AsType::Registry;
+use JSON::Schema::AsType;
 
 *resolve_uri = *JSON::Schema::AsType::Registry::_resolve_uri;
 
@@ -17,10 +18,34 @@ my @cases = (
 	[ ['#./this/that','http://other.com/#/elsewhere'],
 	'http://other.com/#/elsewhere/this/that', 'relative fragment'],
  [ [ 'node' , 'http://localhost:1234/tree#/properties/nodes/items'] => 
- 	'http://localhost:1234/node' ]
+ 	'http://localhost:1234/node' ],
+ [ [ '#' , 'http://localhost:1234/tree#/properties/nodes/items'] => 
+ 	'http://localhost:1234/tree' ],
 );
 
 is resolve_uri( $_->[0]->@* ) => $_->[1], $_->[2] // join ' + ', $_->[0]->@*
 	for @cases;
+
+subtest recursive => sub {
+	my $schema = JSON::Schema::AsType->new( 
+		schema => {
+			anyOf => [
+				{ type => 'string' },
+				{ type => 'object', properties => {
+						'nah' => { '$ref' => '#' }
+					} }
+			]
+		}
+	);
+
+	# ok $schema->check('batman');
+	# ok $schema->type;
+	# ok ! $schema->check([]);
+	ok $schema->check({ nah => 'batman' });
+	#ok $schema->check({ nah => { nah => 'batman' } });
+
+};
+
+
 
 done_testing;
