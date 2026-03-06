@@ -105,9 +105,7 @@ sub fetch {
 			die "reference #" . $fragment . ' not found';
 		}
 		debug( "registering for $url?");
-		my $x = $self->register_schema( $url => $s);
-		warn $x;
-		return $x;
+		return $self->register_schema( $url => $s);
 	}
 
 	if( $root_uri->host eq 'json-schema.org' and $root_uri->path =~ m#/draft-0?(\d+)# ) {
@@ -130,7 +128,6 @@ sub fetch {
 }
 
 sub resolve_uri( $self, $uri, $base = undef ) {
-	warn "resolving $uri";
 	return _resolve_uri( $uri, $base // $self->uri );
 }
 

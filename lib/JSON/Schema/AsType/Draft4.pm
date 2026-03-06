@@ -29,7 +29,6 @@ has '+spec' => (
 
 my $_uri_port = 1;
 has '+uri' => default => sub($self) {
-	die if $_uri_port > 3;
 	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$_uri_port++;
 	$self->clear_parent_schema;
 	return $id;

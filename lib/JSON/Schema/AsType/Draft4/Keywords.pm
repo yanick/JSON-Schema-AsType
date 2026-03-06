@@ -30,8 +30,6 @@ use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types '-all';
 
-use builtin qw/ indexed /;
-
 override all_keywords => sub {
     my $self = shift;
     
@@ -97,7 +95,8 @@ sub _keyword_dependencies {
     my( $self, $dependencies ) = @_;
 
     return Dependencies[
-        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b) : $b } %$dependencies
+        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b, "#./dependencies/$a") : $b } 
+		%$dependencies
     ];
 
 }
@@ -157,7 +156,7 @@ sub _keyword_required {
 
 sub _keyword_not {
     my( $self, $schema ) = @_;
-    Not[ $self->sub_schema($schema) ];
+    Not[ $self->sub_schema($schema,'#./not') ];
 }
 
 sub _keyword_oneOf {
