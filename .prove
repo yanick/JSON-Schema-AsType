@@ -1,0 +1,174 @@
+---
+generation: 4
+last_run_time: 1772808209.28316
+tests:
+  t/001-basic.t:
+    elapsed: 0.158791065216064
+    gen: 3
+    last_fail_time: 1772808177.92846
+    last_pass_time: 1772808203.83228
+    last_result: 0
+    last_run_time: 1772808203.83228
+    last_todo: 0
+    mtime: 1771858933
+    seq: 31
+    total_failures: 2
+    total_passes: 1
+  t/010-recurse.t:
+    elapsed: 0.18673300743103
+    gen: 3
+    last_fail_time: 1772808177.9546
+    last_pass_time: 1772808204.02223
+    last_result: 0
+    last_run_time: 1772808204.02223
+    last_todo: 0
+    mtime: 1771858933
+    seq: 32
+    total_failures: 2
+    total_passes: 1
+  t/020-register_uris.t:
+    elapsed: 0.173226833343506
+    gen: 4
+    last_fail_time: 1772808208.38019
+    last_result: 2
+    last_run_time: 1772808208.38019
+    last_todo: 0
+    mtime: 1772575510
+    seq: 46
+    total_failures: 4
+  t/draft3.t:
+    elapsed: 0.170728921890259
+    gen: 4
+    last_fail_time: 1772808208.55411
+    last_result: 2
+    last_run_time: 1772808208.55411
+    last_todo: 0
+    mtime: 1771858933
+    seq: 47
+    total_failures: 4
+  t/draft4.t:
+    elapsed: 0.176476955413818
+    gen: 4
+    last_fail_time: 1772808208.73351
+    last_result: 2
+    last_run_time: 1772808208.73351
+    last_todo: 0
+    mtime: 1772733533
+    seq: 48
+    total_failures: 4
+  t/draft6.t:
+    elapsed: 0.179421186447144
+    gen: 4
+    last_fail_time: 1772808208.91595
+    last_result: 2
+    last_run_time: 1772808208.91595
+    last_todo: 0
+    mtime: 1771961513
+    seq: 49
+    total_failures: 4
+  t/fetch.t:
+    elapsed: 0.181921005249023
+    gen: 3
+    last_fail_time: 1772808178.10669
+    last_pass_time: 1772808204.93076
+    last_result: 0
+    last_run_time: 1772808204.93076
+    last_todo: 0
+    mtime: 1772666561
+    seq: 37
+    total_failures: 2
+    total_passes: 1
+  t/keywords.t:
+    elapsed: 0.177417993545532
+    gen: 3
+    last_fail_time: 1772808178.14724
+    last_pass_time: 1772808205.11124
+    last_result: 0
+    last_run_time: 1772808205.11124
+    last_todo: 0
+    mtime: 1772470359
+    seq: 38
+    total_failures: 2
+    total_passes: 1
+  t/registry.t:
+    elapsed: 0.177132129669189
+    gen: 3
+    last_fail_time: 1772808178.18331
+    last_pass_time: 1772808205.29268
+    last_result: 0
+    last_run_time: 1772808205.29268
+    last_todo: 0
+    mtime: 1772571838
+    seq: 39
+    total_failures: 2
+    total_passes: 1
+  t/resolve_uri.t:
+    elapsed: 0.118434190750122
+    gen: 3
+    last_fail_time: 1772808178.22934
+    last_pass_time: 1772808205.41373
+    last_result: 0
+    last_run_time: 1772808205.41373
+    last_todo: 0
+    mtime: 1772645093
+    seq: 40
+    total_failures: 2
+    total_passes: 1
+  t/schema-coerce.t:
+    elapsed: 0.184563875198364
+    gen: 4
+    last_fail_time: 1772808209.10367
+    last_result: 2
+    last_run_time: 1772808209.10367
+    last_todo: 0
+    mtime: 1771858933
+    seq: 50
+    total_failures: 4
+  t/spec-schema.t:
+    elapsed: 0.175603151321411
+    gen: 4
+    last_fail_time: 1772808209.28243
+    last_result: 1
+    last_run_time: 1772808209.28243
+    last_todo: 0
+    mtime: 1771858933
+    seq: 51
+    total_failures: 4
+  t/string_number.t:
+    elapsed: 0.182955026626587
+    gen: 3
+    last_fail_time: 1772808178.30032
+    last_pass_time: 1772808205.94957
+    last_result: 0
+    last_run_time: 1772808205.94957
+    last_todo: 0
+    mtime: 1771858933
+    seq: 43
+    total_failures: 2
+    total_passes: 1
+  t/types_draft3.t:
+    elapsed: 0.162319898605347
+    gen: 3
+    last_fail_time: 1772808178.32555
+    last_pass_time: 1772808206.11471
+    last_result: 0
+    last_run_time: 1772808206.11471
+    last_todo: 0
+    mtime: 1771858933
+    seq: 44
+    total_failures: 2
+    total_passes: 1
+  t/types_draft4.t:
+    elapsed: 0.191776990890503
+    gen: 3
+    last_fail_time: 1772808178.35247
+    last_pass_time: 1772808206.30866
+    last_result: 0
+    last_run_time: 1772808206.30866
+    last_todo: 0
+    mtime: 1771858933
+    seq: 45
+    total_failures: 2
+    total_passes: 1
+version: 1
+...

@@ -150,6 +150,7 @@ sub sub_schema($self,$subschema,$uri) {
 
 	$uri = $self->resolve_uri($uri) if $uri;
 
+
 	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
 }
 
@@ -214,8 +215,6 @@ sub resolve_reference {
 	my $uri = $self->resolve_uri($ref);
 
 	my $schema = $self->fetch($uri) or die "couldn't retrieve schema $uri\n";
-
-	warn $schema;
 
 	return $schema;
 }

@@ -1,8 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 2;
-use Test::Deep;
+use Test2::V1 -Pip;
 
 use JSON::Schema::AsType;
 use JSON qw/ from_json /;
@@ -35,12 +34,10 @@ my $schema = JSON::Schema::AsType->new( schema => from_json  <<'JSON' );
 }
 JSON
 
-cmp_deeply [ $schema->all_schema_uris ], bag(
-    qw'
-        http://localhost:1234/node
-        http://localhost:1234/tree
-    '
-);
+like [ $schema->all_schema_uris ], bag {
+	item 'http://localhost:1234/node';
+	item 'http://localhost:1234/tree';
+};
 
 ok $schema->check({
         meta => 'root',
@@ -49,3 +46,5 @@ ok $schema->check({
             subtree => { meta => "child", "nodes" => [ ] }
         }]
 });
+
+done_testing;

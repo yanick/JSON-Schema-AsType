@@ -40,10 +40,10 @@ sub _schema_trigger($self,$schema,@) {
 
 		my $id = $_->{id} or return;
 
-		# that doesn't look like a 'id' for the schema, buddy
+		# that doesn't look like a 'id' for the schema
 		return if ref $id;
 
-		$self->sub_schema($_,$_->{id});
+		$self->sub_schema($_,$id);
 	});
 };
 

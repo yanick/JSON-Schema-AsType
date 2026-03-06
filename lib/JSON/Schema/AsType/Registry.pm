@@ -61,8 +61,6 @@ sub registered_schema( $self, $uri ) {
 sub fetch {
 	my ( $self, $url ) = @_;
 
-	warn "Fetching $url";
-
 	# # is it one of the spec schemas?
 	# if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {
 
@@ -83,17 +81,13 @@ sub fetch {
 	my $schema = $self->registered_schema($root_uri);
 
 	if ($schema) {
-			use DDP;
-			warn $schema->uri;
-			p $schema->schema;
-			$DB::single = 1 if $url->fragment =~ /schemaArray/;
 			my $fragment = $url->fragment;
 			$fragment =~ s#/$##;
-		$schema = JSON::Pointer->get( $schema->schema, $fragment );
-		unless($schema) {
-			die "reference " . $fragment . ' not found';
+		my $s= JSON::Pointer->get( $schema->schema, $fragment );
+		unless($s) {
+			die "reference #" . $fragment . ' not found';
 		}
-		return $self->register_schema( $url => $schema );
+		return $self->register_schema( $url => $s);
 	}
 	warn $schema;
 
@@ -112,12 +106,11 @@ sub resolve_uri( $self, $uri, $base = undef ) {
 }
 
 sub _resolve_uri {
-	my ( $uri, $base ) = map { ref ? $_ : URI->new($_) } @_;
+	my ( $uri, $base ) = @_;
+	$uri = URI->new($uri);
+	$base = URI->new($base);
 
 	return $uri unless $base;
-
-	$uri = URI->new($uri) unless ref $uri;
-	$base = base->new($base) unless ref $base;
 
 	my $result = URI->new($uri)->abs($base)->canonical;
 
@@ -127,8 +120,7 @@ sub _resolve_uri {
 	my $base_doc = $base->clone;
 	$base_doc->fragment(undef);
 
-	# not the same documents? fragment stays the same
-	unless ( $uri_doc->eq($base_doc) ) {
+	if ( $uri_doc->eq($base_doc) ) {
 		no warnings qw/ uninitialized /;
 		my $fragment      = $uri->fragment  =~ s/^#//r;
 		my $base_fragment = $base->fragment =~ s/^#//r;
@@ -137,8 +129,13 @@ sub _resolve_uri {
 		my $path = URI->new($fragment);
 		$path = $path->abs($base_fragment) if $base_fragment;
 		$path = $path->canonical;
+		$path =~ s[^\./][/];
 
 		$result->fragment($path) unless $path eq '/';
+	} else {
+		# not the same documents? fragment stays the same
+		no warnings 'uninitialized';
+		$result->fragment($uri->fragment=~ s[^\./][/]r);
 	}
 
 	return $result;
