@@ -13,7 +13,7 @@ use JSON;
 use LWP::Simple     qw//;
 use Module::Runtime qw/ use_module /;
 
-use Moose::Role;
+use Moose;
 
 has registry => (
 	is      => 'ro',
@@ -76,8 +76,6 @@ sub fetch {
 	# 	my $module = 'JSON::Schema::AsType::Draft' . $1
 	# 	use_module($module)->metaschema;
 	# }
-
-	$url = $self->resolve_uri( $url, $self->root_schema->uri );
 
 	# urgh...
 	$url->scheme("https") if $url->host eq 'json-schema.org';

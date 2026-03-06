@@ -35,7 +35,21 @@ no warnings 'uninitialized';
 
 our $strict_string = 1;
 
-with 'JSON::Schema::AsType::Registry';
+has schema_registry => (
+	is => 'ro', 
+	default => sub { JSON::Schema::AsType::Registry->new },
+	handles => [ qw/ / ]
+);
+
+sub register_schema($self,$url,$schema) {
+	$self->schema_registry->register_schema($url,$schema);
+}
+sub fetch($self,$url) {
+	$self->schema_registry->fetch(
+		$self->resolve_uri( $url, $self->root_schema->uri )
+	);
+}
+
 
 has type => (
 	is      => 'rwp',
@@ -136,6 +150,10 @@ sub validate_explain_schema {
 	$self->spec->validate_explain( $self->schema );
 }
 
+sub resolve_uri( $self, $uri, $base = undef ) {
+	return $self->schema_registry->resolve_uri( $uri, $base // $self->uri );
+}
+
 sub root_schema {
 	my $self = shift;
 	eval { $self->parent_schema and $self->parent_schema->root_schema } || $self;
@@ -151,7 +169,7 @@ sub sub_schema($self,$subschema,$uri) {
 	$uri = $self->resolve_uri($uri) if $uri;
 
 
-	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
+	$self->new( schema => $subschema, parent_schema => $self, schema_registry => $self->schema_registry, maybe uri => $uri );
 }
 
 sub absolute_id {
