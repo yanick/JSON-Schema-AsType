@@ -40,15 +40,16 @@ override all_keywords => sub {
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
 
-		my $schema = $self->resolve_reference($ref);
 
         return Type::Tiny->new(
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
+				my $schema = $self->resolve_reference($ref);
                 $schema->check($_);
             },
             message => sub { 
+				my $schema = $self->resolve_reference($ref);
                 join "\n", "ref schema is " . to_json($schema->schema, { allow_nonref => 1 }), @{$schema->validate_explain($_)} 
             }
         );
@@ -99,7 +100,7 @@ sub _keyword_additionalProperties {
     my( $self, $addi ) = @_;
 
     my $add_schema;
-    $add_schema = $self->sub_schema($addi) if ref $addi eq 'HASH';
+    $add_schema = $self->sub_schema($addi,'#./additionalProperties') if ref $addi eq 'HASH';
 
     my @known_keys = (
         eval { keys %{ $self->schema->{properties} } },
@@ -163,7 +164,8 @@ sub _keyword_oneOf {
 sub _keyword_anyOf {
     my( $self, $options ) = @_;
 
-    AnyOf[ map { $self->sub_schema($_)->type } @$options ];
+	my $i = 0;
+    AnyOf[ map { $self->sub_schema($_,'#./anyOf/'.$i++)->type } @$options ];
 }
 
 sub _keyword_allOf {

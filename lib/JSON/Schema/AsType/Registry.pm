@@ -7,7 +7,7 @@ use feature 'signatures';
 use strict;
 use warnings;
 
-use Test::Deep::NoTest;
+use Test::Deep::NoTest qw/ eq_deeply /;
 use JSON::Pointer;
 use JSON;
 use LWP::Simple     qw//;
@@ -99,40 +99,12 @@ sub fetch {
 
 	die "sadness";
 
-	if ( '#' eq substr $url, 0, 1 ) {
-		$url = $self->resolve_uri($url);
-		my $doc   = $self->root_schema;
-		my @steps = grep { $_ ne '#' } split '/', $url->fragment;
-		$doc = $doc->{$_} for @steps;
+	# my $schema = eval { from_json LWP::Simple::get($url) };
 
-		return $self->sub_schema( $doc, $url );
-	}
+	# die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
 
-	unless ( $url =~ m#^\w+://# ) {    # doesn't look like an uri
-		my $id = $self->uri;
-		$id =~ s#[^/]*$##;
-		$url = $id . $url;
-
-		# such that the 'id's can cascade
-		if ( my $p = $self->parent_schema ) {
-			return $p->fetch($url);
-		}
-	}
-
-	$url = URI->new($url);
-	$url->path( $url->path =~ y#/#/#sr );
-	$url = $url->canonical;
-
-	if ( my $schema = $self->registered_schema($url) ) {
-		return $schema if $schema->has_schema;
-	}
-
-	my $schema = eval { from_json LWP::Simple::get($url) };
-
-	die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
-
-	return $self->register_schema(
-		$url => $self->new( uri => $url, schema => $schema ) );
+	# return $self->register_schema(
+	# 	$url => $self->new( uri => $url, schema => $schema ) );
 }
 
 sub resolve_uri( $self, $uri, $base = undef ) {
