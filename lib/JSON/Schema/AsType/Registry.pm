@@ -49,6 +49,7 @@ around register_schema => sub {
 
 	debug("registering %s",$uri);
 	unless ( $schema isa JSON::Schema::AsType ) {
+        # TODO for Draft4
 		$schema = JSON::Schema::AsType->new(
 			uri => $uri,
 			schema   => $schema,
@@ -103,6 +104,12 @@ sub fetch {
 			die "reference #" . $fragment . ' not found';
 		}
 		debug( "registering for $url?");
+
+        if($s->{id}) {
+            $url = $self->resolve_uri($s->{id},$url);
+            return $self->fetch($url);
+    }
+
 		return $self->register_schema( $url => $s);
 	}
 
@@ -112,7 +119,7 @@ sub fetch {
 		$self->register_schema( $ms->uri => $ms );
 		goto __SUB__;
 	}
-	debug( $self->all_schema_uris );
+	debug( join " ", grep {/folder/ and !/254/} $self->all_schema_uris );
 	debug($root_uri);
 
 	die "sadness";
@@ -133,6 +140,8 @@ sub _resolve_uri {
 	my ( $uri, $base ) = @_;
 	$uri = URI->new($uri);
 	$base = URI->new($base);
+
+    warn "resolving $uri => $base";
 
 	return $uri unless $base;
 

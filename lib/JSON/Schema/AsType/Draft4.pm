@@ -50,6 +50,17 @@ sub _schema_trigger($self,$schema,@) {
 	});
 };
 
+around sub_schema => sub ($orig,$self,$subschema,$uri) {
+    # ah AH, resolve the subschema id
+    if($subschema->{id}) {
+        use JSON::Schema::AsType::Debug;
+        debug( 'b ===> %s %s', $subschema->{id}, $self->uri);
+        $uri = $self->resolve_uri($subschema->{id});
+        debug( 'b !==> %s', $uri);
+    }
+    $orig->($self,$subschema,$uri);
+};
+
 sub metaschema {
 	state $METASCHEMA = __PACKAGE__->new(
 		uri => "https://json-schema.org/draft-04/schema",

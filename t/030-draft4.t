@@ -10,6 +10,7 @@ use List::MoreUtils qw/ any /;
 use Test::More;
 
 use JSON::Schema::AsType;
+use JSON::Schema::AsType::Registry;
 $JSON::Schema::AsType::strict_string = 1;
 
 my $explain = 0;
@@ -19,21 +20,22 @@ my $jsts_dir = path( __FILE__ )->parent->child( 'json-schema-test-suite' );
 # seed the external schemas
 my $remote_dir = $jsts_dir->child('remotes');
 
+my $registry = JSON::Schema::AsType::Registry->new;
+
 $remote_dir->visit(sub{
     my $path = shift;
     return unless $path =~ qr/\.json$/;
 
     my $name = $path->relative($remote_dir);
 
-    JSON::Schema::AsType->new( 
-        uri    => "http://localhost:1234/$name",
-        schema => from_json $path->slurp 
+    $registry->register_schema( 
+        "http://localhost:1234/$name",
+        from_json $path->slurp 
     );
 
     return;
 
 },{recurse => 1});
-
 
 my @files = @ARGV ? $jsts_dir->child('tests','draft4',shift @ARGV) : sort grep { $_->is_file } $jsts_dir->child( 'tests','draft4')->children;
 
@@ -56,6 +58,10 @@ sub run_schema_test {
 
     subtest $test->{description} => sub {
         my $schema = JSON::Schema::AsType->new( draft_version => 4, schema => $test->{schema});
+        for my $uri ($registry->all_schema_uris ) {
+            $schema->register_schema( $uri => $registry->registered_schema($uri));
+        }
+    warn join ' ', $schema->all_schema_uris;
         for ( @{ $test->{tests} } ) {
             my $desc = $_->{description};
             local $TODO = 'known to fail'

@@ -38,11 +38,41 @@ subtest recursive => sub {
 		}
 	);
 
-	# ok $schema->check('batman');
-	# ok $schema->type;
-	# ok ! $schema->check([]);
+	ok $schema->check('batman');
+	ok $schema->type;
+	ok ! $schema->check([]);
 	ok $schema->check({ nah => 'batman' });
-	#ok $schema->check({ nah => { nah => 'batman' } });
+	ok $schema->check({ nah => { nah => 'batman' } });
+
+};
+
+subtest 'ids for draft4' => sub {
+    my $schema = JSON::Schema::AsType->new(
+        draft_version => 4,
+        schema => {
+            "id"=> "http://localhost:1234/scope_change_defs1.json",
+            "type" => "object",
+            "properties"=> {
+                "list"=> {'$ref'=> "#/definitions/baz"}
+            },
+            "definitions"=> {
+                "baz"=> {
+                    "id"=> "folder/",
+                    "type"=> "array",
+                    items => { '$ref' => 'folderInteger.json' }
+                }
+            }
+        }
+    );
+
+    $schema->register_schema( 'http://localhost:1234/folder/folderInteger.json', { type => 'integer' } );
+
+
+    is $schema->registered_schema('http://localhost:1234/folder/')->uri 
+        =>'http://localhost:1234/folder/';
+
+    ok $schema->check({ list => [1,2,3]});
+    ok !$schema->check({ list => [1,2,'potato']});
 
 };
 

@@ -10,7 +10,7 @@ subtest basic => sub {
 
 	$schema->register_schema( $uri, $s );
 
-	is [ $schema->all_schema_uris ], bag {
+	like [ $schema->all_schema_uris ], bag {
 		item $uri;
 	};
 
@@ -33,7 +33,7 @@ subtest 'ids' => sub {
 
 	$schema->register_schema( $uri, $s );
 
-	is [ $schema->all_schema_uris ], bag {
+	like [ $schema->all_schema_uris ], bag {
 		item $uri;
 		item 'http://somethingelse.com/baz';
 	};

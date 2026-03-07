@@ -38,12 +38,9 @@ our $strict_string = 1;
 has registry => (
 	is => 'ro', 
 	default => sub { JSON::Schema::AsType::Registry->new },
-	handles => [ qw/ all_schema_uris / ]
+	handles => [ qw/ all_schema_uris register_schema registered_schema / ]
 );
 
-sub register_schema($self,$url,$schema) {
-	$self->registry->register_schema($url,$schema);
-}
 sub fetch($self,$url) {
 	$self->registry->fetch(
 		$self->resolve_uri( $url, $self->root_schema->uri )
@@ -64,7 +61,7 @@ has draft_version => (
 	default => sub {
 		$_[0]->has_specification
 		  ? $_[0]->specification =~ /(\d+)/ && $1
-		  : eval { $_[0]->parent_schema->draft_version } || 4;
+		  : eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || 4;
 	},
 	isa => enum( [ 3, 4, 6 ] ),
 );
