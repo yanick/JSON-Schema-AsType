@@ -52,7 +52,7 @@ around register_schema => sub {
 		$schema = JSON::Schema::AsType->new(
 			uri => $uri,
 			schema   => $schema,
-			registry => $self->registry
+			registry => $self
 		);
 	}
 
