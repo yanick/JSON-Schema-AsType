@@ -135,21 +135,20 @@ sub fetch {
 
 sub resolve_json_pointer($self, $schema, $pointer, $url ) {
 
-    warn "jsoin pointer: $pointer";
     $url = $self->resolve_uri($schema->{id},$url) if is_hashref($schema) and $schema->{id};
 
     for my $path ( grep { $_ ne '' } split '/', $pointer ) {
-        $DB::single = $pointer =~ /slash/;
         $path = $self->_unescape_ref($path);
 
        $schema = is_hashref($schema) ? $schema->{$path}:$schema->[$path];
         die "reference " . $url . " not found\n" unless $schema;
 
+        $path = $self->_escape_ref($path);
+
        $url =
         (is_hashref($schema) and $schema->{id})
         ? $self->resolve_uri($schema->{id},$url)
         : $self->resolve_uri("#./$path", $url);
-        warn $url;
     }
 
     return ( $schema, $url );
@@ -164,8 +163,6 @@ sub _resolve_uri {
     my ( $uri, $base ) = @_;
     $uri  = URI->new($uri);
     $base = URI->new($base);
-
-    warn "resolving $uri => $base";
 
     return $uri unless $base;
 

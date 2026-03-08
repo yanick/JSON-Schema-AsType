@@ -61,7 +61,6 @@ sub run_schema_test {
         for my $uri ($registry->all_schema_uris ) {
             $schema->register_schema( $uri => $registry->registered_schema($uri));
         }
-    warn join ' ', $schema->all_schema_uris;
         for ( @{ $test->{tests} } ) {
             my $desc = $_->{description};
             local $TODO = 'known to fail'
@@ -73,16 +72,14 @@ sub run_schema_test {
 
             # Test that the result from check is the same as what is in the spec.
             # If the check should be true and the result is false, do validate_explain.
+            $DB::single = 1;
             is !!$schema->check($_->{data}) => !!$_->{valid}, $_->{description}
-                or $_->{valid} and diag join "\n", @{$schema->validate_explain($_->{data})} or do {
-
-
-
-				note "explain: ", $schema->validate_explain($_->{data}) 
-					unless !!$_->{valid};
+                or  do {
+				note $schema->type->display_name;
+                my $validation = $schema->validate_explain($_->{data});
+				note "explain: ", @$validation if $validation;
 				note explain $schema->schema;
 				note explain $_->{data};
-				note $schema->type->display_name;
 			};
 
             diag join "\n", @{ $schema->validate_explain($_->{data}) }
