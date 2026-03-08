@@ -84,6 +84,8 @@ sub fetch {
     $url->scheme("https") if $url->host eq 'json-schema.org';
 
     my $fragment = $url->fragment;
+
+
     $url->fragment( $fragment =~ s[/+$][]r ) if $fragment;
 
     if ( my $schema = $self->registered_schema($url) ) {
@@ -137,7 +139,9 @@ sub resolve_json_pointer($self, $schema, $pointer, $url ) {
     $url = $self->resolve_uri($schema->{id},$url) if is_hashref($schema) and $schema->{id};
 
     for my $path ( grep { $_ ne '' } split '/', $pointer ) {
-        $DB::single = 1;
+        $DB::single = $pointer =~ /slash/;
+        $path = $self->_unescape_ref($path);
+
        $schema = is_hashref($schema) ? $schema->{$path}:$schema->[$path];
         die "reference " . $url . " not found\n" unless $schema;
 
@@ -200,4 +204,24 @@ sub _resolve_uri {
 
     return $result;
 
+}
+
+sub _unescape_ref {
+	my ( $self, $ref ) = @_;
+
+	$ref =~ s/~0/~/g;
+	$ref =~ s!~1!/!g;
+	$ref =~ s!%25!%!g;
+
+	$ref;
+}
+
+sub _escape_ref {
+	my ( $self, $ref ) = @_;
+
+	$ref =~ s/~/~0/g;
+	$ref =~ s!/!~1!g;
+	$ref =~ s!%!%25!g;
+
+	$ref;
 }
