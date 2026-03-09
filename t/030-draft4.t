@@ -10,7 +10,6 @@ use List::MoreUtils qw/ any /;
 use Test::More;
 
 use JSON::Schema::AsType;
-use JSON::Schema::AsType::Registry;
 $JSON::Schema::AsType::strict_string = 1;
 
 my $explain = 0;
@@ -20,7 +19,7 @@ my $jsts_dir = path( __FILE__ )->parent->child( 'json-schema-test-suite' );
 # seed the external schemas
 my $remote_dir = $jsts_dir->child('remotes');
 
-my $registry = JSON::Schema::AsType::Registry->new;
+my $registry = JSON::Schema::AsType->new(schema=>{});
 
 $remote_dir->visit(sub{
     my $path = shift;

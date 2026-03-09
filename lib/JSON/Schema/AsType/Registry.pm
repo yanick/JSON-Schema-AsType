@@ -14,7 +14,7 @@ use LWP::Simple     qw//;
 use Module::Runtime qw/ use_module /;
 use Ref::Util qw/ is_hashref /;
 
-use Moose;
+use Moose::Role;
 
 has registry => (
     is      => 'ro',
@@ -44,13 +44,8 @@ around register_schema => sub {
     }
 
     unless ( $schema isa JSON::Schema::AsType ) {
-
         # TODO for Draft4
-        $schema = JSON::Schema::AsType->new(
-            uri      => $uri,
-            schema   => $schema,
-            registry => $self
-        );
+        $schema = $self->sub_schema( $schema, $uri );
     }
 
     $orig->( $self, $uri, $schema );
@@ -63,6 +58,8 @@ sub registered_schema( $self, $uri ) {
 
 sub fetch {
     my ( $self, $url ) = @_;
+
+	$url = $self->resolve_uri( $url, $self->root_schema->uri );
 
     # # is it one of the spec schemas?
     # if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {
@@ -110,7 +107,7 @@ sub fetch {
         goto __SUB__;
     }
 
-    my $schema = eval { from_json LWP::Simple::get($url) };
+    $schema = eval { from_json LWP::Simple::get($url) };
 
     die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
 

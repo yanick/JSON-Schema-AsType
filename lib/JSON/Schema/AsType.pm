@@ -23,30 +23,18 @@ use URI;
 use Module::Runtime qw/ use_module /;
 
 use Moose::Util qw/ apply_all_roles /;
-use JSON::Schema::AsType::Registry;
 
 use JSON;
 
 use Moose;
-
 use MooseX::MungeHas 'is_ro';
+
+with 'JSON::Schema::AsType::Registry';
+
 
 no warnings 'uninitialized';
 
 our $strict_string = 1;
-
-has registry => (
-	is => 'ro', 
-	default => sub { JSON::Schema::AsType::Registry->new },
-	handles => [ qw/ all_schema_uris register_schema registered_schema / ]
-);
-
-sub fetch($self,$url) {
-	$self->registry->fetch(
-		$self->resolve_uri( $url, $self->root_schema->uri )
-	);
-}
-
 
 has type => (
 	is      => 'rwp',
@@ -145,10 +133,6 @@ sub validate_schema {
 sub validate_explain_schema {
 	my $self = shift;
 	$self->spec->validate_explain( $self->schema );
-}
-
-sub resolve_uri( $self, $uri, $base = undef ) {
-	return $self->registry->resolve_uri( $uri, $base // $self->uri );
 }
 
 sub root_schema {
