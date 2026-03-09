@@ -12,6 +12,7 @@ sub visit {
 sub _visit {
     my ( $ref, $fcn, $ctx ) = @_;
     my $type = ref($ref);
+	return if $type eq 'JSON::PP::Boolean';
     croak("'$ref' is not an ARRAY or HASH")
       unless $type eq 'ARRAY' || $type eq 'HASH';
     my @elems = $type eq 'ARRAY' ? ( 0 .. $#$ref ) : ( sort keys %$ref );
