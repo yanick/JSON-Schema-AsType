@@ -385,7 +385,7 @@ declare Integer =>
         # weeeird stuff stolen from JSON
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
-        my $verdict =$flags & ( B::SVp_IOK() | B::SVp_NOK() ) and !( $flags & B::SVp_POK() ); 
+        my $verdict =$flags & ( B::SVp_IOK ) && !( $flags & B::SVp_POK() ); 
         return 1 if $verdict;
         return;
     };

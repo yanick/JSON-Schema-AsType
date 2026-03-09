@@ -229,7 +229,6 @@ sub resolve_reference {
 
 	my $uri = $self->resolve_uri($ref);
 	use JSON::Schema::AsType::Debug;
-	warn("resolve_reference for: $uri");
 
 	my $schema = $self->fetch($uri) or die "couldn't retrieve schema $uri\n";
 
