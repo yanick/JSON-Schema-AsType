@@ -4,9 +4,12 @@ package JSON::Schema::AsType;
 
 use 5.14.0;
 
+use feature 'signatures';
+
 use strict;
 use warnings;
 
+use PerlX::Maybe;
 use Type::Tiny;
 use Type::Tiny::Class;
 use Scalar::Util    qw/ looks_like_number /;
@@ -17,8 +20,10 @@ use Types::Standard
 use Type::Utils;
 use Clone 'clone';
 use URI;
+use Module::Runtime qw/ use_module /;
 
 use Moose::Util qw/ apply_all_roles /;
+use JSON::Schema::AsType::Registry;
 
 use JSON;
 
@@ -30,7 +35,18 @@ no warnings 'uninitialized';
 
 our $strict_string = 1;
 
-with 'JSON::Schema::AsType::Registry';
+has registry => (
+	is => 'ro', 
+	default => sub { JSON::Schema::AsType::Registry->new },
+	handles => [ qw/ all_schema_uris register_schema registered_schema / ]
+);
+
+sub fetch($self,$url) {
+	$self->registry->fetch(
+		$self->resolve_uri( $url, $self->root_schema->uri )
+	);
+}
+
 
 has type => (
 	is      => 'rwp',
@@ -45,7 +61,7 @@ has draft_version => (
 	default => sub {
 		$_[0]->has_specification
 		  ? $_[0]->specification =~ /(\d+)/ && $1
-		  : eval { $_[0]->parent_schema->draft_version } || 4;
+		  : eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || 4;
 	},
 	isa => enum( [ 3, 4, 6 ] ),
 );
@@ -61,8 +77,10 @@ has spec => (
 
 has schema => (
 	predicate => 'has_schema',
+	is => 'ro',
 	lazy      => 1,
 	default   => sub {
+		return +{};
 		my $self = shift;
 
 		my $uri = $self->uri or die "schema or uri required";
@@ -70,6 +88,8 @@ has schema => (
 		return $self->fetch($uri)->schema;
 	},
 );
+
+sub _schema_trigger {}
 
 has parent_schema => ( clearer => 1, );
 
@@ -79,17 +99,18 @@ has strict_string => (
 	default => sub {
 		my $self = shift;
 
-		$self->parent_schema->strict_string if $self->parent_schema;
+		return $self->parent_schema->strict_string if $self->parent_schema;
 
 		return $JSON::Schema::AsType::strict_string;
 	},
 );
 
 has uri => (
-	is      => 'rw',
+	is      => 'ro',
 	trigger => sub {
 		my ( $self, $uri ) = @_;
-		$self->register_schema( $uri, $self );
+		$uri = URI->new($uri);
+		return if $uri->fragment;
 		$self->clear_parent_schema;
 	}
 );
@@ -126,9 +147,13 @@ sub validate_explain_schema {
 	$self->spec->validate_explain( $self->schema );
 }
 
+sub resolve_uri( $self, $uri, $base = undef ) {
+	return $self->registry->resolve_uri( $uri, $base // $self->uri );
+}
+
 sub root_schema {
 	my $self = shift;
-	eval { $self->parent_schema->root_schema } || $self;
+	eval { $self->parent_schema and $self->parent_schema->root_schema } || $self;
 }
 
 sub is_root_schema {
@@ -136,9 +161,12 @@ sub is_root_schema {
 	return not $self->parent_schema;
 }
 
-sub sub_schema {
-	my ( $self, $subschema ) = @_;
-	$self->new( schema => $subschema, parent_schema => $self );
+sub sub_schema($self,$subschema,$uri) {
+
+	$uri = $self->resolve_uri($uri) if $uri;
+
+
+	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
 }
 
 sub absolute_id {
@@ -199,54 +227,12 @@ sub ancestor_uri {
 sub resolve_reference {
 	my ( $self, $ref ) = @_;
 
-	$ref = join '/', '#', map { $self->_escape_ref($_) } @$ref
-	  if ref $ref;
+	my $uri = $self->resolve_uri($ref);
+	use JSON::Schema::AsType::Debug;
 
-	if ( $ref =~ s/^([^#]+)// ) {
-		my $base = $1;
-		unless ( $base =~ m#://# ) {
-			my $base_uri = $self->ancestor_uri;
-			$base_uri =~ s#[^/]+$##;
-			$base = $base_uri . $base;
-		}
-		return $self->fetch($base)->resolve_reference($ref);
-	}
+	my $schema = $self->fetch($uri) or die "couldn't retrieve schema $uri\n";
 
-	$self = $self->root_schema;
-	return $self if $ref eq '#';
-
-	$ref =~ s/^#//;
-
-	#    return $self->references->{$ref} if $self->references->{$ref};
-
-	my $s = $self->schema;
-
-	my @refs = map { $self->_unescape_ref($_) } grep { length $_ } split '/',
-	  $ref;
-
-	while (@refs) {
-		my $ref      = shift @refs;
-		my $is_array = ref $s eq 'ARRAY';
-
-		$s = $is_array ? $s->[$ref] : $s->{$ref} or last;
-
-		if ( ref $s eq 'HASH' ) {
-			if ( my $local_id = $s->{id} || $s->{'$id'} ) {
-				my $id = $self->absolute_id($local_id);
-				$self = $self->fetch( $self->absolute_id($id) );
-
-				return $self->resolve_reference( \@refs );
-			}
-		}
-
-	}
-
-	return (
-		( ref $s eq 'HASH' or ref $s eq 'JSON::PP::Boolean' )
-		? $self->sub_schema($s)
-		: Any
-	);
-
+	return $schema;
 }
 
 sub _unescape_ref {
@@ -291,17 +277,16 @@ sub _add_to_type {
 sub BUILD {
 	my $self = shift;
 
-	# TODO rename specification to  draft_version
-	# and have specifications renamed to spec
-	apply_all_roles( $self,
-			'JSON::Schema::AsType::'
-		  . ucfirst( $self->specification )
-		  . '::Keywords' );
+	use_module(
+		'JSON::Schema::AsType::' . ucfirst( $self->specification )
+	)->meta->rebless_instance( $self );
+
+	# make it available early for the potential $refs
+	$self->register_schema( $self->uri, $self ) if $self->uri;
 
 	# TODO move the role into a trait, which should take care of this
-	$self->type if $self->has_schema;
+	$self->_schema_trigger($self->schema) if $self->has_schema;
 
-	$self->register_schema( $self->uri, $self ) if $self->uri;
 }
 
 1;

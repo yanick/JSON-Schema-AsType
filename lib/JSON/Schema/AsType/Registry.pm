@@ -2,72 +2,229 @@ package JSON::Schema::AsType::Registry;
 
 use 5.42.0;
 
-use feature ':5.42';
+use feature 'signatures';
 
 use strict;
 use warnings;
 
+use Test::Deep::NoTest qw/ eq_deeply /;
+use JSON::Pointer;
 use JSON;
-use LWP::Simple;
+use LWP::Simple     qw//;
 use Module::Runtime qw/ use_module /;
+use Ref::Util qw/ is_hashref /;
 
-# TODO class instead?
-use Moose::Role;
+use Moose;
 
-# TODO per-object
-our $registry = {};
-
-has schema_registry => (
-    is => 'ro',
-    lazy => 1,
-    default => sub { $registry },
-    traits => [ 'Hash' ],
+has registry => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub { +{} },
+    traits  => ['Hash'],
     handles => {
-        all_schemas       => 'elements',
-        all_schema_uris       => 'keys',
-        registered_schema => 'get',
-        register_schema   => 'set',
+        all_schema_uris => 'keys',
+        register_schema => 'set',
     },
 );
 
 around register_schema => sub {
+
     # TODO Use a type instead to coerce into canonical
-    my( $orig, $self, $uri, $schema ) = @_;
-    $uri =~ s/#$//;
-    $orig->($self,$uri,$schema);
+    my ( $orig, $self, $uri, $schema ) = @_;
+
+    $uri = URI->new($uri)->canonical;
+
+    #warn "registering $uri with "; use DDP; p $schema->schema;
+
+    my $fragment = $uri->fragment;
+
+    if ( my $already = $self->registered_schema($uri) ) {
+        my $s = $schema;
+        $s = $s->schema if $s isa JSON::Schema::AsType;
+        return $already if eq_deeply( $s, $already->schema );
+        use DDP;
+        p $s;
+        p $already->schema;
+        die "schema $uri already registered\n";
+    }
+
+    debug( "registering %s", $uri );
+    unless ( $schema isa JSON::Schema::AsType ) {
+
+        # TODO for Draft4
+        $schema = JSON::Schema::AsType->new(
+            uri      => $uri,
+            schema   => $schema,
+            registry => $self
+        );
+    }
+
+    $orig->( $self, $uri, $schema );
 };
 
+sub registered_schema( $self, $uri ) {
+    $uri = URI->new($uri)->canonical;
+    return $self->registry->{$uri};
+}
+
 sub fetch {
-    my( $self, $url ) = @_;
+    my ( $self, $url ) = @_;
 
-	# is it one of the spec schemas?
-	if( $url =~ qr[^https?://json-schema.org/draft-0?(.*)/schema] ) {
-		return $self->register_schema( $url => 
-			use_module('JSON::Schema::AsType::Draft'. $1)->new 
-		);
-	}
+    debug( "fetching %s", $url );
 
-    unless ( $url =~ m#^\w+://# ) { # doesn't look like an uri
-        my $id =$self->uri;
-        $id =~ s#[^/]*$##;
-        $url = $id . $url;
-            # such that the 'id's can cascade
-        if ( my $p = $self->parent_schema ) {
-            return $p->fetch( $url );
-        }
-    }
+    # # is it one of the spec schemas?
+    # if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {
 
-    $url = URI->new($url);
-    $url->path( $url->path =~ y#/#/#sr );
-    $url = $url->canonical;
+    # 	# TODO get the metaschema
+    # 	my $module = 'JSON::Schema::AsType::Draft' . $1
+    # 	use_module($module)->metaschema;
+    # }
+
+    # urgh...
+    $url->scheme("https") if $url->host eq 'json-schema.org';
+
+    my $fragment = $url->fragment;
+
+
+    $url->fragment( $fragment =~ s[/+$][]r ) if $fragment;
 
     if ( my $schema = $self->registered_schema($url) ) {
-        return $schema if $schema->has_schema;
+        return $schema;
     }
 
-    my $schema = eval { from_json LWP::Simple::get($url) };
+    my $root_uri = $url->clone;
+    $root_uri->fragment(undef);
 
-    die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
+    my $schema = $self->registered_schema($root_uri);
+    use JSON::Schema::AsType::Debug;
+    debug( "got the root schema for $root_uri and it's %s", !!$schema );
 
-    return $self->register_schema( $url => $self->new( uri => $url, schema => $schema ) );
+    if ($schema) {
+        my $fragment = $url->fragment;
+        $fragment =~ s#/+$##;
+        $url->fragment(undef);
+        my( $s, $jp_url ) = $self->resolve_json_pointer(
+            $schema->schema,$fragment, $url );
+        unless ($s) {
+            die "reference #" . $fragment . ' not found';
+        }
+        debug("registering for $url?");
+
+        # if($s->{'$ref'}) {
+        #     return $self->fetch( $self->resolve_uri(
+        #             $s->{'$ref'}, $jp_url
+        #         ) );
+        # }
+
+        return $self->register_schema( $jp_url => $s );
+    }
+
+    if (    $root_uri->host eq 'json-schema.org'
+        and $root_uri->path =~ m#/draft-0?(\d+)# ) {
+        my $module = 'JSON::Schema::AsType::Draft' . $1;
+        my $ms     = use_module($module)->metaschema;
+        $self->register_schema( $ms->uri => $ms );
+        goto __SUB__;
+    }
+    debug( join " ", grep { /folder/ and !/254/ } $self->all_schema_uris );
+    debug($root_uri);
+
+    die "sadness";
+
+    # my $schema = eval { from_json LWP::Simple::get($url) };
+
+    # die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
+
+    # return $self->register_schema(
+    # 	$url => $self->new( uri => $url, schema => $schema ) );
+}
+
+sub resolve_json_pointer($self, $schema, $pointer, $url ) {
+
+    $url = $self->resolve_uri($schema->{id},$url) if is_hashref($schema) and $schema->{id};
+
+    for my $path ( grep { $_ ne '' } split '/', $pointer ) {
+        $path = $self->_unescape_ref($path);
+
+       $schema = is_hashref($schema) ? $schema->{$path}:$schema->[$path];
+        die "reference " . $url . " not found\n" unless $schema;
+
+        $path = $self->_escape_ref($path);
+
+       $url =
+        (is_hashref($schema) and $schema->{id})
+        ? $self->resolve_uri($schema->{id},$url)
+        : $self->resolve_uri("#./$path", $url);
+    }
+
+    return ( $schema, $url );
+
+}
+
+sub resolve_uri( $self, $uri, $base = undef ) {
+    return _resolve_uri( $uri, $base // $self->uri );
+}
+
+sub _resolve_uri {
+    my ( $uri, $base ) = @_;
+    $uri  = URI->new($uri);
+    $base = URI->new($base);
+
+    return $uri unless $base;
+
+    my $result = URI->new($uri)->abs($base)->canonical;
+
+    # let's look at those fragments
+    my $uri_doc = $uri->clone;
+    $uri_doc->fragment(undef);
+    my $base_doc = $base->clone;
+    $base_doc->fragment(undef);
+
+    if ( !"$uri_doc" or $uri_doc->eq($base_doc) ) {
+        no warnings qw/ uninitialized /;
+        my $fragment = $uri->fragment;
+
+        if ( $fragment =~ m[^\.] ) {
+            my $base_fragment = $base->fragment;
+            $base_fragment .= '/' unless m[/$];
+
+            my $path = URI->new($fragment);
+            $path = $path->abs($base_fragment) if $base_fragment;
+            $path = $path->canonical;
+
+            $result->fragment($path) unless $path eq '/';
+        }
+        else {
+            $result->fragment( $fragment || undef );
+        }
+
+    }
+    else {
+        # not the same documents? fragment stays the same
+        no warnings 'uninitialized';
+        $result->fragment( $uri->fragment || undef );
+    }
+
+    return $result;
+
+}
+
+sub _unescape_ref {
+	my ( $self, $ref ) = @_;
+
+	$ref =~ s/~0/~/g;
+	$ref =~ s!~1!/!g;
+	$ref =~ s!%25!%!g;
+
+	$ref;
+}
+
+sub _escape_ref {
+	my ( $self, $ref ) = @_;
+
+	$ref =~ s/~/~0/g;
+	$ref =~ s!/!~1!g;
+	$ref =~ s!%!%25!g;
+
+	$ref;
 }

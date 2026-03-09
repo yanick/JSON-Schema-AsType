@@ -11,6 +11,8 @@ L<JSON::Schema::AsType> schema cache.
 
 =cut
 
+use 5.42.0;
+
 use strict;
 use warnings;
 
@@ -40,38 +42,35 @@ override all_keywords => sub {
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
 
+        my $schema;
+
         return Type::Tiny->new(
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
-                
-                my $r = $self->resolve_reference($ref);
+				my $v = $_;
+				use JSON::Schema::AsType::Debug;
+				debug( 'in ref for %s', $ref );
+				$schema //= $self->resolve_reference($ref);
 
-                $r->check($_);
+                my $result = $schema->check($v) || 0;
+
+                return $result;
             },
             message => sub { 
-                my $schema = $self->resolve_reference($ref);
-
-                join "\n", "ref schema is " . to_json($schema->schema, { allow_nonref => 1 }), @{$schema->validate_explain($_)} 
+                join "\n", "ref schema is " . to_json($schema->schema, { allow_nonref => 1 }),@{$schema->validate_explain($_)} 
             }
         );
 } );
 
 sub _keyword_id {
-    my( $self, $id ) = @_;
-
-    unless( $self->uri ) {
-        my $id = $self->absolute_id($id);
-        $self->uri($id);
-    }
-
-    return;
+	# done as part of the initial visit
 }
 
 sub _keyword_definitions {
     my( $self, $defs ) = @_;
 
-    $self->sub_schema( $_ ) for values %$defs;
+    $self->sub_schema( $defs->{$_}, "#./definitions/$_" ) for keys %$defs;
 
     return;
 };
@@ -100,7 +99,8 @@ sub _keyword_dependencies {
     my( $self, $dependencies ) = @_;
 
     return Dependencies[
-        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b) : $b } %$dependencies
+        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b, "#./dependencies/$a") : $b } 
+		%$dependencies
     ];
 
 }
@@ -109,7 +109,7 @@ sub _keyword_additionalProperties {
     my( $self, $addi ) = @_;
 
     my $add_schema;
-    $add_schema = $self->sub_schema($addi) if ref $addi eq 'HASH';
+    $add_schema = $self->sub_schema($addi,'#./additionalProperties') if ref $addi eq 'HASH';
 
     my @known_keys = (
         eval { keys %{ $self->schema->{properties} } },
@@ -122,7 +122,7 @@ sub _keyword_patternProperties {
     my( $self, $properties ) = @_;
 
     my %prop_schemas = pairmap {
-        $a => $self->sub_schema($b)->type
+        $a => $self->sub_schema($b, "#./patternProperties/$a")->type
     } %$properties;
 
     return PatternProperties[ %prop_schemas ];
@@ -133,7 +133,7 @@ sub _keyword_properties {
 
     Properties[
         pairmap { 
-            my $schema = $self->sub_schema($b);
+            my $schema = $self->sub_schema($b, "#./properties/$a");
             $a => $schema->type;
         }  %$properties
     ];
@@ -160,26 +160,28 @@ sub _keyword_required {
 
 sub _keyword_not {
     my( $self, $schema ) = @_;
-    Not[ $self->sub_schema($schema) ];
+    Not[ $self->sub_schema($schema,'#./not') ];
 }
 
 sub _keyword_oneOf {
     my( $self, $options ) = @_;
 
-    OneOf[ map { $self->sub_schema( $_ ) } @$options ];
+    OneOf[ pairmap { $self->sub_schema( $b, "#./oneOf/$a" ) } indexed @$options ];
 }
 
 
 sub _keyword_anyOf {
     my( $self, $options ) = @_;
 
-    AnyOf[ map { $self->sub_schema($_)->type } @$options ];
+	my $i = 0;
+    AnyOf[ map { $self->sub_schema($_,'#./anyOf/'.$i++)->type } @$options ];
 }
 
 sub _keyword_allOf {
     my( $self, $options ) = @_;
 
-    AllOf[ map { $self->sub_schema($_)->type } @$options ];
+	my $i = 0;
+    AllOf[ map { $self->sub_schema($_,"#./allOf/".$i++)->type } @$options ];
 }
 
 sub _keyword_type {
@@ -189,11 +191,11 @@ sub _keyword_type {
         lc $_->name => $_
     } Integer, Number, String, Object, Array, Boolean, Null;
 
-    unless( $self->strict_string ) {
-        $keyword_map{number} = LaxNumber;
-        $keyword_map{integer} = LaxInteger;
-        $keyword_map{string} = LaxString;
-    }
+	unless( $self->strict_string ) {
+	$keyword_map{number} = LaxNumber;
+	$keyword_map{integer} = LaxInteger;
+	$keyword_map{string} = LaxString;
+		}
 
 
     return $keyword_map{$struct_type}
@@ -266,9 +268,9 @@ sub _keyword_additionalItems {
         return AdditionalItems[$size];
     }
 
-    my $schema = $self->sub_schema($s);
+    my $schema = $self->sub_schema($s,'#./additionalItems');
 
-    my $to_skip  = @{ $self->schema->{items} };
+    my $to_skip  = ($self->schema->{items}||[])->@*;
 
     return AdditionalItems[$to_skip,$schema];
 
@@ -282,15 +284,16 @@ sub _keyword_items {
     }
 
     if( ref $items eq 'HASH' ) {
-        my $type = $self->sub_schema($items)->type;
+        my $type = $self->sub_schema($items,'#./items')->type;
 
         return Items[$type];
     }
 
     # TODO forward declaration not workie
     my @types;
+	my $i = 0;
     for ( @$items ) {
-        push @types, $self->sub_schema($_)->type;
+        push @types, $self->sub_schema($_,'#./items/'.$i++)->type;
     }
 
     return Items[\@types];
