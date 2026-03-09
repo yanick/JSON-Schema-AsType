@@ -17,17 +17,18 @@ with 'JSON::Schema::AsType::Draft3::Keywords';
 
 use feature qw/ signatures /;
 
-my $METASCHEMA = from_json join '', <DATA>;
-
 has '+draft_version' => default => 3;
+
+my $_uri_port = 1;
+has '+uri' => default => sub($self) {
+	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$_uri_port++;
+	$self->clear_parent_schema;
+	return $id;
+};
 
 has '+spec' => (
 	default => sub($self) {
-		$self->new(
-			registry => $self->registry,
-			uri => "https://json-schema.org/draft-03/schema",
-			schema => $METASCHEMA
-		);
+		metaschema();
 	}
 );
 
@@ -41,6 +42,23 @@ sub _schema_trigger($self,$schema,@) {
 
 		$self->sub_schema($_,$_->{id});
 	});
+};
+
+sub metaschema {
+	state $METASCHEMA = __PACKAGE__->new(
+		uri => "https://json-schema.org/draft-03/schema",
+		schema => from_json join '', <DATA>,
+	);
+
+	return $METASCHEMA;
+}
+
+around sub_schema => sub ($orig,$self,$subschema,$uri) {
+    # ah AH, resolve the subschema id
+    if($subschema->{id}) {
+        $uri = $self->resolve_uri($subschema->{id});
+    }
+    $orig->($self,$subschema,$uri);
 };
 
 __DATA__

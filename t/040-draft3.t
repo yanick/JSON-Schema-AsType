@@ -19,16 +19,17 @@ my $jsts_dir = path( 't', 'json-schema-test-suite' );
 # seed the external schemas
 my $remote_dir = $jsts_dir->child('remotes');
 
+my $registry = JSON::Schema::AsType->new(schema=>{});
+
 $remote_dir->visit(sub{
     my $path = shift;
     return unless $path =~ qr/\.json$/;
 
     my $name = $path->relative($remote_dir);
 
-    JSON::Schema::AsType->new( 
-        specification => 'draft3',
-        uri    => "http://localhost:1234/$name",
-        schema => from_json $path->slurp 
+    $registry->register_schema( 
+        "http://localhost:1234/$name",
+        from_json $path->slurp 
     );
 
     return;
@@ -57,6 +58,9 @@ sub run_schema_test {
             specification => 'draft3',
             schema => $test->{schema}
         );
+        for my $uri (grep /localhost/, $registry->all_schema_uris ) {
+            $schema->register_schema( $uri => $registry->registered_schema($uri));
+        }
         for ( @{ $test->{tests} } ) {
             my $desc = $_->{description};
             local $TODO = 'known to fail'
