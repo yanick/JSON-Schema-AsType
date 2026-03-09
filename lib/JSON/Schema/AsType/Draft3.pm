@@ -32,6 +32,11 @@ has '+spec' => (
 	}
 );
 
+sub _has_id ($self,$schema = {} ) {
+	return unless ref $schema eq 'HASH';
+	return $schema->{id};
+}
+
 sub _schema_trigger($self,$schema,@) {
 	JSON::Schema::AsType::Visit::visit( $schema, sub {
 		my ( $key, $valueref, $context ) = @_;

@@ -44,7 +44,6 @@ override _build_type => sub {
 
     return super() if ref $self->schema eq 'HASH';
 
-    use JSON;
     return( ( $self->schema eq JSON::true) ? Any : ~Any );
     
 };
@@ -85,6 +84,7 @@ sub _keyword_propertyNames {
 sub _keyword_items {
     my( $self, $items ) = @_;
 
+	$DB::single = 1;
     if ( Boolean->check($items) ) {
         return if $items;
         return Items[JSON::false];

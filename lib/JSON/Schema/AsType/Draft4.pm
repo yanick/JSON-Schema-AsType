@@ -29,7 +29,7 @@ has '+spec' => (
 
 my $_uri_port = 1;
 has '+uri' => default => sub($self) {
-	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$_uri_port++;
+	my $id = $self->_has_id($self->schema) // 'http://254.0.0.1:'.$_uri_port++;
 	$self->clear_parent_schema;
 	return $id;
 };
@@ -41,7 +41,7 @@ sub _schema_trigger($self,$schema,@) {
 
 		return unless ref $_ eq 'HASH';
 
-		my $id = $_->{id} or return;
+		my $id = $self->_has_id($_) or return;
 
 		# that doesn't look like a 'id' for the schema
 		return if ref $id;
@@ -50,10 +50,15 @@ sub _schema_trigger($self,$schema,@) {
 	});
 };
 
+sub _has_id ($self,$schema = {} ) {
+	return unless ref $schema eq 'HASH';
+	return $schema->{id};
+}
+
 around sub_schema => sub ($orig,$self,$subschema,$uri) {
     # ah AH, resolve the subschema id
-    if($subschema->{id}) {
-        $uri = $self->resolve_uri($subschema->{id});
+    if(my $id = $self->_has_id($subschema)) {
+        $uri = $self->resolve_uri($id);
     }
     $orig->($self,$subschema,$uri);
 };

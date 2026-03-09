@@ -260,6 +260,7 @@ sub _keyword_minimum {
 sub _keyword_additionalItems {
     my( $self, $s ) = @_;
 
+	$DB::single = 1;
     unless($s) {
         my $items = $self->schema->{items} or return;
         return if ref $items eq 'HASH';  # it's a schema, nevermind

@@ -40,6 +40,8 @@ around register_schema => sub {
         my $s = $schema;
         $s = $s->schema if $s isa JSON::Schema::AsType;
         return $already if eq_deeply( $s, $already->schema );
+		use DDP;
+		p [ $s, $already->schema ]->@*;
         die "schema $uri already registered for a different schema\n";
     }
 
@@ -92,7 +94,7 @@ sub fetch {
         $url->fragment(undef);
         my( $s, $jp_url ) = $self->resolve_json_pointer(
             $schema->schema,$fragment, $url );
-        unless ($s) {
+        unless ($s or ref $s eq 'JSON::PP::Boolean' ) {
             die "reference #" . $fragment . ' not found';
         }
 
@@ -117,20 +119,21 @@ sub fetch {
 
 sub resolve_json_pointer($self, $schema, $pointer, $url ) {
 
-    $url = $self->resolve_uri($schema->{id},$url) if is_hashref($schema) and $schema->{id};
+    $url = $self->resolve_uri($self->_has_id($schema),$url) if $self->_has_id($schema);
 
     for my $path ( grep { $_ ne '' } split '/', $pointer ) {
         $path = $self->_unescape_ref($path);
 
+		my $o = $schema;
        $schema = is_hashref($schema) ? $schema->{$path}:$schema->[$path];
-        die "reference " . $url . " not found\n" unless $schema;
+			$DB::single = !$schema;
+        die "reference " . $url . " not found\n" unless defined $schema;
 
         $path = $self->_escape_ref($path);
 
        $url =
-        (is_hashref($schema) and $schema->{id})
-        ? $self->resolve_uri($schema->{id},$url)
-        : $self->resolve_uri("#./$path", $url);
+         $self->resolve_uri(
+			 $self->_has_id($schema)//"#./$path", $url);
     }
 
     return ( $schema, $url );

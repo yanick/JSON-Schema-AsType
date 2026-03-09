@@ -18,7 +18,7 @@ use feature qw/ signatures /;
 
 my $_uri_port = 1;
 has '+uri' => default => sub($self) {
-	my $id = eval {$self->schema->{id}} // 'http://254.0.0.1:'.$_uri_port++;
+	my $id = eval {$self->schema->{'$id'}} // 'http://254.0.0.1:'.$_uri_port++;
 	$self->clear_parent_schema;
 	return $id;
 };
@@ -31,22 +31,35 @@ has '+spec' => (
 	}
 );
 
+around sub_schema => sub ($orig,$self,$subschema,$uri) {
+    # ah AH, resolve the subschema id
+    if( my $id = $self->_has_id($subschema) ) {
+        $uri = $self->resolve_uri($id);
+    }
+    $orig->($self,$subschema,$uri);
+};
+
 sub _schema_trigger($self,$schema,@) {
 	JSON::Schema::AsType::Visit::visit( $schema, sub {
 		my ( $key, $valueref, $context ) = @_;
 
 		return unless ref $_ eq 'HASH';
 
-		return unless eval{$_->{id}};
+		my $id = $self->_has_id($_) or return;
 
-		$self->sub_schema($_,$_->{id});
+		$self->sub_schema($_,$id);
 		return;
 	});
 };
 
+sub _has_id ($self,$schema = {} ) {
+	return unless ref $schema eq 'HASH';
+	return $schema->{'$id'};
+}
+
 sub metaschema {
 	state $METASCHEMA = __PACKAGE__->new(
-		uri => "https://json-schema.org/draft-03/schema",
+		uri => "https://json-schema.org/draft-06/schema",
 		schema => from_json join '', <DATA>,
 	);
 

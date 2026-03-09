@@ -3,10 +3,35 @@ use warnings;
 
 use Test::More;
 
+use List::Util qw/ pairgrep /;
 use List::MoreUtils qw/ any /;
+use Path::Tiny;
+use JSON::Schema::AsType;
 use parent 'Exporter';
 
 our @EXPORT = qw/ run_schema_test run_tests_for /;
+
+my $jsts_dir = path( __FILE__ )->parent->child( '../json-schema-test-suite' );
+
+# seed the external schemas
+my $remote_dir = $jsts_dir->child('remotes');
+
+my $registry = JSON::Schema::AsType->new(schema=>{});
+
+$remote_dir->visit(sub{
+    my $path = shift;
+    return unless $path =~ qr/\.json$/;
+
+    my $name = $path->relative($remote_dir);
+
+    $registry->register_schema( 
+        "http://localhost:1234/$name",
+        from_json $path->slurp 
+    );
+
+    return;
+
+},{recurse => 1});
 
 sub run_tests_for {
     my $version = shift;
@@ -24,7 +49,11 @@ sub run_schema_test {
     subtest $test->{description} => sub {
         my $schema = JSON::Schema::AsType->new( 
             draft_version => $version,
-            schema => $test->{schema});
+            schema => $test->{schema},
+			registry => {
+				pairgrep { $a !~ /254/ } $registry->registry->%*
+			},
+		);
 
         diag explain $test->{schema} if $::explain;
 
