@@ -382,9 +382,12 @@ declare Integer =>
     where sub {
         return 0 if !defined || ref;
 
+        # weeeird stuff stolen from JSON
         my $b_obj = B::svref_2object(\$_);
         my $flags = $b_obj->FLAGS;
-        return( $flags & B::SVp_IOK and not ($flags & B::SVp_POK) );
+        my $verdict =$flags & ( B::SVp_IOK() | B::SVp_NOK() ) and !( $flags & B::SVp_POK() ); 
+        return 1 if $verdict;
+        return;
     };
 
 declare LaxString => as Str,

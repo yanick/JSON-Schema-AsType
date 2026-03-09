@@ -99,7 +99,7 @@ has strict_string => (
 	default => sub {
 		my $self = shift;
 
-		$self->parent_schema->strict_string if $self->parent_schema;
+		return $self->parent_schema->strict_string if $self->parent_schema;
 
 		return $JSON::Schema::AsType::strict_string;
 	},
@@ -229,7 +229,7 @@ sub resolve_reference {
 
 	my $uri = $self->resolve_uri($ref);
 	use JSON::Schema::AsType::Debug;
-	debug("resolve_reference for: $uri");
+	warn("resolve_reference for: $uri");
 
 	my $schema = $self->fetch($uri) or die "couldn't retrieve schema $uri\n";
 

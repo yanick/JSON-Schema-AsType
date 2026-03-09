@@ -110,6 +110,12 @@ sub fetch {
         }
         debug("registering for $url?");
 
+        # if($s->{'$ref'}) {
+        #     return $self->fetch( $self->resolve_uri(
+        #             $s->{'$ref'}, $jp_url
+        #         ) );
+        # }
+
         return $self->register_schema( $jp_url => $s );
     }
 

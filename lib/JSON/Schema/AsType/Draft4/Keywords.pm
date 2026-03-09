@@ -42,6 +42,7 @@ override all_keywords => sub {
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
 
+        my $schema;
 
         return Type::Tiny->new(
             name => 'Ref',
@@ -49,12 +50,23 @@ __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
             constraint => sub {
 				use JSON::Schema::AsType::Debug;
 				debug( 'in ref for %s', $ref );
-				my $schema = $self->resolve_reference($ref);
-                $schema->check($_);
+				$schema //= $self->resolve_reference($ref);
+                use DDP; p $schema->schema;
+
+                my $result = $schema->check($_) || 0;
+
+                if($ref =~ /a/ ) {
+                    use JSON;
+                    my $x = JSON::encode_json($_);
+                    warn $x;
+                    warn $schema->type;
+                    warn $schema->check($_);
+                }
+                warn "$ref: checking $_ giving $result\n";
+                return $result;
             },
             message => sub { 
-				my $schema = $self->resolve_reference($ref);
-                join "\n", "ref schema is " . to_json($schema->schema, { allow_nonref => 1 }), @{$schema->validate_explain($_)} 
+                join "\n", "ref schema is " . to_json($schema->schema, { allow_nonref => 1 }); #@{$schema->validate_explain($_)} 
             }
         );
 } );

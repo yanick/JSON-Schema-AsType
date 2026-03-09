@@ -72,7 +72,6 @@ sub run_schema_test {
 
             # Test that the result from check is the same as what is in the spec.
             # If the check should be true and the result is false, do validate_explain.
-            $DB::single = 1;
             is !!$schema->check($_->{data}) => !!$_->{valid}, $_->{description}
                 or  do {
 				note $schema->type->display_name;
