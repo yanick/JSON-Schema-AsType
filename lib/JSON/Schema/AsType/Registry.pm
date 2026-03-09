@@ -34,21 +34,15 @@ around register_schema => sub {
 
     $uri = URI->new($uri)->canonical;
 
-    #warn "registering $uri with "; use DDP; p $schema->schema;
-
     my $fragment = $uri->fragment;
 
     if ( my $already = $self->registered_schema($uri) ) {
         my $s = $schema;
         $s = $s->schema if $s isa JSON::Schema::AsType;
         return $already if eq_deeply( $s, $already->schema );
-        use DDP;
-        p $s;
-        p $already->schema;
-        die "schema $uri already registered\n";
+        die "schema $uri already registered for a different schema\n";
     }
 
-    debug( "registering %s", $uri );
     unless ( $schema isa JSON::Schema::AsType ) {
 
         # TODO for Draft4
@@ -69,8 +63,6 @@ sub registered_schema( $self, $uri ) {
 
 sub fetch {
     my ( $self, $url ) = @_;
-
-    debug( "fetching %s", $url );
 
     # # is it one of the spec schemas?
     # if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {
@@ -96,8 +88,6 @@ sub fetch {
     $root_uri->fragment(undef);
 
     my $schema = $self->registered_schema($root_uri);
-    use JSON::Schema::AsType::Debug;
-    debug( "got the root schema for $root_uri and it's %s", !!$schema );
 
     if ($schema) {
         my $fragment = $url->fragment;
@@ -108,13 +98,6 @@ sub fetch {
         unless ($s) {
             die "reference #" . $fragment . ' not found';
         }
-        debug("registering for $url?");
-
-        # if($s->{'$ref'}) {
-        #     return $self->fetch( $self->resolve_uri(
-        #             $s->{'$ref'}, $jp_url
-        #         ) );
-        # }
 
         return $self->register_schema( $jp_url => $s );
     }
@@ -126,17 +109,13 @@ sub fetch {
         $self->register_schema( $ms->uri => $ms );
         goto __SUB__;
     }
-    debug( join " ", grep { /folder/ and !/254/ } $self->all_schema_uris );
-    debug($root_uri);
 
-    die "sadness";
+    my $schema = eval { from_json LWP::Simple::get($url) };
 
-    # my $schema = eval { from_json LWP::Simple::get($url) };
+    die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
 
-    # die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
-
-    # return $self->register_schema(
-    # 	$url => $self->new( uri => $url, schema => $schema ) );
+    return $self->register_schema(
+     	$url => $self->new( uri => $url, schema => $schema ) );
 }
 
 sub resolve_json_pointer($self, $schema, $pointer, $url ) {
