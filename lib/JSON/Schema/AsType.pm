@@ -153,18 +153,6 @@ sub sub_schema($self,$subschema,$uri) {
 	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
 }
 
-sub absolute_id {
-	my ( $self, $new_id ) = @_;
-
-	return $new_id if $new_id =~ m#://#;    # looks absolute to me
-
-	my $base = $self->ancestor_uri;
-
-	$base =~ s#[^/]+$##;
-
-	return $base . $new_id;
-}
-
 sub _build_type {
 	my $self = shift;
 
@@ -216,7 +204,6 @@ sub resolve_reference {
 	my ( $self, $ref ) = @_;
 
 	my $uri = $self->resolve_uri($ref);
-	use JSON::Schema::AsType::Debug;
 
 	my $schema = $self->fetch($uri) or die "couldn't retrieve schema $uri\n";
 
