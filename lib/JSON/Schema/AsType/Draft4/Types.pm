@@ -51,6 +51,8 @@ Can coerce the value from a hashref defining the schema.
 use strict;
 use warnings;
 
+use Test::Deep::NoTest qw/ eq_deeply /;
+
 use Type::Utils -all;
 use Types::Standard qw/ 
     Str StrictNum HashRef ArrayRef 
@@ -152,34 +154,13 @@ declare UniqueItems,
 
 my $json = JSON->new->allow_nonref->canonical;
 
-sub same_structs {
-    my @s = @_;
-
-    my @refs = grep { $_ } map { ref } @s;
-
-    return if @refs == 1;
-
-    no warnings 'uninitialized';
-
-    return $s[0] eq $s[1] unless @refs;
-
-    @refs = uniq @refs;
-    return unless @refs == 1;
-
-    if ( ref $s[0] eq 'ARRAY' ) {
-        return all { same_structs($a,$b) } zip @{$s[0]}, @{$s[1]};
-    }
-
-    all { same_structs($s[0]{$_},$s[1]{$_}) } uniq map { keys %$_ } @s;
-}
-
 declare Enum,
     constraint_generator => sub {
         my @items = @_;
 
         sub {
             my $j = $_;
-            any { same_structs($_,$j) } @items;
+            any { eq_deeply($_,$j) } @items;
         }
     };
 
@@ -261,12 +242,30 @@ declare AdditionalItems,
             my $to_skip = shift;
             my $schema = shift;
             return sub {
-                all { $schema->check($_) } splice @$_, $to_skip; 
+				my @additional = splice @$_, $to_skip; 
+
+				if( ref $schema eq 'JSON::PP::Boolean' ) {
+					my $verdict = @additional;
+					$verdict = !$verdict unless $schema;
+					return $verdict;
+				}
+
+                return all { $schema->check($_) } @additional;
             }
         }
         else {
             my $size = shift;
-            return sub { @$_ <= $size };
+			if( ref $size eq 'JSON::PP::Boolean' ) {
+				return sub {
+					my $s = ref($_) eq 'ARRAY' ? @_:0;
+					$DB::single = 1;
+					return !!$size ? $s : !$s;
+				}
+			}
+            return sub { 
+				my $s = ref($_) eq 'ARRAY' ? @_:0;
+				$s <= $size ;
+			};
         }
     };
 

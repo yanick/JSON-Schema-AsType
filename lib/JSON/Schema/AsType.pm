@@ -170,6 +170,10 @@ sub _build_type {
 
 	$self->_set_type('');
 
+	if( JSON::is_bool($self->schema) ) {
+		return $self->schema ? Any : ~Any;
+	}
+
 	# $ref trumps all
 	return $self->_process_keyword('$ref')
 	  if $self->schema->{'$ref'};
