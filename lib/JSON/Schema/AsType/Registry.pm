@@ -77,7 +77,7 @@ sub fetch {
     my $fragment = $url->fragment;
 
 
-    $url->fragment( $fragment =~ s[/+$][]r ) if $fragment;
+	#    $url->fragment( $fragment =~ s[/+$][]r ) if $fragment;
 
     if ( my $schema = $self->registered_schema($url) ) {
         return $schema;
@@ -90,7 +90,7 @@ sub fetch {
 
     if ($schema) {
         my $fragment = $url->fragment;
-        $fragment =~ s#/+$##;
+		#        $fragment =~ s#/+$##;
         $url->fragment(undef);
         my( $s, $jp_url ) = $self->resolve_json_pointer(
             $schema->schema,$fragment, $url );
@@ -121,7 +121,11 @@ sub resolve_json_pointer($self, $schema, $pointer, $url ) {
 
     $url = $self->resolve_uri($self->_has_id($schema),$url) if $self->_has_id($schema);
 
-    for my $path ( grep { $_ ne '' } split '/', $pointer ) {
+	$DB::single = $pointer =~ m[//];
+	my @path_entries = split '/', $pointer;
+	push @path_entries, '' if $pointer =~ m#/.*/$#;
+	shift @path_entries; # the nothing before the first slash
+    for my $path ( @path_entries ) {
         $path = $self->_unescape_ref($path);
 
 		my $o = $schema;
