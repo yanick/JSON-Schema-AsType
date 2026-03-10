@@ -53,6 +53,7 @@ use warnings;
 
 use Test::Deep::NoTest qw/ eq_deeply /;
 
+use Math::BigFloat;
 use Type::Utils -all;
 use Types::Standard qw/ 
     Str StrictNum HashRef ArrayRef 
@@ -426,8 +427,9 @@ declare 'MultipleOf',
         my $num =shift;
 
         return sub {
-            !Number->check($_)
-                or ($_ / $num) !~ /\./;
+			return 1 unless Number->check($_);
+			my ($q,$r) = Math::BigFloat->new($_)->bdiv($num);
+			return !$r;
         }
     };
 

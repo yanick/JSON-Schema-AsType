@@ -30,6 +30,23 @@ $remote_dir->visit(
 
 		my $name = $path->relative($remote_dir);
 
+		$registry->register_schema( "http://localhost:1234/draft4/$name",
+			from_json $path->slurp );
+
+		return;
+
+	},
+	{ recurse => 1 }
+);
+$remote_dir = $jsts_dir->child('remotes');
+$remote_dir->visit(
+	sub {
+		my $path = shift;
+		return if $path =~ /draft/;
+		return unless $path =~ qr/\.json$/;
+
+		my $name = $path->relative($remote_dir);
+
 		$registry->register_schema( "http://localhost:1234/$name",
 			from_json $path->slurp );
 
