@@ -64,6 +64,9 @@ sub run_schema_test($draft,$test) {
 				$uri => $registry->{$uri} 
 			);
 		}
+
+		$DB::single = !!$target_test;
+
 		for ( @{ $test->{tests} } ) {
 			my $desc = $_->{description};
 			# local $TODO = 'known to fail'
@@ -104,7 +107,7 @@ sub run_schema_test($draft,$test) {
 sub registry($draft) {
 	my $remotes_dir = $jsts_dir->child('remotes');
 
-	my $registry = JSON::Schema::AsType->new( schema => {} );
+	my $registry = JSON::Schema::AsType->new( draft_version => $draft, schema => {} );
 
 	$remotes_dir->visit(
 		sub {

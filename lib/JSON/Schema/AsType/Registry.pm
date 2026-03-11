@@ -155,10 +155,15 @@ sub _resolve_uri {
 
     return $uri unless $base;
 
+	my $result;
 	if( $base isa 'URI::urn') {
-		$DB::single = 1;
+		return URI->new($uri)->canonical if $uri !~ /^#/;
+		$result = $base->clone;
+		$result->fragment($uri =~ s/^#//r );
+		return $result;
 	}
-    my $result = URI->new($uri)->abs($base)->canonical;
+
+	$result = URI->new($uri)->abs($base)->canonical;
 
     # let's look at those fragments
     my $uri_doc = $uri->clone;

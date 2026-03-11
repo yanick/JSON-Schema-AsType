@@ -47,6 +47,11 @@ sub _schema_trigger($self,$schema,@) {
 
 		my $id = $self->_has_id($_) or return;
 
+		$DB::single = $id =~ /foo/;
+		
+		# that doesn't look like a 'id' for the schema
+		return if ref $id;
+
 		$self->sub_schema($_,$id);
 		return;
 	});
