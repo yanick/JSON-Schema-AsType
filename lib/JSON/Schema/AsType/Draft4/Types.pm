@@ -49,7 +49,7 @@ Can coerce the value from a hashref defining the schema.
 
 =cut
 
-use strict;
+use 5.42.0;
 use warnings;
 
 use Test::Deep::NoTest qw/ eq_deeply /;
@@ -157,7 +157,13 @@ declare Enum, constraint_generator => sub {
 
 	sub {
 		my $j = $_;
-		any { eq_deeply( $_, $j ) } @items;
+		# TODO horrible corner case for the test suite, worth it?
+		any { 
+			ref($_) && ref($j) && (ref($_) ne ref($j)) ? 0 :
+			$_ isa Math::BigFloat ? $_->beq($j)
+			: $j isa Math::BigFloat ? $j->beq($_)
+			: eq_deeply( $_, $j ) 
+		} @items;
 	}
 };
 
