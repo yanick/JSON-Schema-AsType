@@ -7,6 +7,8 @@ use Test2::V1 -Pip;
 
 use feature qw/ try /;
 
+# for the bigfloat checks
+BEGIN { $ENV{PERL_JSON_BACKEND}='JSON::backportPP'; }
 use JSON;
 use Path::Tiny 0.062;
 use List::MoreUtils qw/ any /;
@@ -43,8 +45,9 @@ sub run_draft_test_suite($draft) {
 
 sub run_test_suite($draft,$file) {
 
-	my $data = from_json $file->slurp, { allow_nonref => 1 };
+	my $data = from_json $file->slurp, { allow_nonref => 1, allow_bignum => 1 };
 
+	use DDP; p $data;
 	subtest $file => sub {
 		run_schema_test($draft,$_) for grep { 
 			!$target_test or $_->{description} =~ /$target_test/
