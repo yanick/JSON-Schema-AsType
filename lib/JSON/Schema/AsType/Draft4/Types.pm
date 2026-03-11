@@ -147,7 +147,7 @@ declare AdditionalProperties,
 
 declare UniqueItems, where {
 	return 1 unless Array->check($_);
-	@$_ == uniq map { to_json $_, { allow_nonref => 1 } } @$_
+	@$_ == uniq map { to_json $_, { allow_nonref => 1 , canonical => 1 } } @$_
 };
 
 my $json = JSON->new->allow_nonref->canonical;
