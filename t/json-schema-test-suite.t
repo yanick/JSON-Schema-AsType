@@ -31,7 +31,7 @@ my $todo = { 6 => {
 	}
 };
 
-run_draft_test_suite($_) for grep { !$target_draft or $_ == $target_draft } qw/ 3 4 6 /;
+run_draft_test_suite($_) for grep { !$target_draft or $_ == $target_draft } qw/ 3 4 6 7 /;
 
 done_testing;
 

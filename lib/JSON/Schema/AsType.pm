@@ -49,9 +49,9 @@ has draft_version => (
 	default => sub {
 		$_[0]->has_specification
 		  ? $_[0]->specification =~ /(\d+)/ && $1
-		  : eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || 4;
+		  : eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || 7;
 	},
-	isa => enum( [ 3, 4, 6 ] ),
+	isa => enum( [ 3, 4, 6, 7 ] ),
 );
 
 has spec => (
@@ -116,7 +116,7 @@ has specification => (
 		eval { $_[0]->parent_schema->specification } || 'draft4';
 	},
 	isa => enum 'JsonSchemaSpecification',
-	[qw/ draft3 draft4 draft6 /],
+	[qw/ draft3 draft4 draft6 draft7 /],
 );
 
 sub specification_schema {
