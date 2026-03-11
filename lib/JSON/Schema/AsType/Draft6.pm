@@ -34,7 +34,7 @@ has '+spec' => (
 around sub_schema => sub ($orig,$self,$subschema,$uri) {
     # ah AH, resolve the subschema id
     if( my $id = $self->_has_id($subschema) ) {
-        $uri = $self->resolve_uri($id);
+        $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
     }
     $orig->($self,$subschema,$uri);
 };

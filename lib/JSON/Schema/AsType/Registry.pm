@@ -72,7 +72,7 @@ sub fetch {
     # }
 
     # urgh...
-    $url->scheme("https") if $url->host eq 'json-schema.org';
+    $url->scheme("https") if $url->can('host') and $url->host eq 'json-schema.org';
 
     my $fragment = $url->fragment;
 
@@ -155,6 +155,9 @@ sub _resolve_uri {
 
     return $uri unless $base;
 
+	if( $base isa 'URI::urn') {
+		$DB::single = 1;
+	}
     my $result = URI->new($uri)->abs($base)->canonical;
 
     # let's look at those fragments

@@ -84,7 +84,6 @@ sub _keyword_propertyNames {
 sub _keyword_items {
     my( $self, $items ) = @_;
 
-	$DB::single = 1;
     if ( Boolean->check($items) ) {
         return if $items;
         return Items[JSON::false];
