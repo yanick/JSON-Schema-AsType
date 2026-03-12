@@ -12,7 +12,7 @@ use Moose;
 
 extends qw/ JSON::Schema::AsType /;
 
-with 'JSON::Schema::AsType::Draft7::Keywords';
+with 'JSON::Schema::AsType::Draft2019_09::Keywords';
 
 use feature qw/ signatures /;
 
