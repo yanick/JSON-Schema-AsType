@@ -135,6 +135,12 @@ sub sub_schema($self,$subschema,$uri) {
 	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
 }
 
+has _ref_exclusion => ( # $ref excludes all other keywords
+	is => 'ro',
+	lazy => 1,
+	default => 1,
+);
+
 sub _build_type {
 	my $self = shift;
 
@@ -146,7 +152,7 @@ sub _build_type {
 
 	# $ref trumps all
 	return $self->_process_keyword('$ref')
-	  if $self->schema->{'$ref'};
+	  if $self->schema->{'$ref'} and $self->_ref_exclusion;
 
 	my @types =
 	  grep { $_ and $_->name ne 'Any' }
@@ -198,6 +204,7 @@ sub _unescape_ref {
 	$ref =~ s/~0/~/g;
 	$ref =~ s!~1!/!g;
 	$ref =~ s!%25!%!g;
+	$ref =~ s!%22!"!g;
 
 	$ref;
 }
@@ -208,6 +215,7 @@ sub _escape_ref {
 	$ref =~ s/~/~0/g;
 	$ref =~ s!/!~1!g;
 	$ref =~ s!%!%25!g;
+	$ref =~ s!"!%22!g;
 
 	$ref;
 }

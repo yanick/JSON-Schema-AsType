@@ -68,13 +68,17 @@ sub fetch {
 
 	$url = $self->resolve_uri( $url, $self->root_schema->uri );
 
+	$DB::single = $url =~ /2019/;
     # # is it one of the spec schemas?
-    # if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {
+    if ( $url =~ qr!
+			^https?://json-schema.org/draft[-/]
+			0?(\d+|2\d{3}-\d{2})/schema
+		!x ) {
 
-    # 	# TODO get the metaschema
-    # 	my $module = 'JSON::Schema::AsType::Draft' . $1
-    # 	use_module($module)->metaschema;
-    # }
+    	# TODO get the metaschema
+    	my $module = 'JSON::Schema::AsType::Draft' . $1 =~ s/-/_/r;
+    	return use_module($module)->_metaschema;
+    }
 
     # urgh...
     $url->scheme("https") if $url->can('host') and $url->host eq 'json-schema.org';
@@ -117,6 +121,7 @@ sub fetch {
 	die "fetching remote schemas disabled, can't retrieve $url\n" 
 		unless $self->fetch_remote;
 
+	$DB::single = 1;
     $schema = eval { from_json LWP::Simple::get($url) };
 
     die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';

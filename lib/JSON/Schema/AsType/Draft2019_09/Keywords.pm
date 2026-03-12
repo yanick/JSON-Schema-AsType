@@ -29,6 +29,12 @@ use JSON::Schema::AsType::Draft2019_09::Types qw/ DependentRequired /;
 
 with 'JSON::Schema::AsType::Draft7::Keywords';
 
+override all_keywords => sub {
+    my $self = shift;
+    
+    return uniq '$id', super();
+};
+
 sub _keyword_dependentRequired {
 	my( $self, $depends) = @_;
 
