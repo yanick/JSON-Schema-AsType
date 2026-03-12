@@ -119,12 +119,6 @@ has specification => (
 	[qw/ draft3 draft4 draft6 draft7 /],
 );
 
-sub specification_schema {
-	my $self = shift;
-
-	$self->spec->schema;
-}
-
 sub validate_schema {
 	my $self = shift;
 	$self->spec->validate( $self->schema );
