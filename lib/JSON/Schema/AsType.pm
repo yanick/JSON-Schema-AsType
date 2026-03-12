@@ -57,7 +57,10 @@ has draft => (
 has metaschema => (
 	is      => 'ro',
 	lazy    => 1,
-	default => sub {
+	default => sub($self) {
+		if ( $self->has_schema and $self->schema->{'$schema'} ) {
+			return $self->fetch( $self->{schema}{'$schema'} );
+		}
 		$_[0]->fetch( sprintf "https://json-schema.org/draft-%02d/schema",
 			$_[0]->draft );
 	},
