@@ -27,7 +27,7 @@ Can coerce the value from a hashref defining the schema.
     # equivalent to
 
     $schema = JSON::Schema::AsType::Draft4->new(
-        draft_version => 7,
+        draft => 7,
         schema => \%schema;
     )->type;
 
@@ -75,7 +75,7 @@ declare Schema, as InstanceOf['Type::Tiny'];
 coerce Schema,
     from HashRef,
     via { 
-        my $schema = JSON::Schema::AsType->new( draft_version => 7, schema => $_ );
+        my $schema = JSON::Schema::AsType->new( draft => 7, schema => $_ );
 
         if ( $schema->validate_schema ) {
             die "not a valid draft7 json schema\n";

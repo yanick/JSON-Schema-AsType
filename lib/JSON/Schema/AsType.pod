@@ -79,7 +79,7 @@ be added to a schema cache. There is currently no way to prevent this.
 If this is an issue for you, you can manipulate the cache by accessing 
 C<%JSON::Schema::AsType::EXTERNAL_SCHEMAS> directly.
 
-=item draft_version => $version
+=item draft => $version
 
 The version of the JSON-Schema specification to use. Accepts C<3>  or C<4>,
 defaults to '4'. 
@@ -115,7 +115,7 @@ Like C<validate>, but validates the schema itself against its specification.
 
 Like C<validate_explain>, but validates the schema itself against its specification.
 
-=method draft_version
+=method draft
 
 Returns the draft version used by the object.
 

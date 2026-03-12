@@ -8,7 +8,7 @@ use JSON;
 
 subtest 'nested refs' => sub {
 my $schema = JSON::Schema::AsType->new(
-	draft_version => 4,
+	draft => 4,
     schema => {
             "definitions"=> {
                 "a"=> {"type"=> "integer"},
@@ -28,7 +28,7 @@ ok $schema->check(2);
 
 subtest 'remote refs' => sub {
 my $schema = JSON::Schema::AsType->new(
-	draft_version => 4,
+	draft => 4,
     schema => {
         '$ref' => "http://localhost:1234/subSchemas.json#/definitions/integer"
     }

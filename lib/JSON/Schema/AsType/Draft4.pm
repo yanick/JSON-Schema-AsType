@@ -18,7 +18,7 @@ with 'JSON::Schema::AsType::Draft4::Keywords';
 
 use feature qw/ signatures /;
 
-has '+draft_version' => default => 4;
+has '+draft' => default => 4;
 
 has '+spec' => (
 	default => sub($self) { 

@@ -48,7 +48,7 @@ sub run_schema_test {
 
     subtest $test->{description} => sub {
         my $schema = JSON::Schema::AsType->new( 
-            draft_version => $version,
+            draft => $version,
             schema => $test->{schema},
 			registry => {
 				pairgrep { $a !~ /254/ } $registry->registry->%*

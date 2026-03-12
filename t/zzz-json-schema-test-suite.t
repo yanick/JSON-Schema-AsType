@@ -67,7 +67,7 @@ sub run_schema_test( $draft, $test, $file, $TODO = [] ) {
 		$todo = todo "known todo" if any { $test->{description} eq $_ } @$TODO;
 
 		my $schema = JSON::Schema::AsType->new(
-			draft_version => $draft,
+			draft => $draft,
 			schema        => $test->{schema}
 		);
 		my $registry = registry($draft);
@@ -119,7 +119,7 @@ sub registry($draft) {
 	my $remotes_dir = $jsts_dir->child('remotes');
 
 	my $registry =
-	  JSON::Schema::AsType->new( draft_version => $draft, schema => {} );
+	  JSON::Schema::AsType->new( draft => $draft, schema => {} );
 
 	$remotes_dir->visit(
 		sub {
