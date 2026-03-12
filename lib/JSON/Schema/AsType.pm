@@ -54,7 +54,7 @@ has draft => (
 	isa => enum( \@DRAFT_VERSIONS ),
 );
 
-has spec => (
+has metaschema => (
 	is      => 'ro',
 	lazy    => 1,
 	default => sub {
@@ -109,12 +109,12 @@ has references => sub {
 
 sub validate_schema {
 	my $self = shift;
-	$self->spec->validate( $self->schema );
+	$self->metaschema->validate( $self->schema );
 }
 
 sub validate_explain_schema {
 	my $self = shift;
-	$self->spec->validate_explain( $self->schema );
+	$self->metaschema->validate_explain( $self->schema );
 }
 
 sub root_schema {

@@ -7,7 +7,7 @@ use JSON::Schema::AsType;
 
 for ( 3, 4, 6, 7 ) {
 	isa_ok(
-		JSON::Schema::AsType->new( draft => $_ )->spec =>
+		JSON::Schema::AsType->new( draft => $_ )->metaschema =>
 		  'JSON::Schema::AsType',
 		"draft$_"
 	);

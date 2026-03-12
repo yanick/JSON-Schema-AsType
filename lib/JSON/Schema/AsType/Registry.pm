@@ -104,7 +104,7 @@ sub fetch {
     if (    $root_uri->host eq 'json-schema.org'
         and $root_uri->path =~ m#/draft-0?(\d+)# ) {
         my $module = 'JSON::Schema::AsType::Draft' . $1;
-        my $ms     = use_module($module)->metaschema;
+        my $ms     = use_module($module)->_metaschema;
         $self->register_schema( $ms->uri => $ms );
         goto __SUB__;
     }

@@ -20,9 +20,9 @@ use feature qw/ signatures /;
 
 has '+draft' => default => 4;
 
-has '+spec' => (
+has '+metaschema' => (
 	default => sub($self) { 
-		my $schema = metaschema();
+		my $schema = _metaschema();
 		return $schema;
 	}
 );
@@ -63,7 +63,7 @@ around sub_schema => sub ($orig,$self,$subschema,$uri) {
     $orig->($self,$subschema,$uri);
 };
 
-sub metaschema {
+sub _metaschema {
 	state $METASCHEMA = __PACKAGE__->new(
 		uri => "https://json-schema.org/draft-04/schema",
 		schema => from_json join '', <DATA>,
