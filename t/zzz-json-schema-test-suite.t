@@ -31,7 +31,7 @@ push $todo->{$_}{'const.json'}->@*,
   for 4, 6, 7;
 
 run_draft_test_suite($_)
-  for grep { !$target_draft or $_ == $target_draft } qw/ 3 4 6 7 /;
+  for grep { !$target_draft or $_ == $target_draft } reverse qw/ 3 4 6 7 2019-09 /;
 
 done_testing;
 
