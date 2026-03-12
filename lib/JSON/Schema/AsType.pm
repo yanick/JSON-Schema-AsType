@@ -23,30 +23,18 @@ use URI;
 use Module::Runtime qw/ use_module /;
 
 use Moose::Util qw/ apply_all_roles /;
-use JSON::Schema::AsType::Registry;
 
 use JSON;
 
 use Moose;
-
 use MooseX::MungeHas 'is_ro';
+
+with 'JSON::Schema::AsType::Registry';
+
 
 no warnings 'uninitialized';
 
 our $strict_string = 1;
-
-has registry => (
-	is => 'ro', 
-	default => sub { JSON::Schema::AsType::Registry->new },
-	handles => [ qw/ all_schema_uris register_schema registered_schema / ]
-);
-
-sub fetch($self,$url) {
-	$self->registry->fetch(
-		$self->resolve_uri( $url, $self->root_schema->uri )
-	);
-}
-
 
 has type => (
 	is      => 'rwp',
@@ -61,9 +49,9 @@ has draft_version => (
 	default => sub {
 		$_[0]->has_specification
 		  ? $_[0]->specification =~ /(\d+)/ && $1
-		  : eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || 4;
+		  : eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || 7;
 	},
-	isa => enum( [ 3, 4, 6 ] ),
+	isa => enum( [ 3, 4, 6, 7 ] ),
 );
 
 has spec => (
@@ -128,7 +116,7 @@ has specification => (
 		eval { $_[0]->parent_schema->specification } || 'draft4';
 	},
 	isa => enum 'JsonSchemaSpecification',
-	[qw/ draft3 draft4 draft6 /],
+	[qw/ draft3 draft4 draft6 draft7 /],
 );
 
 sub specification_schema {
@@ -145,10 +133,6 @@ sub validate_schema {
 sub validate_explain_schema {
 	my $self = shift;
 	$self->spec->validate_explain( $self->schema );
-}
-
-sub resolve_uri( $self, $uri, $base = undef ) {
-	return $self->registry->resolve_uri( $uri, $base // $self->uri );
 }
 
 sub root_schema {
@@ -169,22 +153,14 @@ sub sub_schema($self,$subschema,$uri) {
 	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
 }
 
-sub absolute_id {
-	my ( $self, $new_id ) = @_;
-
-	return $new_id if $new_id =~ m#://#;    # looks absolute to me
-
-	my $base = $self->ancestor_uri;
-
-	$base =~ s#[^/]+$##;
-
-	return $base . $new_id;
-}
-
 sub _build_type {
 	my $self = shift;
 
 	$self->_set_type('');
+
+	if( JSON::is_bool($self->schema) ) {
+		return $self->schema ? Any : ~Any;
+	}
 
 	# $ref trumps all
 	return $self->_process_keyword('$ref')
@@ -228,7 +204,6 @@ sub resolve_reference {
 	my ( $self, $ref ) = @_;
 
 	my $uri = $self->resolve_uri($ref);
-	use JSON::Schema::AsType::Debug;
 
 	my $schema = $self->fetch($uri) or die "couldn't retrieve schema $uri\n";
 

@@ -44,7 +44,6 @@ override _build_type => sub {
 
     return super() if ref $self->schema eq 'HASH';
 
-    use JSON;
     return( ( $self->schema eq JSON::true) ? Any : ~Any );
     
 };
@@ -59,7 +58,7 @@ sub _keyword_contains {
    my( $self, $type ) = @_;
 
    return Contains[
-       $self->sub_schema($type)->type
+       $self->sub_schema($type, '#./contains')->type
    ];
     
 };
@@ -79,7 +78,7 @@ sub _keyword_exclusiveMinimum {
 sub _keyword_propertyNames {
     my( $self, $schema ) = @_;
 
-    PropertyNames[ $self->sub_schema($schema)->type ];
+    PropertyNames[ $self->sub_schema($schema,'#./propertyNames')->type ];
 }
 
 sub _keyword_items {
@@ -91,15 +90,16 @@ sub _keyword_items {
     }
 
     if( ref $items eq 'HASH' ) {
-        my $type = $self->sub_schema($items)->type;
+        my $type = $self->sub_schema($items,'#./items')->type;
 
         return Items[$type];
     }
 
     # TODO forward declaration not workie
     my @types;
+	my $i = 0;
     for ( @$items ) {
-        push @types, $self->sub_schema($_)->type;
+        push @types, $self->sub_schema($_,'#./items/'.$i++)->type;
     }
 
     return Items[\@types];
@@ -110,7 +110,7 @@ sub _keyword_dependencies {
 
     return Dependencies[
         pairmap {
-            $a => ( ref $b eq 'HASH' or ref $b eq 'JSON::PP::Boolean' ) ? $self->sub_schema($b) 
+            $a => ( ref $b eq 'HASH' or ref $b eq 'JSON::PP::Boolean' ) ? $self->sub_schema($b,'#./dependencies/'.$a) 
                     : $b } %$dependencies
     ];
 

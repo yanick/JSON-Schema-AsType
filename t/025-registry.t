@@ -6,7 +6,7 @@ subtest basic => sub {
 	my $schema = JSON::Schema::AsType->new;
 
 	my $uri = 'http://something.com/foo';
-	my $s = { type => 'boolean' };
+	my $s   = { type => 'boolean' };
 
 	$schema->register_schema( $uri, $s );
 
@@ -21,12 +21,12 @@ subtest 'ids' => sub {
 	my $schema = JSON::Schema::AsType->new;
 
 	my $uri = 'http://something.com/foo';
-	my $s = { 
-		type => 'boolean',
+	my $s   = {
+		type        => 'boolean',
 		definitions => {
 			bar => {
-				id => 'http://somethingelse.com/baz',
-				type => 'string',
+				'$id' => 'http://somethingelse.com/baz',
+				type  => 'string',
 			}
 		}
 	};
@@ -40,6 +40,4 @@ subtest 'ids' => sub {
 };
 
 done_testing;
-
-
 

@@ -16,19 +16,28 @@ with 'JSON::Schema::AsType::Draft6::Keywords';
 
 use feature qw/ signatures /;
 
-my $METASCHEMA = from_json join '', <DATA>;
+my $_uri_port = 1;
+has '+uri' => default => sub($self) {
+	my $id = eval {$self->schema->{'$id'}} // 'http://254.0.0.1:'.$_uri_port++;
+	$self->clear_parent_schema;
+	return $id;
+};
 
 has '+draft_version' => default => 6;
 
 has '+spec' => (
 	default => sub($self) {
-		$self->new(
-			registry => $self->registry,
-			uri => "https://json-schema.org/draft-06/schema",
-			schema => $METASCHEMA
-		);
+		$self->metaschema
 	}
 );
+
+around sub_schema => sub ($orig,$self,$subschema,$uri) {
+    # ah AH, resolve the subschema id
+    if( my $id = $self->_has_id($subschema) ) {
+        $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
+    }
+    $orig->($self,$subschema,$uri);
+};
 
 sub _schema_trigger($self,$schema,@) {
 	JSON::Schema::AsType::Visit::visit( $schema, sub {
@@ -36,11 +45,31 @@ sub _schema_trigger($self,$schema,@) {
 
 		return unless ref $_ eq 'HASH';
 
-		return unless $_->{id};
+		my $id = $self->_has_id($_) or return;
 
-		$self->sub_schema($_,$_->{id});
+		$DB::single = $id =~ /foo/;
+		
+		# that doesn't look like a 'id' for the schema
+		return if ref $id;
+
+		$self->sub_schema($_,$id);
+		return;
 	});
 };
+
+sub _has_id ($self,$schema = {} ) {
+	return unless ref $schema eq 'HASH';
+	return $schema->{'$id'};
+}
+
+sub metaschema {
+	state $METASCHEMA = __PACKAGE__->new(
+		uri => "https://json-schema.org/draft-06/schema",
+		schema => from_json join '', <DATA>,
+	);
+
+	return $METASCHEMA;
+}
 
 __DATA__
 {

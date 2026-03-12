@@ -1,30 +1,30 @@
 use strict;
 use warnings;
 
-use Test::More tests => 4;
+use Test::More;
 
 use JSON::Schema::AsType;
 
-for ( 3..4 ) {
-    isa_ok( 
-        JSON::Schema::AsType->new( draft_version => $_ )->spec
-            => 'JSON::Schema::AsType', $_ 
-    );
+for ( 3, 4, 6, 7 ) {
+	isa_ok(
+		JSON::Schema::AsType->new( draft_version => $_ )->spec =>
+		  'JSON::Schema::AsType',
+		"draft$_"
+	);
 }
 
-
 subtest "good schema" => sub {
-    my $good = { properties => { foo => { type => 'string' } } };
+	my $good = { properties => { foo => { type => 'string' } } };
 
-    ok !JSON::Schema::AsType->new( schema => $good )->validate_schema;
-    ok !JSON::Schema::AsType->new( schema => $good )->validate_explain_schema;
+	ok !JSON::Schema::AsType->new( schema => $good )->validate_schema;
+	ok !JSON::Schema::AsType->new( schema => $good )->validate_explain_schema;
 };
 
 subtest "bad schema" => sub {
-    my $bad = { id => []  };
+	my $bad = { '$ref' => [] };
 
-    ok( JSON::Schema::AsType->new( schema => $bad )->validate_schema );
-    ok( JSON::Schema::AsType->new( schema => $bad )->validate_explain_schema );
+	ok( JSON::Schema::AsType->new( schema => $bad )->validate_schema );
+	ok( JSON::Schema::AsType->new( schema => $bad )->validate_explain_schema );
 };
 
-
+done_testing;

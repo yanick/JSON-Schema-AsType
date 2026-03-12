@@ -36,7 +36,7 @@ sub _keyword_properties {
     my( $self, $properties ) = @_;
 
     my @props = pairmap { {
-        my $schema = $self->sub_schema($b);
+        my $schema = $self->sub_schema($b,"#./properties/$a");
         my $p = $schema->type;
         $p = Optional[$p] unless $b->{required};
         $a => $p
@@ -53,9 +53,12 @@ sub _keyword_disallow {
 sub _keyword_extends {
     my( $self, $extends ) = @_;
 
-    my @extends = ref $extends eq 'ARRAY' ? @$extends : ( $extends );
+	my $i = 0;
+    my @extends = ref $extends eq 'ARRAY' 
+		? (map { $self->sub_schema($_,"#./extends/".$i++)->type } @$extends)
+		: ( $self->sub_schema($extends,"#./extends")->type );
 
-    return Extends[ map { $self->sub_schema($_)->type } @extends];
+    return Extends[@extends];
 }
 
 sub _keyword_type {
@@ -77,7 +80,8 @@ sub _keyword_type {
     return $type_map{$struct_type} if $type_map{$struct_type};
 
     if( my @types = eval { @$struct_type } ) {
-        return reduce { $a | $b } map { ref $_ ? $self->sub_schema($_)->type : $self->_keyword_type($_) } @types;
+		my $i =0;
+        return reduce { $a | $b } map { ref $_ ? $self->sub_schema($_,"#./type/".$i++)->type : $self->_keyword_type($_) } @types;
     }
 
     die "unknown type '$struct_type'";
@@ -92,8 +96,9 @@ sub _keyword_divisibleBy {
 sub _keyword_dependencies {
     my( $self, $dependencies ) = @_;
 
+	my $i = 0;
     return Dependencies[
-        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b)->type : $b } %$dependencies
+        pairmap { $a => ref $b eq 'HASH' ? $self->sub_schema($b,'#./dependencies/'.$i++)->type : $b } %$dependencies
     ];
 
 }

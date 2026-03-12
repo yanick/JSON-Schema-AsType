@@ -260,15 +260,23 @@ sub _keyword_minimum {
 sub _keyword_additionalItems {
     my( $self, $s ) = @_;
 
-    unless($s) {
-        my $items = $self->schema->{items} or return;
-        return if ref $items eq 'HASH';  # it's a schema, nevermind
-        my $size = @$items;
+	$DB::single = 1;
+    # unless($s) {
+    #     my $items = $self->schema->{items} or return;
+    #     return if ref $items eq 'HASH';  # it's a schema, nevermind
+    #     my $size = @$items;
 
-        return AdditionalItems[$size];
-    }
+    #     return AdditionalItems[$size];
+    # }
 
     my $schema = $self->sub_schema($s,'#./additionalItems');
+
+	# items is schema => additionalItems does nothing
+	return Any if ref $self->schema->{items} eq 'HASH';
+
+	# no items? it's always valid 
+	return Any unless defined $self->schema->{items};
+
 
     my $to_skip  = ($self->schema->{items}||[])->@*;
 

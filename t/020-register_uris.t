@@ -6,7 +6,8 @@ use Test2::V1 -Pip;
 use JSON::Schema::AsType;
 use JSON qw/ from_json /;
 
-my $schema = JSON::Schema::AsType->new( schema => from_json  <<'JSON' );
+my $schema =
+  JSON::Schema::AsType->new( draft_version => 4, schema => from_json <<'JSON' );
 {
     "id": "http://localhost:1234/tree",
     "description": "tree of nodes",
@@ -39,12 +40,16 @@ like [ $schema->all_schema_uris ], bag {
 	item 'http://localhost:1234/tree';
 };
 
-ok $schema->check({
-        meta => 'root',
-        nodes => [ {
-            value  => 1,
-            subtree => { meta => "child", "nodes" => [ ] }
-        }]
-});
+ok $schema->check(
+	{
+		meta  => 'root',
+		nodes => [
+			{
+				value   => 1,
+				subtree => { meta => "child", "nodes" => [] }
+			}
+		]
+	}
+);
 
 done_testing;

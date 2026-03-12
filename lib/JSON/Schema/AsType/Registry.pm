@@ -14,7 +14,7 @@ use LWP::Simple     qw//;
 use Module::Runtime qw/ use_module /;
 use Ref::Util qw/ is_hashref /;
 
-use Moose;
+use Moose::Role;
 
 has registry => (
     is      => 'ro',
@@ -34,29 +34,20 @@ around register_schema => sub {
 
     $uri = URI->new($uri)->canonical;
 
-    #warn "registering $uri with "; use DDP; p $schema->schema;
-
     my $fragment = $uri->fragment;
 
     if ( my $already = $self->registered_schema($uri) ) {
         my $s = $schema;
         $s = $s->schema if $s isa JSON::Schema::AsType;
         return $already if eq_deeply( $s, $already->schema );
-        use DDP;
-        p $s;
-        p $already->schema;
-        die "schema $uri already registered\n";
+		use DDP;
+		p [ $s, $already->schema ]->@*;
+        die "schema $uri already registered for a different schema\n";
     }
 
-    debug( "registering %s", $uri );
     unless ( $schema isa JSON::Schema::AsType ) {
-
         # TODO for Draft4
-        $schema = JSON::Schema::AsType->new(
-            uri      => $uri,
-            schema   => $schema,
-            registry => $self
-        );
+        $schema = $self->sub_schema( $schema, $uri );
     }
 
     $orig->( $self, $uri, $schema );
@@ -70,7 +61,7 @@ sub registered_schema( $self, $uri ) {
 sub fetch {
     my ( $self, $url ) = @_;
 
-    debug( "fetching %s", $url );
+	$url = $self->resolve_uri( $url, $self->root_schema->uri );
 
     # # is it one of the spec schemas?
     # if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {
@@ -81,12 +72,12 @@ sub fetch {
     # }
 
     # urgh...
-    $url->scheme("https") if $url->host eq 'json-schema.org';
+    $url->scheme("https") if $url->can('host') and $url->host eq 'json-schema.org';
 
     my $fragment = $url->fragment;
 
 
-    $url->fragment( $fragment =~ s[/+$][]r ) if $fragment;
+	#    $url->fragment( $fragment =~ s[/+$][]r ) if $fragment;
 
     if ( my $schema = $self->registered_schema($url) ) {
         return $schema;
@@ -96,25 +87,16 @@ sub fetch {
     $root_uri->fragment(undef);
 
     my $schema = $self->registered_schema($root_uri);
-    use JSON::Schema::AsType::Debug;
-    debug( "got the root schema for $root_uri and it's %s", !!$schema );
 
     if ($schema) {
         my $fragment = $url->fragment;
-        $fragment =~ s#/+$##;
+		#        $fragment =~ s#/+$##;
         $url->fragment(undef);
         my( $s, $jp_url ) = $self->resolve_json_pointer(
             $schema->schema,$fragment, $url );
-        unless ($s) {
+        unless ($s or ref $s eq 'JSON::PP::Boolean' ) {
             die "reference #" . $fragment . ' not found';
         }
-        debug("registering for $url?");
-
-        # if($s->{'$ref'}) {
-        #     return $self->fetch( $self->resolve_uri(
-        #             $s->{'$ref'}, $jp_url
-        #         ) );
-        # }
 
         return $self->register_schema( $jp_url => $s );
     }
@@ -126,35 +108,36 @@ sub fetch {
         $self->register_schema( $ms->uri => $ms );
         goto __SUB__;
     }
-    debug( join " ", grep { /folder/ and !/254/ } $self->all_schema_uris );
-    debug($root_uri);
 
-    die "sadness";
+    $schema = eval { from_json LWP::Simple::get($url) };
 
-    # my $schema = eval { from_json LWP::Simple::get($url) };
+    die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
 
-    # die "couldn't get schema from '$url'\n" unless ref $schema eq 'HASH';
-
-    # return $self->register_schema(
-    # 	$url => $self->new( uri => $url, schema => $schema ) );
+    return $self->register_schema(
+     	$url => $self->new( uri => $url, schema => $schema ) );
 }
 
 sub resolve_json_pointer($self, $schema, $pointer, $url ) {
 
-    $url = $self->resolve_uri($schema->{id},$url) if is_hashref($schema) and $schema->{id};
+    $url = $self->resolve_uri($self->_has_id($schema),$url) if $self->_has_id($schema);
 
-    for my $path ( grep { $_ ne '' } split '/', $pointer ) {
+	$DB::single = $pointer =~ m[//];
+	my @path_entries = split '/', $pointer;
+	push @path_entries, '' if $pointer =~ m#/.*/$#;
+	shift @path_entries; # the nothing before the first slash
+    for my $path ( @path_entries ) {
         $path = $self->_unescape_ref($path);
 
+		my $o = $schema;
        $schema = is_hashref($schema) ? $schema->{$path}:$schema->[$path];
-        die "reference " . $url . " not found\n" unless $schema;
+			$DB::single = !$schema;
+        die "reference " . $url . " not found\n" unless defined $schema;
 
         $path = $self->_escape_ref($path);
 
        $url =
-        (is_hashref($schema) and $schema->{id})
-        ? $self->resolve_uri($schema->{id},$url)
-        : $self->resolve_uri("#./$path", $url);
+         $self->resolve_uri(
+			 $self->_has_id($schema)//"#./$path", $url);
     }
 
     return ( $schema, $url );
@@ -172,7 +155,15 @@ sub _resolve_uri {
 
     return $uri unless $base;
 
-    my $result = URI->new($uri)->abs($base)->canonical;
+	my $result;
+	if( $base isa 'URI::urn') {
+		return URI->new($uri)->canonical if $uri !~ /^#/;
+		$result = $base->clone;
+		$result->fragment($uri =~ s/^#//r );
+		return $result;
+	}
+
+	$result = URI->new($uri)->abs($base)->canonical;
 
     # let's look at those fragments
     my $uri_doc = $uri->clone;
