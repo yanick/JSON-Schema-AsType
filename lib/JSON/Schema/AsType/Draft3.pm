@@ -26,9 +26,9 @@ has '+uri' => default => sub($self) {
 	return $id;
 };
 
-has '+spec' => (
+has '+metaschema' => (
 	default => sub($self) {
-		metaschema();
+		_metaschema();
 	}
 );
 
@@ -49,7 +49,7 @@ sub _schema_trigger($self,$schema,@) {
 	});
 };
 
-sub metaschema {
+sub _metaschema {
 	state $METASCHEMA = __PACKAGE__->new(
 		uri => "https://json-schema.org/draft-03/schema",
 		schema => from_json join '', <DATA>,
