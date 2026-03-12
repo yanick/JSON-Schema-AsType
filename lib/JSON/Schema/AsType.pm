@@ -36,6 +36,8 @@ no warnings 'uninitialized';
 
 our $strict_string = 1;
 
+our @DRAFT_VERSIONS = ( 3,4,6,7 );
+
 has type => (
 	is      => 'rwp',
 	handles => [qw/ check validate validate_explain /],
@@ -47,11 +49,9 @@ has draft_version => (
 	is      => 'ro',
 	lazy    => 1,
 	default => sub {
-		$_[0]->has_specification
-		  ? $_[0]->specification =~ /(\d+)/ && $1
-		  : eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || 7;
+		  eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || $DRAFT_VERSIONS[-1];
 	},
-	isa => enum( [ 3, 4, 6, 7 ] ),
+	isa => enum( \@DRAFT_VERSIONS ),
 );
 
 has spec => (
@@ -106,18 +106,6 @@ has uri => (
 has references => sub {
 	+{};
 };
-
-has specification => (
-	predicate => 1,
-	is        => 'ro',
-	lazy      => 1,
-	default   => sub {
-		return 'draft' . $_[0]->draft_version;
-		eval { $_[0]->parent_schema->specification } || 'draft4';
-	},
-	isa => enum 'JsonSchemaSpecification',
-	[qw/ draft3 draft4 draft6 draft7 /],
-);
 
 sub validate_schema {
 	my $self = shift;
@@ -247,7 +235,7 @@ sub BUILD {
 	my $self = shift;
 
 	use_module(
-		'JSON::Schema::AsType::' . ucfirst( $self->specification )
+		'JSON::Schema::AsType::Draft' . $self->draft_version
 	)->meta->rebless_instance( $self );
 
 	# make it available early for the potential $refs
