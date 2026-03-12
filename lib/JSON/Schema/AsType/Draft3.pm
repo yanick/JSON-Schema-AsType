@@ -17,7 +17,7 @@ with 'JSON::Schema::AsType::Draft3::Keywords';
 
 use feature qw/ signatures /;
 
-has '+draft_version' => default => 3;
+has '+draft' => default => 3;
 
 my $_uri_port = 1;
 has '+uri' => default => sub($self) {

@@ -48,7 +48,7 @@ subtest recursive => sub {
 
 subtest 'ids for draft4' => sub {
     my $schema = JSON::Schema::AsType->new(
-        draft_version => 4,
+        draft => 4,
         schema => {
             "id"=> "http://localhost:1234/scope_change_defs1.json",
             "type" => "object",

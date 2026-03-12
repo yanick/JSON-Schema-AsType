@@ -23,7 +23,7 @@ has '+uri' => default => sub($self) {
 	return $id;
 };
 
-has '+draft_version' => default => 6;
+has '+draft' => default => 6;
 
 has '+spec' => (
 	default => sub($self) {

@@ -45,11 +45,11 @@ has type => (
 	lazy    => 1
 );
 
-has draft_version => (
+has draft => (
 	is      => 'ro',
 	lazy    => 1,
 	default => sub {
-		  eval { $_[0]->parent_schema && $_[0]->parent_schema->draft_version } || $DRAFT_VERSIONS[-1];
+		  eval { $_[0]->parent_schema && $_[0]->parent_schema->draft } || $DRAFT_VERSIONS[-1];
 	},
 	isa => enum( \@DRAFT_VERSIONS ),
 );
@@ -59,7 +59,7 @@ has spec => (
 	lazy    => 1,
 	default => sub {
 		$_[0]->fetch( sprintf "https://json-schema.org/draft-%02d/schema",
-			$_[0]->draft_version );
+			$_[0]->draft );
 	},
 );
 
@@ -235,7 +235,7 @@ sub BUILD {
 	my $self = shift;
 
 	use_module(
-		'JSON::Schema::AsType::Draft' . $self->draft_version
+		'JSON::Schema::AsType::Draft' . $self->draft
 	)->meta->rebless_instance( $self );
 
 	# make it available early for the potential $refs
