@@ -25,8 +25,23 @@ use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft6::Types '-all';
 
+use JSON::Schema::AsType::Draft7::Types qw/ If /;
+
 with 'JSON::Schema::AsType::Draft6::Keywords';
 
+sub _keyword_if {
+	my( $self, $if) = @_;
 
+	$if= $self->sub_schema($if, '#./if')->type;
+
+	my @clauses = map {
+		defined $self->schema->{$_} ?
+	 $self->sub_schema( $self->schema->{$_}, "#./$_" )->type : Any
+	} qw/ then else/;
+
+
+	return If[$if,@clauses];
+
+}
 
 1;

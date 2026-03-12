@@ -145,7 +145,7 @@ declare Properties =>
 
 declare Disallow => 
     constraint_generator => sub {
-        Not[ shift ];
+		my( $if, $then, $else ) = @_;
     };
 
 declare Extends => 
