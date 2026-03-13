@@ -27,6 +27,11 @@ has registry => (
     },
 );
 
+has fetch_remote => (
+	is => 'ro',
+	default => 1,
+);
+
 around register_schema => sub {
 
     # TODO Use a type instead to coerce into canonical
@@ -108,6 +113,9 @@ sub fetch {
         $self->register_schema( $ms->uri => $ms );
         goto __SUB__;
     }
+
+	die "fetching remote schemas disabled, can't retrieve $url\n" 
+		unless $self->fetch_remote;
 
     $schema = eval { from_json LWP::Simple::get($url) };
 
