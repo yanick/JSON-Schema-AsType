@@ -55,7 +55,7 @@ sub run_schema_test {
 			},
 		);
 
-        diag explain $test->{schema} if $::explain;
+        #        diag explain $test->{schema} if $::explain;
 
         for ( @{ $test->{tests} } ) {
             my $desc = $_->{description};
@@ -67,12 +67,11 @@ sub run_schema_test {
 
             is !!$schema->check($_->{data}) => !!$_->{valid}, $_->{description} 
                 or do {
-                    diag explain $_->{data};
-                    diag join "\n", @{$schema->validate_explain($_->{data})||[]};
+                    # diag explain $_->{data};
+                    # diag join "\n", @{$schema->validate_explain($_->{data})||[]};
                 };
 
-            diag join "\n", @{ $schema->validate_explain($_->{data}) ||[] }
-                unless $_->{valid} or not $::explain;
+#            diag join "\n", @{ $schema->validate_explain($_->{data}) ||[] } unless $_->{valid} or not $::explain;
         }
     };
 

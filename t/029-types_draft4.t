@@ -151,7 +151,7 @@ sub test_type {
             for my $test ( @$bad ) {
                 my $error = $type->validate($test);
                 ok $error, join '', 'value: ', explain $test;
-                diag $error unless $printed++;
+                #                diag $error unless $printed++;
             }
         } if $bad;
     };
