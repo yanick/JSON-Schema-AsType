@@ -198,6 +198,7 @@ sub _unescape_ref {
 	$ref =~ s/~0/~/g;
 	$ref =~ s!~1!/!g;
 	$ref =~ s!%25!%!g;
+	$ref =~ s!%22!"!g;
 
 	$ref;
 }
@@ -208,6 +209,7 @@ sub _escape_ref {
 	$ref =~ s/~/~0/g;
 	$ref =~ s!/!~1!g;
 	$ref =~ s!%!%25!g;
+	$ref =~ s!"!%22!g;
 
 	$ref;
 }
