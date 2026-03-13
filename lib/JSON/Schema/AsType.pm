@@ -36,7 +36,7 @@ no warnings 'uninitialized';
 
 our $strict_string = 1;
 
-our @DRAFT_VERSIONS = ( 3,4,6,7 );
+our @DRAFT_VERSIONS = ( 3,4,6,7,'2019-09' );
 
 has type => (
 	is      => 'rwp',
@@ -235,7 +235,7 @@ sub BUILD {
 	my $self = shift;
 
 	use_module(
-		'JSON::Schema::AsType::Draft' . $self->draft
+		'JSON::Schema::AsType::Draft' . $self->draft =~ s/-/_/r
 	)->meta->rebless_instance( $self );
 
 	# make it available early for the potential $refs
