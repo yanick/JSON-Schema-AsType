@@ -29,7 +29,7 @@ my $todo = {};
 
 push $todo->{$_}{'const.json'}->@*,
   'float and integers are equal up to 64-bit representation limits'
-  for 4, 6, 7;
+  for 4, 6, 7, '2019-09';
 
 $todo->{'2019-09'}{$_.'.json'} = 1 for qw/
   additionalItems
@@ -37,8 +37,6 @@ $todo->{'2019-09'}{$_.'.json'} = 1 for qw/
   allOf
   anchor
   anyOf
-  boolean_schema
-  const
   contains
   content
   default
@@ -136,8 +134,6 @@ sub run_schema_test( $draft, $test, $file, $TODO = [] ) {
             $schema->register_schema( $uri => $registry->{$uri} );
         }
 
-        $DB::single = !!$target_test;
-
         for ( @{ $test->{tests} } ) {
             my $desc = $_->{description};
 
@@ -154,6 +150,7 @@ sub run_schema_test( $draft, $test, $file, $TODO = [] ) {
                 is !!$schema->check( $_->{data} ) => !!$_->{valid},
                   $_->{description}
                   or do {
+
                     note $schema->type->display_name;
                     my $validation = $schema->validate_explain( $_->{data} );
                     note "explain: ", @$validation if $validation;

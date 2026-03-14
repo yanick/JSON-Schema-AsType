@@ -15,3 +15,5 @@ use feature qw/ module_true /;
 
 use Moose::Role;
 
+with 'JSON::Schema::AsType::Draft7::Keywords';
+

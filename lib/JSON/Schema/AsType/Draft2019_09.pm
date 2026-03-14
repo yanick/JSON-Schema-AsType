@@ -66,7 +66,7 @@ sub vocabulary_role($self,$url) {
     $VOCABULARY{$url}
 }
 
-after BUILD => sub($self,@) {
+before _build_type => sub($self,@) {
     my @roles = grep { $_ } map { $self->vocabulary_role($_) } $self->vocabularies->@*;
 
     return unless @roles;
