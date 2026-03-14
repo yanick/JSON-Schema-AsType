@@ -31,53 +31,53 @@ push $todo->{$_}{'const.json'}->@*,
   'float and integers are equal up to 64-bit representation limits'
   for 4, 6, 7;
 
-$todo->{'2019-09'}{$_} = 1 for qw/
-  additionalItems.json
-  additionalProperties.json
-  allOf.json
-  anchor.json
-  anyOf.json
-  boolean_schema.json
-  const.json
-  contains.json
-  content.json
-  default.json
-  defs.json
-  dependentRequired.json
-  dependentSchemas.json
-  enum.json
-  exclusiveMaximum.json
-  exclusiveMinimum.json
-  format.json
-  if-then-else.json
-  infinite-loop-detection.json
-  items.json
-  maxContains.json
-  maximum.json
-  maxItems.json
-  maxLength.json
-  maxProperties.json
-  minContains.json
-  minimum.json
-  minItems.json
-  minLength.json
-  minProperties.json
-  multipleOf.json
-  not.json
-  oneOf.json
-  pattern.json
-  patternProperties.json
-  properties.json
-  propertyNames.json
-  recursiveRef.json
-  ref.json
-  refRemote.json
-  required.json
-  type.json
-  unevaluatedItems.json
-  unevaluatedProperties.json
-  uniqueItems.json
-  vocabulary.json
+$todo->{'2019-09'}{$_.'.json'} = 1 for qw/
+  additionalItems
+  additionalProperties
+  allOf
+  anchor
+  anyOf
+  boolean_schema
+  const
+  contains
+  content
+  default
+  defs
+  dependentRequired
+  dependentSchemas
+  enum
+  exclusiveMaximum
+  exclusiveMinimum
+  format
+  if-then-else
+  infinite-loop-detection
+  items
+  maxContains
+  maximum
+  maxItems
+  maxLength
+  maxProperties
+  minContains
+  minimum
+  minItems
+  minLength
+  minProperties
+  multipleOf
+  not
+  oneOf
+  pattern
+  patternProperties
+  properties
+  propertyNames
+  recursiveRef
+  ref
+  refRemote
+  required
+  type
+  unevaluatedItems
+  unevaluatedProperties
+  uniqueItems
+  vocabulary
   /;
 
 run_draft_test_suite($_)
@@ -103,6 +103,10 @@ sub run_test_suite( $draft, $file, $todo = {} ) {
 
     my $data = from_json $file->slurp, { allow_nonref => 1 };
 
+    my $TODO = $todo->{ path($file)->basename };
+    if( $TODO and not ref $TODO and not $ENV{HARNESS_ACTIVE}) {
+        return;
+    }
     subtest $file => sub {
         run_schema_test( $draft, $_, $file, $todo->{ path($file)->basename } )
           for grep { !$target_test or $_->{description} =~ /$target_test/ }

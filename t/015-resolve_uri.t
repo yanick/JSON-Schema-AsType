@@ -28,6 +28,7 @@ is resolve_uri( $_->[0]->@* ) => $_->[1], $_->[2] // join ' + ', $_->[0]->@*
 
 subtest recursive => sub {
 	my $schema = JSON::Schema::AsType->new( 
+        draft => 7,
 		schema => {
 			anyOf => [
 				{ type => 'string' },

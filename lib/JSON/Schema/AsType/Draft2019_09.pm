@@ -3,8 +3,11 @@ package JSON::Schema::AsType::Draft2019_09;
 use 5.42.0;
 use warnings;
 
-use feature ':5.42';
+use feature ':5.42', 'try';
 use JSON::Schema::AsType::Visit;
+use List::Util qw/ pairmap /;
+use Moose::Util qw/ ensure_all_roles /;
+use Module::Runtime qw/ use_module /;
 
 use JSON;
 
@@ -12,74 +15,112 @@ use Moose;
 
 extends qw/ JSON::Schema::AsType /;
 
-with 'JSON::Schema::AsType::Draft7::Keywords';
-
 use feature qw/ signatures /;
 
 my $_uri_port = 1;
 has '+uri' => default => sub($self) {
-	my $id =
-	  eval { $self->schema->{'$id'} } // 'http://254.0.0.1:' . $_uri_port++;
-	$self->clear_parent_schema;
-	return $id;
+    my $id =
+      eval { $self->schema->{'$id'} } // 'http://254.0.0.1:' . $_uri_port++;
+    $self->clear_parent_schema;
+    return $id;
 };
 
 has '+draft' => default => "2019-09";
 
-has '+metaschema' => (
-	default => sub($self) {
-		_metaschema()
-	}
+has is_own_metaschema => (
+    is => 'ro',
+    default => 0,
 );
+
+has '+metaschema' => (
+    default => sub($self) {
+        $self->is_own_metaschema ? $self : _metaschema();
+    }
+);
+
+has vocabularies => ( 
+    is => 'ro', lazy => 1, 
+    default => sub($self) {
+        my $v = $self->metaschema->schema->{'$vocabulary'} or return [];
+
+        return [
+            pairmap { ($a)x!!$b } %$v
+        ];
+    }
+);
+
+
+our %VOCABULARY = map {
+    m#([^/]+)$#;
+    $_ => __PACKAGE__ . '::Vocabulary::'.ucfirst( $1)=~ s/-//r
+} (
+        "https://json-schema.org/draft/2019-09/vocab/core" ,
+        "https://json-schema.org/draft/2019-09/vocab/applicator" ,
+        "https://json-schema.org/draft/2019-09/vocab/validation" ,
+        "https://json-schema.org/draft/2019-09/vocab/meta-data" ,
+        "https://json-schema.org/draft/2019-09/vocab/format" ,
+        "https://json-schema.org/draft/2019-09/vocab/content" ,
+);
+
+sub vocabulary_role($self,$url) {
+    $VOCABULARY{$url}
+}
+
+after BUILD => sub($self,@) {
+    my @roles = grep { $_ } map { $self->vocabulary_role($_) } $self->vocabularies->@*;
+
+    return unless @roles;
+
+    ensure_all_roles( $self, @roles); 
+};
 
 around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
 
-	# ah AH, resolve the subschema id
-	if ( my $id = $self->_has_id($subschema) ) {
+    # ah AH, resolve the subschema id
+    if ( my $id = $self->_has_id($subschema) ) {
         $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
-	}
-	$orig->( $self, $subschema, $uri );
+    }
+    $orig->( $self, $subschema, $uri );
 };
 
 sub _schema_trigger( $self, $schema, @ ) {
-	JSON::Schema::AsType::Visit::visit(
-		$schema,
-		sub {
-			my ( $key, $valueref, $context ) = @_;
+    JSON::Schema::AsType::Visit::visit(
+        $schema,
+        sub {
+            my ( $key, $valueref, $context ) = @_;
 
-			return unless ref $_ eq 'HASH';
+            return unless ref $_ eq 'HASH';
 
-			my $id = $self->_has_id($_) or return;
+            my $id = $self->_has_id($_) or return;
 
-			$self->sub_schema( $_, $id );
-			return;
-		}
-	);
+            $self->sub_schema( $_, $id );
+            return;
+        }
+    );
 }
 
 sub _has_id ( $self, $schema = {} ) {
-	return unless ref $schema eq 'HASH';
-	return $schema->{'$id'};
+    return unless ref $schema eq 'HASH';
+    return $schema->{'$id'};
 }
 
 sub _metaschema {
-	state @docs = (from_json join '', <DATA>)->@*;
+    state @docs = ( from_json join '', <DATA> )->@*;
 
-	state $METASCHEMA = __PACKAGE__->new(
-		uri    => "https://json-schema.org/draft/2019-09/schema",
-		schema => shift @docs
-	);
+    state $METASCHEMA = __PACKAGE__->new(
+        uri    => "https://json-schema.org/draft/2019-09/schema",
+        schema => shift @docs,
+        is_own_metaschema => 1,
+    );
 
-	state $done = 0;
+    state $done = 0;
 
-	if(not $done) {
-		$METASCHEMA->register_schema( 
-			$_->{'$id'} => $_
-		) for @docs;
-		$done++;
-	}
+    if ( not $done ) {
+        $METASCHEMA->register_schema( $_->{'$id'} => $_ ) for @docs;
+        $done++;
+    }
 
-	return $METASCHEMA;
+    return $METASCHEMA;
 }
 
 __DATA__

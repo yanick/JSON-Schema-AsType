@@ -131,8 +131,14 @@ sub sub_schema($self,$subschema,$uri) {
 
 	$uri = $self->resolve_uri($uri) if $uri;
 
+    JSON::Schema::AsType->new(
+        draft => $self->draft,
+        schema => $subschema, 
+        parent_schema => $self, 
+        registry => $self->registry, 
+        maybe uri => $uri
+    );
 
-	$self->new( schema => $subschema, parent_schema => $self, registry => $self->registry, maybe uri => $uri );
 }
 
 sub _build_type {
@@ -161,6 +167,11 @@ sub all_keywords {
 	# 'id' has to be first
 	return sort { $a eq 'id' ? -1 : $b eq 'id' ? 1 : $a cmp $b }
 	  map { /^_keyword_(.*)/ } $self->meta->get_method_list;
+}
+
+sub has_keyword($self,$keyword) {
+    my $method = "_keyword_$keyword";
+    return $self->can($method);
 }
 
 sub _process_keyword {
@@ -232,6 +243,7 @@ sub _add_to_type {
 
 	$self->_set_type($t);
 }
+
 
 sub BUILD {
 	my $self = shift;
