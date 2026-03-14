@@ -42,12 +42,15 @@ override all_keywords => sub {
 __PACKAGE__->meta->add_method( '_keyword_$ref' => sub {
         my( $self, $ref ) = @_;
 
+
         my $schema;
 
         return Type::Tiny->new(
             name => 'Ref',
             display_name => "Ref($ref)",
             constraint => sub {
+        local $::DEEP = $::DEEP+1;
+        die if $::DEEP>10;
 				my $v = $_;
 				use JSON::Schema::AsType::Debug;
 				debug( 'in ref for %s', $ref );

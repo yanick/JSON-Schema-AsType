@@ -32,50 +32,20 @@ push $todo->{$_}{'const.json'}->@*,
   for 4, 6, 7, '2019-09';
 
 $todo->{'2019-09'}{$_.'.json'} = 1 for qw/
-  additionalItems
-  additionalProperties
-  allOf
-  anchor
-  anyOf
-  contains
-  content
-  default
-  defs
-  dependentRequired
-  dependentSchemas
-  enum
-  exclusiveMaximum
-  exclusiveMinimum
-  format
-  if-then-else
-  infinite-loop-detection
-  items
-  maxContains
-  maximum
-  maxItems
-  maxLength
-  maxProperties
-  minContains
-  minimum
-  minItems
-  minLength
-  minProperties
-  multipleOf
-  not
-  oneOf
-  pattern
-  patternProperties
-  properties
-  propertyNames
-  recursiveRef
-  ref
-  refRemote
-  required
-  type
-  unevaluatedItems
-  unevaluatedProperties
-  uniqueItems
-  vocabulary
+    unevaluatedItems 
+    unevaluatedProperties
+    maxContains
+    minContains
+    vocabulary
+    dependentSchemas
+    recursiveRef
+    not
+    refRemote
+    dependentRequired
+    infinite-loop-detection
+    ref
+    defs
+    anchor
   /;
 
 run_draft_test_suite($_)
