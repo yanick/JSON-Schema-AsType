@@ -57,8 +57,20 @@ sub _keyword_const {
 sub _keyword_contains {
    my( $self, $type ) = @_;
 
+   my $min = $self->schema->{minContains} // 1; # for 2019-09
+   my $max = $self->schema->{maxContains} // 9E99; # for 2019-09
+
+   if( JSON::is_bool($type) ) {
+		if( $type ) {
+			$min = 1;
+		}
+		else {
+			$max = 0;
+		}
+   }
+
    return Contains[
-       $self->sub_schema($type, '#./contains')->type
+       $self->sub_schema($type, '#./contains')->type, $min, $max
    ];
     
 };

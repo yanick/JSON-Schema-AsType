@@ -48,8 +48,10 @@ Can coerce the value from a hashref defining the schema.
 
 =cut
 
-use strict;
+use 5.42.0;
 use warnings;
+
+use experimental 'signatures';
 
 use Type::Utils -all;
 use Types::Standard qw/ 
@@ -82,18 +84,19 @@ use JSON::Schema::AsType::Draft4::Types qw/
 __PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, Items, ExclusiveMaximum, ExclusiveMinimum;
 
 declare Contains,
-    constraint_generator => sub{
-        my $type = shift;
+    constraint_generator => sub($type,$min=1,$max=9E99){
 
         return sub {
             return 1 unless Array->check($_);
 
-            if( Boolean->check($type) ) {
-            }
-
-            return any { 
-                $type->check($_);
+            my @contains = map {
+                $type->check($_)
             } @$_;
+
+
+            $JSON::Schema::AsType::CONTEXT{contains} = \@contains;
+
+			return $min <= @contains <= $max;
         }
     };
 

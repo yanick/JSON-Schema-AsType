@@ -12,8 +12,14 @@ use 5.42.0;
 use warnings;
 
 use feature qw/ module_true /;
+use Types::Standard qw/Any/;
 
 use Moose::Role;
 
-with 'JSON::Schema::AsType::Draft7::Keywords';
+use JSON::Schema::AsType::Draft2019_09::Types qw/ /;
+
+with 'JSON::Schema::AsType::Draft7::Keywords' => {
+	-exclude => [ ]
+};
+
 

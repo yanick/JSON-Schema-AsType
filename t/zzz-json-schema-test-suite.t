@@ -34,8 +34,6 @@ push $todo->{$_}{'const.json'}->@*,
 $todo->{'2019-09'}{$_.'.json'} = 1 for qw/
     unevaluatedItems 
     unevaluatedProperties
-    maxContains
-    minContains
     vocabulary
     dependentSchemas
     recursiveRef
