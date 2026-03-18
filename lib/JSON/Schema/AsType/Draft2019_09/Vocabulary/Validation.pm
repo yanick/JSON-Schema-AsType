@@ -16,10 +16,14 @@ use Types::Standard qw/Any/;
 
 use Moose::Role;
 
-use JSON::Schema::AsType::Draft2019_09::Types qw/ /;
+use JSON::Schema::AsType::Draft2019_09::Types qw/ DependentRequired /;
 
 with 'JSON::Schema::AsType::Draft7::Keywords' => {
 	-exclude => [ ]
 };
 
+sub _keyword_dependentRequired {
+	my( $self, $depends) = @_;
 
+	DependentRequired[$depends];
+}
