@@ -43,7 +43,6 @@ $todo->{'2019-09'}{$_.'.json'} = 1 for qw/
     infinite-loop-detection
     ref
     defs
-    anchor
   /;
 
 run_draft_test_suite($_)

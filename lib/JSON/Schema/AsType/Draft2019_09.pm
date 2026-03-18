@@ -66,6 +66,33 @@ sub vocabulary_role($self,$url) {
     $VOCABULARY{$url}
 }
 
+# in D2019_09::Core ?
+after _schema_trigger => sub ( $self, $schema, @ ) {
+	JSON::Schema::AsType::Visit::visit(
+		$schema,
+		sub {
+			my ( $key, $valueref, $context ) = @_;
+
+			return unless ref $_ eq 'HASH';
+
+			my $anchor = $_->{'$anchor'} or return;
+
+			my $uri = URI->new($self->uri);
+
+			if ( my $id = $self->_has_id($_) ) {
+				$uri = $self->resolve_uri($id);
+			}
+
+			$uri->fragment($anchor);
+			$DB::single = $anchor =~ /foo/;
+
+			#$self->sub_schema( $_, $uri);
+			$self->register_schema( $uri => $_ );
+			return;
+		}
+	);
+};
+
 before _build_type => sub($self,@) {
     my @roles = grep { $_ } map { $self->vocabulary_role($_) } $self->vocabularies->@*;
 

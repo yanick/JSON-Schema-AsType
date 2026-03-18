@@ -129,17 +129,17 @@ sub resolve_json_pointer($self, $schema, $pointer, $url ) {
 
     $url = $self->resolve_uri($self->_has_id($schema),$url) if $self->_has_id($schema);
 
-	$DB::single = $pointer =~ m[//];
+	$pointer =~ s[^/][];
+	$DB::single = $pointer =~ m[foo];
 	my @path_entries = split '/', $pointer;
 	push @path_entries, '' if $pointer =~ m#/.*/$#;
-	shift @path_entries; # the nothing before the first slash
     for my $path ( @path_entries ) {
         $path = $self->_unescape_ref($path);
 
 		my $o = $schema;
        $schema = is_hashref($schema) ? $schema->{$path}:$schema->[$path];
 			$DB::single = !$schema;
-        die "reference " . $url . " not found\n" unless defined $schema;
+        die "reference " . $url . "#$pointer not found\n" unless defined $schema;
 
         $path = $self->_escape_ref($path);
 
