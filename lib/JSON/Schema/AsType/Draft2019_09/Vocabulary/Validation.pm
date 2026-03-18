@@ -13,10 +13,14 @@ use warnings;
 
 use feature qw/ module_true /;
 use Types::Standard qw/Any/;
+use List::Util qw/ pairmap /;
 
 use Moose::Role;
 
-use JSON::Schema::AsType::Draft2019_09::Types qw/ DependentRequired /;
+use JSON::Schema::AsType::Draft2019_09::Types qw/ 
+	DependentRequired 
+	DependentSchemas
+/;
 
 with 'JSON::Schema::AsType::Draft7::Keywords' => {
 	-exclude => [ ]
@@ -26,4 +30,14 @@ sub _keyword_dependentRequired {
 	my( $self, $depends) = @_;
 
 	DependentRequired[$depends];
+}
+
+sub _keyword_dependentSchemas {
+	my( $self, $depends) = @_;
+
+	my %depends = pairmap {
+		$a => $self->sub_schema($b, "#./dependentSchema/$a")
+	} %$depends;
+
+	DependentSchemas[\%depends];
 }
