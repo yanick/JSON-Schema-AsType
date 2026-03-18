@@ -146,6 +146,8 @@ sub _build_type {
 
 	$self->_set_type('');
 
+    local %JSON::Schema::AsType::CONTEXT = ();
+
 	if( JSON::is_bool($self->schema) ) {
 		return $self->schema ? Any : ~Any;
 	}

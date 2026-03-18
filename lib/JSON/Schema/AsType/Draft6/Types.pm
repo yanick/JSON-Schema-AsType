@@ -88,12 +88,13 @@ declare Contains,
         return sub {
             return 1 unless Array->check($_);
 
-            if( Boolean->check($type) ) {
-            }
-
-            return any { 
-                $type->check($_);
+            my @contains = map {
+                $type->check($_)
             } @$_;
+
+            $JSON::Schema::AsType::CONTEXT{contains} = \@contains;
+
+            return any {  $_ } @contains;
         }
     };
 

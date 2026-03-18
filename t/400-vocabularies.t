@@ -27,4 +27,6 @@ ok $schema->has_keyword('const'), 'has the method for const';
 
 ok !$schema->check('potato'), 'validation fails, as it should';
 
+print join "\n", $schema->all_keywords;
+
 done_testing;
