@@ -65,6 +65,7 @@ use Types::Standard qw/
 use Type::Library
     -base,
     -declare => qw(
+		DependentRequired
     );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -80,3 +81,19 @@ use JSON::Schema::AsType::Draft4::Types qw/
 
 #__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, Items, ExclusiveMaximum, ExclusiveMinimum;
 
+
+declare DependentRequired => 
+    constraint_generator => sub($depends) {
+		return sub {
+			# only for objects
+			return 1 unless ref eq 'HASH';
+
+			for my ($prop, $deps ) (%$depends)  {
+				next unless exists $_->{$prop};
+				for my $d (@$deps) {
+					return 0 unless exists $_->{$d};
+				}
+			}
+			return 1;
+		}
+    };

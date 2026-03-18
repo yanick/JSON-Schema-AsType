@@ -32,16 +32,18 @@ push $todo->{$_}{'const.json'}->@*,
   for 4, 6, 7, '2019-09';
 
 $todo->{'2019-09'}{$_.'.json'} = 1 for qw/
+
     unevaluatedItems 
     unevaluatedProperties
+    not
+
     vocabulary
     dependentSchemas
     recursiveRef
-    not
     refRemote
-    dependentRequired
     infinite-loop-detection
     ref
+	defs
   /;
 
 run_draft_test_suite($_)
