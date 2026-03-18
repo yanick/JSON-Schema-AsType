@@ -93,12 +93,6 @@ after _schema_trigger => sub ( $self, $schema, @ ) {
 	);
 };
 
-after _schema_trigger => sub ( $self, $schema, @ ) {
-	# if( ref $schema eq 'HASH' and $schema->{'$schema'} ) {
-	# 	$self->fetch($schema->{'$schema'});
-	# }
-};
-
 before _build_type => sub($self,@) {
     my @roles = grep { $_ } map { $self->vocabulary_role($_) } $self->vocabularies->@*;
 

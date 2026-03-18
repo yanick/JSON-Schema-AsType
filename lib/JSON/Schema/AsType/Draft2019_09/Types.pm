@@ -66,6 +66,7 @@ use Type::Library
     -base,
     -declare => qw(
 		DependentRequired
+		DependentSchemas
     );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -94,6 +95,22 @@ declare DependentRequired =>
 					return 0 unless exists $_->{$d};
 				}
 			}
+			return 1;
+		}
+    };
+
+declare DependentSchemas =>
+    constraint_generator => sub($depends) {
+
+		return sub {
+			# only for objects
+			return 1 unless ref eq 'HASH';
+
+			for my ($prop, $dep ) (%$depends)  {
+				next unless exists $_->{$prop};
+				return 0 unless $dep->check($_);
+			}
+
 			return 1;
 		}
     };

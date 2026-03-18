@@ -38,7 +38,6 @@ $todo->{'2019-09'}{$_.'.json'} = 1 for qw/
     not
 
     vocabulary
-    dependentSchemas
     recursiveRef
     refRemote
     infinite-loop-detection
