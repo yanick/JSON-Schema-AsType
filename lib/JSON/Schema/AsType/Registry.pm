@@ -66,7 +66,7 @@ sub registered_schema( $self, $uri ) {
 sub fetch {
     my ( $self, $url ) = @_;
 
-	$url = $self->resolve_uri( $url, $self->root_schema->uri );
+	$url = $self->resolve_uri( $url, $self->uri );
 
     # # is it one of the spec schemas?
     # if ( $url =~ qr[^https?://json-schema.org/draft-0?(\d+)/schema] ) {

@@ -115,17 +115,6 @@ sub validate_explain_schema {
     $self->metaschema->validate_explain( $self->schema );
 }
 
-sub root_schema {
-    my $self = shift;
-    eval { $self->parent_schema and $self->parent_schema->root_schema }
-      || $self;
-}
-
-sub is_root_schema {
-    my $self = shift;
-    return not $self->parent_schema;
-}
-
 sub sub_schema( $self, $subschema, $uri ) {
 
     $uri = $self->resolve_uri($uri) if $uri;
