@@ -31,19 +31,13 @@ use Moose;
 use MooseX::MungeHas 'is_ro';
 
 with 'JSON::Schema::AsType::Registry';
+with 'JSON::Schema::AsType::Type';
 
 no warnings 'uninitialized';
 
 our $strict_string = 1;
 
 our @DRAFT_VERSIONS = ( 3, 4, 6, 7, '2019-09' );
-
-has type => (
-    is      => 'rwp',
-    handles => [qw/ check validate validate_explain /],
-    builder => 1,
-    lazy    => 1
-);
 
 has draft => (
     is      => 'ro',
@@ -105,15 +99,6 @@ has uri => (
     }
 );
 
-sub validate_schema {
-    my $self = shift;
-    $self->metaschema->validate( $self->schema );
-}
-
-sub validate_explain_schema {
-    my $self = shift;
-    $self->metaschema->validate_explain( $self->schema );
-}
 
 sub sub_schema( $self, $subschema, $uri ) {
 
@@ -129,26 +114,8 @@ sub sub_schema( $self, $subschema, $uri ) {
 
 }
 
-sub _build_type {
-    my $self = shift;
-
-    $self->_set_type('');
-
-    local %JSON::Schema::AsType::CONTEXT = ();
-
-    if ( JSON::is_bool( $self->schema ) ) {
-        return $self->schema ? Any : ~Any;
-    }
-
-    # $ref trumps all
-    return $self->_process_keyword('$ref')
-      if $self->schema->{'$ref'};
-
-    my @types =
-      grep { $_ and $_->name ne 'Any' }
-      map { $self->_process_keyword($_) } $self->all_keywords;
-
-    return @types ? reduce { $a & $b } @types : Any;
+sub all_active_keywords($self) {
+    return grep { exists $self->schema->{$_} } $self->all_keywords;
 }
 
 sub all_keywords {
@@ -166,8 +133,6 @@ sub has_keyword( $self, $keyword ) {
 
 sub _process_keyword {
     my ( $self, $keyword ) = @_;
-
-    return unless exists $self->schema->{$keyword};
 
     my $value = $self->schema->{$keyword};
 
