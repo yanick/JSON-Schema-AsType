@@ -187,13 +187,6 @@ sub _process_keyword {
     $self->$method($value);
 }
 
-# returns the first defined parent uri
-sub ancestor_uri {
-    my $self = shift;
-
-    return $self->uri || eval { $self->parent_schema->ancestor_uri };
-}
-
 sub resolve_reference {
     my ( $self, $ref ) = @_;
 
