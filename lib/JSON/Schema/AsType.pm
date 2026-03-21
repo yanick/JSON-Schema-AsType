@@ -42,9 +42,9 @@ our @DRAFT_VERSIONS = ( 3, 4, 6, 7, '2019-09' );
 has draft => (
     is      => 'ro',
     lazy    => 1,
-    default => sub {
-        eval { $_[0]->parent_schema && $_[0]->parent_schema->draft }
-          || $DRAFT_VERSIONS[-1];
+    default => sub($self) {
+        return $self->parent_schema->draft if $self->parent_schema;
+        return $DRAFT_VERSIONS[-1];
     },
     isa => enum( \@DRAFT_VERSIONS ),
 );
