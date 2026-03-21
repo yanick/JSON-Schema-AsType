@@ -208,16 +208,6 @@ sub _escape_ref {
     $ref;
 }
 
-sub _add_to_type {
-    my ( $self, $t ) = @_;
-
-    if ( my $already = $self->type ) {
-        $t = $already & $t;
-    }
-
-    $self->_set_type($t);
-}
-
 sub BUILD {
     my $self = shift;
 
