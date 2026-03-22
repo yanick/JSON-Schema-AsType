@@ -10,6 +10,8 @@ use JSON;
 # use Data::Visitor::Tiny;
 use JSON::Schema::AsType::Visit;
 
+use List::Util qw/ uniq /;
+
 use Moose;
 
 extends qw/ JSON::Schema::AsType /;
@@ -32,6 +34,15 @@ has '+uri' => default => sub($self) {
 	my $id = $self->_has_id($self->schema) // 'http://254.0.0.1:'.$_uri_port++;
 	$self->clear_parent_schema;
 	return $id;
+};
+
+override all_keywords => sub {
+	my $self = shift;
+
+	# $ref trumps all
+	return '$ref' if $self->schema->{'$ref'};
+
+	return uniq 'id', super();
 };
 
 sub _schema_trigger($self,$schema,@) {

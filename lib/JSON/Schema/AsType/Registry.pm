@@ -22,7 +22,6 @@ has registry => (
     default => sub { +{} },
     traits  => ['Hash'],
     handles => {
-        all_schema_uris => 'keys',
         register_schema => 'set',
     },
 );
@@ -31,6 +30,10 @@ has fetch_remote => (
 	is => 'ro',
 	default => 1,
 );
+
+sub all_schema_uris($self) {
+    return sort keys $self->registry->%*;
+}
 
 around register_schema => sub {
 

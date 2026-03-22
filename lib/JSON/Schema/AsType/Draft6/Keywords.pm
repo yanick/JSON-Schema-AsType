@@ -30,15 +30,6 @@ use JSON::Schema::AsType::Draft6::Types '-all';
 
 with 'JSON::Schema::AsType::Draft4::Keywords';
 
-override all_keywords => sub {
-    my $self = shift;
-    
-    # $ref trumps all
-    return '$ref' if $self->schema->{'$ref'};
-
-    return uniq '$id', super();
-};
-
 override _build_type => sub {
     my $self = shift;
 

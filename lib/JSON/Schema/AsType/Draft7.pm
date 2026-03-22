@@ -7,6 +7,7 @@ use feature ':5.42';
 use JSON::Schema::AsType::Visit;
 
 use JSON;
+use List::Util qw/ uniq /;
 
 use Moose;
 
@@ -31,6 +32,15 @@ has '+metaschema' => (
 		_metaschema()
 	}
 );
+
+override all_keywords => sub {
+	my $self = shift;
+
+	# $ref trumps all
+	return '$ref' if $self->schema->{'$ref'};
+
+	return uniq 'id', super();
+};
 
 around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
 

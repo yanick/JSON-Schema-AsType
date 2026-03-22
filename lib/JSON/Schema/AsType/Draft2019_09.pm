@@ -18,10 +18,21 @@ extends qw/ JSON::Schema::AsType /;
 use feature qw/ signatures /;
 
 my $_uri_port = 1;
-has '+uri' => default => sub($self) {
-    my $id =
-      eval { $self->schema->{'$id'} } // 'http://254.0.0.1:' . $_uri_port++;
-    $self->clear_parent_schema;
+has '+uri' => 
+    lazy => 1,
+    default => sub($self) {
+
+    my $id = $self->_has_id($self->schema);
+
+    unless($id) {
+        do {
+            $id = 'http://254.0.0.1:' . $_uri_port++;
+        } while $self->registered_schema($id);
+    }
+
+    # TODO not required?
+    #$self->clear_parent_schema;
+    
     return $id;
 };
 
@@ -93,12 +104,10 @@ after _schema_trigger => sub ( $self, $schema, @ ) {
 	);
 };
 
-before _build_type => sub($self,@) {
+sub _after_build($self) {
     my @roles = grep { $_ } map { $self->vocabulary_role($_) } $self->vocabularies->@*;
 
-    return unless @roles;
-
-    ensure_all_roles( $self, @roles); 
+    ensure_all_roles( $self, @roles) if @roles; 
 };
 
 around sub_schema => sub ( $orig, $self, $subschema, $uri ) {

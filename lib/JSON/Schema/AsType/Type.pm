@@ -18,6 +18,26 @@ has type => (
     lazy    => 1
 );
 
+=pod
+$JSON::Schema::AsType::Type::INDENT = 0;
+around check => sub($orig,$self,$value) {
+
+    use DDP;
+    say "\t" x $JSON::Schema::AsType::Type::INDENT, "checking ", $self->uri;
+    say "\t" x $JSON::Schema::AsType::Type::INDENT, $self->type->display_name;
+    say "\t" x $JSON::Schema::AsType::Type::INDENT, "value ", np $value;
+
+    local $JSON::Schema::AsType::Type::INDENT = $JSON::Schema::AsType::Type::INDENT + 1;
+    my $verdict = $orig->($self,$value);
+
+
+    say "\t" x --$JSON::Schema::AsType::Type::INDENT, "verdict: $verdict";
+
+    return $verdict;
+
+};
+=cut
+
 sub validate_schema {
     my $self = shift;
     $self->metaschema->validate( $self->schema );

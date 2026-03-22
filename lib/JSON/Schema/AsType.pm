@@ -95,7 +95,6 @@ has uri => (
     trigger => sub {
         my ( $self, $uri ) = @_;
         return if $uri->fragment;
-        $self->clear_parent_schema;
     }
 );
 
@@ -184,6 +183,8 @@ sub BUILD {
 
     # TODO move the role into a trait, which should take care of this
     $self->_schema_trigger( $self->schema ) if $self->has_schema;
+
+    $self->_after_build if $self->can('_after_build');
 
 }
 

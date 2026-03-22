@@ -32,14 +32,6 @@ use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types '-all';
 
-override all_keywords => sub {
-	my $self = shift;
-
-	# $ref trumps all
-	return '$ref' if $self->schema->{'$ref'};
-
-	return uniq 'id', super();
-};
 
 __PACKAGE__->meta->add_method(
 	'_keyword_$ref' => sub {
@@ -54,9 +46,8 @@ __PACKAGE__->meta->add_method(
 				local $::DEEP = ( $::DEEP // 0 ) + 1;
 				die if $::DEEP > 10;
 				my $v = $_;
-				use JSON::Schema::AsType::Debug;
-				debug( 'in ref for %s', $ref );
-				$schema //= $self->resolve_reference($ref);
+				$schema = $self->resolve_reference($ref);
+                $schema = $self->sub_schema($schema->schema,$schema->uri);
 
 				my $result = $schema->check($v) || 0;
 

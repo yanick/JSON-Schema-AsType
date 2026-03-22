@@ -10,6 +10,7 @@ use Moose;
 use feature ':5.42';
 
 use JSON::Schema::AsType::Visit;
+use List::Util qw/ uniq /;
 
 extends qw/ JSON::Schema::AsType /;
 
@@ -31,6 +32,15 @@ has '+metaschema' => (
 		_metaschema();
 	}
 );
+
+override all_keywords => sub {
+	my $self = shift;
+
+	# $ref trumps all
+	return '$ref' if $self->schema->{'$ref'};
+
+	return uniq 'id', super();
+};
 
 sub _has_id ($self,$schema = {} ) {
 	return unless ref $schema eq 'HASH';
