@@ -4,7 +4,7 @@ use JSON::Schema::AsType;
 use JSON;
 
 subtest '1' => sub {
-    pass; return;
+
 my $schema = JSON::Schema::AsType->new(
     draft  => '2019-09',
     schema => {
@@ -68,7 +68,7 @@ my $schema = JSON::Schema::AsType->new(
 
 is $schema->uri => 'https://example.com/recursiveRef8_main.json';
 
-is [ $schema->all_schema_uris ] => [
+is [ grep { !/json-schema/ } $schema->all_schema_uris ] => [
       "https://example.com/recursiveRef8_anyLeafNode.json",
       "https://example.com/recursiveRef8_inner.json",
       "https://example.com/recursiveRef8_integerNode.json",
@@ -81,8 +81,8 @@ my $else = $schema->fetch('https://example.com/recursiveRef8_main.json#/else');
 
 ok scalar @{[$else->all_active_keywords]}, "else has active keywords";
 
-# ok !$schema->fetch('https://example.com/recursiveRef8_main.json#/else')->check(JSON::true), "booleans are not allowed, directly for the else";
-#ok !$schema->fetch('https://example.com/recursiveRef8_main.json#/else')->check(1.1), "floats are not allowed, directly for the else";
+ ok !$schema->fetch('https://example.com/recursiveRef8_main.json#/else')->check(JSON::true), "booleans are not allowed, directly for the else";
+ok !$schema->fetch('https://example.com/recursiveRef8_main.json#/else')->check(1.1), "floats are not allowed, directly for the else";
 
 ok ! $schema->check({ november => 1.1 }), "floats are not allowed";
 };

@@ -45,7 +45,12 @@ has is_own_metaschema => (
 
 has '+metaschema' => (
     default => sub($self) {
-        $self->is_own_metaschema ? $self : _metaschema();
+        return $self if $self->is_own_metaschema;
+        my $meta = _metaschema();
+        for ( $meta->all_schema_uris ) {
+            $self->register_schema( $_ => $meta->registered_schema($_) );
+        }
+        return $meta;
     }
 );
 

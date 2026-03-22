@@ -39,7 +39,6 @@ $todo->{'2019-09'}{$_.'.json'} = 1 for qw/
 
     vocabulary
     infinite-loop-detection
-    ref
     defs
   /;
 

@@ -46,6 +46,9 @@ __PACKAGE__->meta->add_method(
 				local $::DEEP = ( $::DEEP // 0 ) + 1;
 				die if $::DEEP > 10;
 				my $v = $_;
+
+                $DB::single = 1;
+
 				$schema = $self->resolve_reference($ref);
                 $schema = $self->sub_schema($schema->schema,$schema->uri);
 
