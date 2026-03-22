@@ -115,6 +115,7 @@ around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
     # ah AH, resolve the subschema id
     if ( my $id = $self->_has_id($subschema) ) {
         $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
+        $subschema->{'$id'} = "".$uri; # TODO sane?
     }
     $orig->( $self, $subschema, $uri );
 };
@@ -137,7 +138,9 @@ sub _schema_trigger( $self, $schema, @ ) {
 
 sub _has_id ( $self, $schema = {} ) {
     return unless ref $schema eq 'HASH';
-    return $schema->{'$id'};
+    my $id = $schema->{'$id'};
+    return if ref $id; # not a real $id
+    return $id;
 }
 
 sub _metaschema {
