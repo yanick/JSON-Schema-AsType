@@ -1,5 +1,6 @@
 package JSON::Schema::AsType::Draft2019_09::Vocabulary::Validation;
-# ABSTRACT: Role processing draft7 JSON Schema 
+
+# ABSTRACT: Role processing draft7 JSON Schema
 
 =head1 DESCRIPTION
 
@@ -11,20 +12,19 @@ by L<JSON::Schema::AsType> objects.
 use 5.42.0;
 use warnings;
 
-use feature qw/ module_true /;
+use feature         qw/ module_true /;
 use Types::Standard qw/Any/;
-use List::Util qw/ pairmap /;
+use List::Util      qw/ pairmap /;
 
 use Moose::Role;
 
-use JSON::Schema::AsType::Draft2019_09::Types qw/ 
-	DependentRequired 
-	DependentSchemas
-/;
+use JSON::Schema::AsType::Draft2019_09::Types qw/
+  DependentRequired
+  DependentSchemas
+  UnevaluatedProperties
+  /;
 
-with 'JSON::Schema::AsType::Draft7::Keywords' => {
-	-exclude => [ ]
-};
+with 'JSON::Schema::AsType::Draft7::Keywords' => { -exclude => [] };
 
 __PACKAGE__->meta->add_method(
 	'_keyword_$recursiveRef' => sub {
@@ -39,52 +39,64 @@ __PACKAGE__->meta->add_method(
 
 				my $v = $_;
 
-                my $anchor;
+				my $anchor;
 				my $parent = $self;
 
-                my $first_id;
+				my $first_id;
 
-				while($parent = $parent->parent_schema ) {
-                    # warn "===> ".$parent->uri, "\n";
-                    # warn "anchor: ", $anchor && $anchor->uri, "\n";
-                    # warn "first ", $first_id && $first_id->uri, "\n";
-                    if( $parent->schema->{'$id'} and !$parent->schema->{'$recursiveAnchor'} and not $first_id ) {
-                        $first_id = $parent;
-                        last;
-                    }
-                    $anchor = $parent if $parent->schema->{'$recursiveAnchor'};
+				while ( $parent = $parent->parent_schema ) {
+
+					# warn "===> ".$parent->uri, "\n";
+					# warn "anchor: ", $anchor && $anchor->uri, "\n";
+					# warn "first ", $first_id && $first_id->uri, "\n";
+					if (    $parent->schema->{'$id'}
+						and !$parent->schema->{'$recursiveAnchor'}
+						and not $first_id )
+					{
+						$first_id = $parent;
+						last;
+					}
+					$anchor = $parent if $parent->schema->{'$recursiveAnchor'};
 				}
 
-                    # warn "anchor: ", $anchor && $anchor->uri, "\n";
-                    # warn "first ", $first_id && $first_id->uri, "\n";
+				# warn "anchor: ", $anchor && $anchor->uri, "\n";
+				# warn "first ", $first_id && $first_id->uri, "\n";
 
-                if(!$anchor) {
-                    if($first_id) {
-                        return $first_id->check($v);
-                    }
-                    my $method = '_keyword_$ref';
-                    return $self->$method($ref)->check($v);
-                }
+				if ( !$anchor ) {
+					if ($first_id) {
+						return $first_id->check($v);
+					}
+					my $method = '_keyword_$ref';
+					return $self->$method($ref)->check($v);
+				}
 
-                # use DDP; p $anchor->schema;
-                # warn "checking for $v\n";
-                return $anchor->check($v);
+				# use DDP; p $anchor->schema;
+				# warn "checking for $v\n";
+				return $anchor->check($v);
 			},
 		);
 	}
 );
-sub _keyword_dependentRequired {
-	my( $self, $depends) = @_;
 
-	DependentRequired[$depends];
+sub _keyword_dependentRequired {
+	my ( $self, $depends ) = @_;
+
+	DependentRequired [$depends];
 }
 
 sub _keyword_dependentSchemas {
-	my( $self, $depends) = @_;
+	my ( $self, $depends ) = @_;
 
-	my %depends = pairmap {
-		$a => $self->sub_schema($b, "#./dependentSchema/$a")
-	} %$depends;
+	my %depends =
+	  pairmap { $a => $self->sub_schema( $b, "#./dependentSchema/$a" ) }
+	  %$depends;
 
-	DependentSchemas[\%depends];
+	DependentSchemas [ \%depends ];
+}
+
+sub _keyword_unevaluatedProperties( $self, $subschema ) {
+	my $schema = $self->sub_schema( $subschema, '#./unevaluatedProperties' );
+
+	return UnevaluatedProperties [ $schema->type ];
+
 }

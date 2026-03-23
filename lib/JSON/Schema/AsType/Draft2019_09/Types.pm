@@ -67,9 +67,10 @@ use Type::Library
     -declare => qw(
 		DependentRequired
 		DependentSchemas
+		UnevaluatedProperties
     );
 
-use List::MoreUtils qw/ all any zip none /;
+use List::MoreUtils qw/ zip none any all /;
 use List::Util qw/ pairs pairmap reduce uniq /;
 
 use JSON::Schema::AsType;
@@ -114,3 +115,13 @@ declare DependentSchemas =>
 			return 1;
 		}
     };
+
+declare UnevaluatedProperties => 
+	constraint_generator => sub($type) {
+		return sub {
+			# only for objects 
+			return 1 unless ref eq 'HASH';
+
+			return all { $type->check($_) } values %$_;
+		}
+	}
