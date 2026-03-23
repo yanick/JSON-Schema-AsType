@@ -190,7 +190,7 @@ sub _keyword_allOf {
 	my ( $self, $options ) = @_;
 
 	my $i = 0;
-	AllOf [ map { $self->sub_schema( $_, "#./allOf/" . $i++ )->type }
+	AllOf [ map { $self->sub_schema( $_, "#./allOf/" . $i++, 0 )->type }
 		  @$options ];
 }
 

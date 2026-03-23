@@ -136,7 +136,8 @@ declare AdditionalProperties,
 			none { ref $_ ? $key =~ $_ : $key eq $_ } @$known_properties
 		} keys %$_;
 
-		$JSON::Schema::AsType::SCOPE{additionalProperties} = \@add_keys;
+		push $JSON::Schema::AsType::SCOPE{additionalProperties}->@*, 
+			@add_keys;
 
 		if ( eval { $type_or_boolean->can('check') } ) {
 			my $obj = $_;
@@ -203,7 +204,7 @@ declare PatternProperties, constraint_generator => sub {
 			push @keys, grep { /$key/ } keys %$obj;
 		}
 
-		$JSON::Schema::AsType::SCOPE{patternProperties} = \@keys;
+		push $JSON::Schema::AsType::SCOPE{patternProperties}->@*, @keys;
 
 		for my $key ( keys %props ) {
 			return unless all { $props{$key}->check( $obj->{$_} ) } grep { /$key/ } keys %$_;
@@ -223,10 +224,8 @@ declare Properties, constraint_generator => sub {
 	sub {
 		return 1 unless Object->check($_);
 		my $t = $_;
-		$JSON::Schema::AsType::SCOPE{properties} = [
-			grep { exists $t->{$_} }
-			keys %types
-		];
+		push $JSON::Schema::AsType::SCOPE{properties}->@*, 
+			grep { exists $t->{$_} } keys %types;
 		return $type->check($t);
 	}
 };

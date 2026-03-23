@@ -80,7 +80,8 @@ sub vocabulary_role($self,$url) {
 }
 
 around _build_type => sub($orig,$self)  {
-	return Scope[ $orig->($self) ];
+	my $type = $orig->($self);
+	return $self->scoped ? Scope[$type]:$type;
 };
 
 # in D2019_09::Core ?
@@ -116,14 +117,14 @@ sub _after_build($self) {
     ensure_all_roles( $self, @roles) if @roles; 
 };
 
-around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
+around sub_schema => sub ( $orig, $self, $subschema, $uri, $scoped = 1 ) {
 
     # ah AH, resolve the subschema id
     if ( my $id = $self->_has_id($subschema) ) {
         $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
         $subschema->{'$id'} = "".$uri; # TODO sane?
     }
-    $orig->( $self, $subschema, $uri );
+    $orig->( $self, $subschema, $uri, $scoped );
 };
 
 override all_keywords => sub($self) {
@@ -131,7 +132,8 @@ override all_keywords => sub($self) {
 	# the ones for which the order is important are first, 
 	# and filtered out later by the 'uniq'
     return uniq '$id',
-		qw/ properties patternProperties additionalProperties unevaluatedProperties /,
+		qw/ properties patternProperties additionalProperties 
+			allOf unevaluatedProperties /,
 		sort map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 };
 
