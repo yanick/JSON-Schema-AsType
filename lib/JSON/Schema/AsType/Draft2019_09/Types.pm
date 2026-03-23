@@ -149,10 +149,13 @@ declare UnevaluatedProperties =>
 			if( my $p = $JSON::Schema::AsType::SCOPE{additionalProperties} ) {
 				$keys{$_} = 1 for @$p;
 			}
+			if( my $p = $JSON::Schema::AsType::SCOPE{unevaluatedProperties} ) {
+				$keys{$_} = 1 for @$p;
+			}
 
-			return all { $type->check($_) } 
-				map { $target->{$_} }
-				grep { !$keys{$_} }
-				keys %$target;
+			my @keys  = grep { !$keys{$_} } keys %$target;
+			push $JSON::Schema::AsType::SCOPE{unevaluatedProperties}->@*, @keys;
+
+			return all { $type->check($_) } map { $target->{$_} } @keys;
 		}
 	}
