@@ -130,18 +130,20 @@ declare AdditionalProperties,
 
 	sub {
 		return 1 unless Object->check($_);
+
 		my @add_keys = grep {
 			my $key = $_;
 			none { ref $_ ? $key =~ $_ : $key eq $_ } @$known_properties
 		} keys %$_;
 
+		$JSON::Schema::AsType::SCOPE{additionalProperties} = \@add_keys;
+
 		if ( eval { $type_or_boolean->can('check') } ) {
 			my $obj = $_;
 			return all { $type_or_boolean->check( $obj->{$_} ) } @add_keys;
 		}
-		else {
-			return not( @add_keys and not $type_or_boolean );
-		}
+
+		return not( @add_keys and not $type_or_boolean );
 	}
   };
 

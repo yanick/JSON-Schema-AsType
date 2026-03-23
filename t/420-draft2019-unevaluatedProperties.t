@@ -49,5 +49,18 @@ subtest 'unevaluatedProperties with adjacent patternProperties' => sub {
 	ok $schema->check( { foo => 'foo' } ), 'nothing unevaluated';
 };
 
+subtest 'unevaluatedProperties with adjacent additionalProperties' => sub {
+	my $schema = JSON::Schema::AsType->new(
+		draft  => '2019-09',
+		schema => {
+			'unevaluatedProperties' => JSON::false,
+			additionalProperties => JSON::true,
+			'type' => 'object',
+		}
+	);
+
+	ok $schema->check( { foo => 'foo' } ), 'nothing unevaluated';
+};
+
 
 done_testing;

@@ -146,6 +146,9 @@ declare UnevaluatedProperties =>
 			if( my $p = $JSON::Schema::AsType::SCOPE{patternProperties} ) {
 				$keys{$_} = 1 for @$p;
 			}
+			if( my $p = $JSON::Schema::AsType::SCOPE{additionalProperties} ) {
+				$keys{$_} = 1 for @$p;
+			}
 
 			return all { $type->check($_) } 
 				map { $target->{$_} }

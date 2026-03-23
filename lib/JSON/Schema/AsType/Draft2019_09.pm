@@ -130,9 +130,8 @@ override all_keywords => sub($self) {
 
 	# the ones for which the order is important are first, 
 	# and filtered out later by the 'uniq'
-    return uniq 
-		'$id', 
-		'properties', 'patternProperties', 'unevaluatedProperties',
+    return uniq '$id',
+		qw/ properties patternProperties additionalProperties unevaluatedProperties /,
 		sort map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 };
 
