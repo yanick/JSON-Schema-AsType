@@ -206,15 +206,20 @@ declare PatternProperties, constraint_generator => sub {
 	}
 };
 declare Properties, constraint_generator => sub {
-	my @types = @_;
+	my %types = @_;
 
-	@types = pairmap { $a => Optional [$b] } @types;
+	%types = pairmap { $a => Optional [$b] } %types;
 
-	my $type = Dict [ @types, slurpy Any ];
+	my $type = Dict [ %types, slurpy Any ];
 
 	sub {
 		return 1 unless Object->check($_);
-		return $type->check($_);
+		my $t = $_;
+		$JSON::Schema::AsType::SCOPE{properties} = [
+			grep { exists $t->{$_} }
+			keys %types
+		];
+		return $type->check($t);
 	}
 };
 

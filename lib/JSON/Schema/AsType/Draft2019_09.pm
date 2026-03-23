@@ -5,9 +5,11 @@ use warnings;
 
 use feature ':5.42', 'try';
 use JSON::Schema::AsType::Visit;
-use List::Util qw/ pairmap /;
+use List::Util qw/ pairmap uniq /;
 use Moose::Util qw/ ensure_all_roles /;
 use Module::Runtime qw/ use_module /;
+
+use JSON::Schema::AsType::Draft2019_09::Types qw/ Scope /;
 
 use JSON;
 
@@ -77,6 +79,10 @@ sub vocabulary_role($self,$url) {
     $VOCABULARY{$url}
 }
 
+around _build_type => sub($orig,$self)  {
+	return Scope[ $orig->($self) ];
+};
+
 # in D2019_09::Core ?
 after _schema_trigger => sub ( $self, $schema, @ ) {
 	JSON::Schema::AsType::Visit::visit(
@@ -118,6 +124,14 @@ around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
         $subschema->{'$id'} = "".$uri; # TODO sane?
     }
     $orig->( $self, $subschema, $uri );
+};
+
+override all_keywords => sub($self) {
+
+	# the ones for which the order is important are first, 
+	# and filtered out later by the 'uniq'
+    return uniq '$id', 'properties', 'unevaluatedProperties',
+		sort map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 };
 
 sub _schema_trigger( $self, $schema, @ ) {

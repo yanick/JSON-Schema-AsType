@@ -67,6 +67,7 @@ use Type::Library
     -declare => qw(
 		DependentRequired
 		DependentSchemas
+		Scope
 		UnevaluatedProperties
     );
 
@@ -116,12 +117,36 @@ declare DependentSchemas =>
 		}
     };
 
+declare Scope => 
+	constraint_generator => sub($type) {
+		return sub {
+			local %JSON::Schema::AsType::SCOPE = ();
+
+			return  $type->check($_);
+		}
+	};
+
 declare UnevaluatedProperties => 
 	constraint_generator => sub($type) {
+
 		return sub {
 			# only for objects 
 			return 1 unless ref eq 'HASH';
 
-			return all { $type->check($_) } values %$_;
+			use DDP;
+			p %JSON::Schema::AsType::SCOPE;
+
+			my $target = $_;
+
+			my %keys;
+
+			if( my $p = $JSON::Schema::AsType::SCOPE{properties} ) {
+				$keys{$_} = 1 for @$p;
+			}
+
+			return all { $type->check($_) } 
+				map { $target->{$_} }
+				grep { !$keys{$_} }
+				keys %$target;
 		}
 	}
