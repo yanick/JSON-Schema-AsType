@@ -62,5 +62,23 @@ subtest 'unevaluatedProperties with adjacent additionalProperties' => sub {
 	ok $schema->check( { foo => 'foo' } ), 'nothing unevaluated';
 };
 
+subtest 'allOf keeps the scope' => sub {
+	my $schema = JSON::Schema::AsType->new(
+		draft  => '2019-09',
+		schema => {
+			properties => { foo => { type => 'string' } },
+			unevaluatedProperties => JSON::false,
+			type => 'object',
+			allOf => [
+				{ properties => { bar => { type => 'string' } } }
+			]
+		}
+	);
+	
+	note $schema->type->display_name;
+
+	ok $schema->check( { foo => 'foo', bar => 'bar' } ), 'nothing unevaluated';
+};
+
 
 done_testing;
