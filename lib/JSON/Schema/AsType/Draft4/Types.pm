@@ -195,10 +195,16 @@ declare PatternProperties, constraint_generator => sub {
 		return 1 unless Object->check($_);
 
 		my $obj = $_;
+
+		my @keys;
 		for my $key ( keys %props ) {
-			return
-			  unless all { $props{$key}->check( $obj->{$_} ) }
-			  grep { /$key/ } keys %$_;
+			push @keys, grep { /$key/ } keys %$obj;
+		}
+
+		$JSON::Schema::AsType::SCOPE{patternProperties} = \@keys;
+
+		for my $key ( keys %props ) {
+			return unless all { $props{$key}->check( $obj->{$_} ) } grep { /$key/ } keys %$_;
 		}
 
 		return 1;
