@@ -5,7 +5,7 @@ use warnings;
 
 use feature ':5.42', 'try';
 use JSON::Schema::AsType::Visit;
-use List::Util qw/ pairmap /;
+use List::Util qw/ pairmap uniq /;
 use Moose::Util qw/ ensure_all_roles /;
 use Module::Runtime qw/ use_module /;
 
@@ -110,14 +110,24 @@ sub _after_build($self) {
     ensure_all_roles( $self, @roles) if @roles; 
 };
 
-around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
+around sub_schema => sub ( $orig, $self, $subschema, $uri, $scoped = 1 ) {
 
     # ah AH, resolve the subschema id
     if ( my $id = $self->_has_id($subschema) ) {
         $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
         $subschema->{'$id'} = "".$uri; # TODO sane?
     }
-    $orig->( $self, $subschema, $uri );
+    $orig->( $self, $subschema, $uri, $scoped );
+};
+
+override all_keywords => sub($self) {
+
+	# the ones for which the order is important are first, 
+	# and filtered out later by the 'uniq'
+    return uniq '$id', '$ref', '$recursiveRef',
+		qw/ properties patternProperties additionalProperties 
+			allOf anyOf oneOf if dependentSchemas unevaluatedProperties /,
+		sort map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 };
 
 sub _schema_trigger( $self, $schema, @ ) {

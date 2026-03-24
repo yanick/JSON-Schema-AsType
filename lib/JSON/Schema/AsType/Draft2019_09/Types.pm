@@ -67,9 +67,10 @@ use Type::Library
     -declare => qw(
 		DependentRequired
 		DependentSchemas
+		UnevaluatedProperties
     );
 
-use List::MoreUtils qw/ all any zip none /;
+use List::MoreUtils qw/ zip none any all /;
 use List::Util qw/ pairs pairmap reduce uniq /;
 
 use JSON::Schema::AsType;
@@ -114,3 +115,37 @@ declare DependentSchemas =>
 			return 1;
 		}
     };
+
+declare UnevaluatedProperties => 
+	constraint_generator => sub($type) {
+
+		return sub {
+			# only for objects 
+			return 1 unless ref eq 'HASH';
+
+			use DDP;
+			p %JSON::Schema::AsType::SCOPE;
+
+			my $target = $_;
+
+			my %keys;
+
+			if( my $p = $JSON::Schema::AsType::SCOPE{properties} ) {
+				$keys{$_} = 1 for @$p;
+			}
+			if( my $p = $JSON::Schema::AsType::SCOPE{patternProperties} ) {
+				$keys{$_} = 1 for @$p;
+			}
+			if( my $p = $JSON::Schema::AsType::SCOPE{additionalProperties} ) {
+				$keys{$_} = 1 for @$p;
+			}
+			if( my $p = $JSON::Schema::AsType::SCOPE{unevaluatedProperties} ) {
+				$keys{$_} = 1 for @$p;
+			}
+
+			my @keys  = grep { !$keys{$_} } keys %$target;
+			push $JSON::Schema::AsType::SCOPE{unevaluatedProperties}->@*, @keys;
+
+			return all { $type->check($_) } map { $target->{$_} } @keys;
+		}
+	}

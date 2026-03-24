@@ -55,6 +55,7 @@ use warnings;
 use Test::Deep::NoTest qw/ eq_deeply /;
 
 use Math::BigFloat;
+use Hash::Merge qw/ merge /;
 use Type::Utils -all;
 use Types::Standard qw/
   Str StrictNum HashRef ArrayRef
@@ -130,24 +131,26 @@ declare AdditionalProperties,
 
 	sub {
 		return 1 unless Object->check($_);
+
 		my @add_keys = grep {
 			my $key = $_;
 			none { ref $_ ? $key =~ $_ : $key eq $_ } @$known_properties
 		} keys %$_;
 
+		push $JSON::Schema::AsType::SCOPE{additionalProperties}->@*, @add_keys;
+
 		if ( eval { $type_or_boolean->can('check') } ) {
 			my $obj = $_;
 			return all { $type_or_boolean->check( $obj->{$_} ) } @add_keys;
 		}
-		else {
-			return not( @add_keys and not $type_or_boolean );
-		}
+
+		return not( @add_keys and not $type_or_boolean );
 	}
   };
 
 declare UniqueItems, where {
 	return 1 unless Array->check($_);
-	@$_ == uniq map { to_json $_, { allow_nonref => 1 , canonical => 1 } } @$_
+	@$_ == uniq map { to_json $_, { allow_nonref => 1, canonical => 1 } } @$_
 };
 
 my $json = JSON->new->allow_nonref->canonical;
@@ -157,10 +160,9 @@ declare Enum, constraint_generator => sub {
 
 	sub {
 		my $j = $_;
+
 		# TODO horrible corner case for the test suite, worth it?
-		any { 
-			eq_deeply( $_, $j ) 
-		} @items;
+		any { eq_deeply( $_, $j ) } @items;
 	}
 };
 
@@ -195,6 +197,14 @@ declare PatternProperties, constraint_generator => sub {
 		return 1 unless Object->check($_);
 
 		my $obj = $_;
+
+		my @keys;
+		for my $key ( keys %props ) {
+			push @keys, grep { /$key/ } keys %$obj;
+		}
+
+		push $JSON::Schema::AsType::SCOPE{patternProperties}->@*, @keys;
+
 		for my $key ( keys %props ) {
 			return
 			  unless all { $props{$key}->check( $obj->{$_} ) }
@@ -206,15 +216,22 @@ declare PatternProperties, constraint_generator => sub {
 	}
 };
 declare Properties, constraint_generator => sub {
-	my @types = @_;
+	my %types = @_;
 
-	@types = pairmap { $a => Optional [$b] } @types;
-
-	my $type = Dict [ @types, slurpy Any ];
+	%types = pairmap { $a => Optional[$b] } %types;
 
 	sub {
 		return 1 unless Object->check($_);
-		return $type->check($_);
+
+		my $t = $_;
+
+		$DB::single = 1;
+		for my $type ( grep { exists $t->{$_} } keys %types ) {
+			return 0 unless $types{$type}->check($t->{$type});
+			push $JSON::Schema::AsType::SCOPE{properties}->@*, $type;
+		}
+
+		return 1;
 	}
 };
 
@@ -285,24 +302,77 @@ declare MinLength, constraint_generator => sub {
 declare AllOf, constraint_generator => sub {
 	my @types = @_;
 	sub {
-		my $v = $_;
-		all { $_->check($v) } @types;
+		my $value = $_;
+
+		my $matched = 1;
+		my %scope;
+
+		for my $type (@types) {
+			local %JSON::Schema::AsType::SCOPE;
+
+			return 0 unless $type->check($value);
+
+			%scope = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
+		}
+
+		%JSON::Schema::AsType::SCOPE =
+			  merge( \%JSON::Schema::AsType::SCOPE, \%scope )->%*;
+
+		return 1;
 	}
 };
 
 declare AnyOf, constraint_generator => sub {
 	my @types = @_;
 	sub {
-		my $v = $_;
-		any { $_->check($v) } @types;
+		my $value = $_;
+
+		my $matched = 0;
+		my %scope;
+
+		for my $type (@types) {
+			local %JSON::Schema::AsType::SCOPE;
+
+			next unless $type->check($value);
+
+			%scope = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
+			$matched = 1;
+		}
+
+		if ($matched) {
+			%JSON::Schema::AsType::SCOPE =
+			  merge( \%JSON::Schema::AsType::SCOPE, \%scope )->%*;
+		}
+
+		return $matched;
 	}
 };
 
 declare OneOf, constraint_generator => sub {
 	my @types = @_;
 	sub {
-		my $v = $_;
-		1 == grep { $_->check($v) } @types;
+		my $value = $_;
+
+		my $matched = 0;
+		my %scope;
+
+		for my $type (@types) {
+			local %JSON::Schema::AsType::SCOPE;
+
+			next unless $type->check($value);
+
+			return 0 if $matched;
+
+			%scope = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
+			$matched = 1;
+		}
+
+		if ($matched) {
+			%JSON::Schema::AsType::SCOPE =
+			  merge( \%JSON::Schema::AsType::SCOPE, \%scope )->%*;
+		}
+
+		return $matched;
 	}
 };
 

@@ -30,6 +30,7 @@ use Type::Utils qw( class_type );
 use Moose;
 use MooseX::MungeHas 'is_ro';
 
+
 with 'JSON::Schema::AsType::Registry';
 with 'JSON::Schema::AsType::Type';
 
@@ -98,8 +99,13 @@ has uri => (
     }
 );
 
+# for 2019-09 and up
+has scoped => (
+	is => 'ro',
+	default => 1,
+);
 
-sub sub_schema( $self, $subschema, $uri ) {
+sub sub_schema( $self, $subschema, $uri, $scoped = 1 ) {
 
     $uri = $self->resolve_uri($uri) if $uri;
 
@@ -108,6 +114,7 @@ sub sub_schema( $self, $subschema, $uri ) {
         schema        => $subschema,
         parent_schema => $self,
         registry      => $self->registry,
+		scoped 		  => $scoped,
         maybe uri     => $uri
     );
 

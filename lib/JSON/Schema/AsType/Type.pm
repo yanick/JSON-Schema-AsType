@@ -18,6 +18,45 @@ has type => (
     lazy    => 1
 );
 
+has base_type => (
+	is => 'ro',
+	builder => 1, 
+	lazy => 1,
+);
+
+sub validate_schema {
+    my $self = shift;
+    $self->metaschema->validate( $self->schema );
+}
+
+sub validate_explain_schema {
+    my $self = shift;
+    $self->metaschema->validate_explain( $self->schema );
+}
+
+sub _build_base_type {
+    my $self = shift;
+
+    return $self->schema ? Any : ~Any 
+        if JSON::is_bool( $self->schema );
+
+    my @types = 
+        grep { $_ and $_->name ne 'Any' }
+        map { $self->_process_keyword($_) } 
+            $self->all_active_keywords;
+
+    return @types ? reduce { $a & $b } @types : Any;
+}
+
+sub _build_type($self) {
+	return Type::Tiny->new(
+		constraint => sub { 
+			local %JSON::Schema::AsType::SCOPE = ();
+			$self->base_type->check($_);
+		}
+	);
+}
+
 =pod
 $JSON::Schema::AsType::Type::INDENT = 0;
 around check => sub($orig,$self,$value) {
@@ -37,27 +76,3 @@ around check => sub($orig,$self,$value) {
 
 };
 =cut
-
-sub validate_schema {
-    my $self = shift;
-    $self->metaschema->validate( $self->schema );
-}
-
-sub validate_explain_schema {
-    my $self = shift;
-    $self->metaschema->validate_explain( $self->schema );
-}
-
-sub _build_type {
-    my $self = shift;
-
-    return $self->schema ? Any : ~Any 
-        if JSON::is_bool( $self->schema );
-
-    my @types = 
-        grep { $_ and $_->name ne 'Any' }
-        map { $self->_process_keyword($_) } 
-            $self->all_active_keywords;
-
-    return @types ? reduce { $a & $b } @types : Any;
-}

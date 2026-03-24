@@ -32,7 +32,6 @@ use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types '-all';
 
-
 __PACKAGE__->meta->add_method(
 	'_keyword_$ref' => sub {
 		my ( $self, $ref ) = @_;
@@ -47,9 +46,9 @@ __PACKAGE__->meta->add_method(
 				die if $::DEEP > 10;
 				my $v = $_;
 				$schema = $self->resolve_reference($ref);
-                $schema = $self->sub_schema($schema->schema,$schema->uri);
+				$schema = $self->sub_schema( $schema->schema, $schema->uri );
 
-				my $result = $schema->check($v) || 0;
+				my $result = $schema->base_type->check($v) || 0;
 
 				return $result;
 			},
@@ -174,15 +173,17 @@ sub _keyword_not {
 sub _keyword_oneOf {
 	my ( $self, $options ) = @_;
 
-	OneOf [ pairmap { $self->sub_schema( $b, "#./oneOf/$a" ) }
-		indexed @$options ];
+	OneOf [
+		pairmap { $self->sub_schema( $b, "#./oneOf/$a" )->base_type }
+		indexed @$options
+	];
 }
 
 sub _keyword_anyOf {
 	my ( $self, $options ) = @_;
 
 	my $i = 0;
-	AnyOf [ map { $self->sub_schema( $_, '#./anyOf/' . $i++ )->type }
+	AnyOf [ map { $self->sub_schema( $_, '#./anyOf/' . $i++ )->base_type }
 		  @$options ];
 }
 
@@ -190,7 +191,7 @@ sub _keyword_allOf {
 	my ( $self, $options ) = @_;
 
 	my $i = 0;
-	AllOf [ map { $self->sub_schema( $_, "#./allOf/" . $i++ )->type }
+	AllOf [ map { $self->sub_schema( $_, "#./allOf/" . $i++ )->base_type }
 		  @$options ];
 }
 

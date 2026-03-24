@@ -32,11 +32,11 @@ with 'JSON::Schema::AsType::Draft6::Keywords';
 sub _keyword_if {
 	my( $self, $if) = @_;
 
-	$if= $self->sub_schema($if, '#./if')->type;
+	$if= $self->sub_schema($if, '#./if')->base_type;
 
 	my @clauses = map {
 		defined $self->schema->{$_} ?
-	 $self->sub_schema( $self->schema->{$_}, "#./$_" )->type : Any
+	 $self->sub_schema( $self->schema->{$_}, "#./$_")->base_type : Any
 	} qw/ then else/;
 
 
