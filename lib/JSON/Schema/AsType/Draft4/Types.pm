@@ -247,7 +247,10 @@ declare Items, constraint_generator => sub {
 	  ? Tuple [ ( map { Optional [$_] } @$types ), slurpy Any ]
 	  : Tuple [ slurpy ArrayRef [$types] ];
 
-	return ~ArrayRef | $type;
+	return ~ArrayRef | ( $type & sub { 
+		push $JSON::Schema::AsType::SCOPE{items}->@*, 0..$_->$#*;
+		return 1;
+	} );
 
 };
 
