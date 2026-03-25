@@ -7,6 +7,7 @@ use feature 'signatures', 'module_true';
 
 use Types::Standard qw/ Any /;
 use List::Util qw/ reduce /;
+use Type::Tiny;
 
 use Moose::Role;
 use MooseX::MungeHas 'is_ro';
@@ -45,16 +46,32 @@ sub _build_base_type {
         map { $self->_process_keyword($_) } 
             $self->all_active_keywords;
 
-    return @types ? reduce { $a & $b } @types : Any;
+	return Type::Tiny->new(
+		display_name => $self->uri,
+		parent =>@types ? reduce { $a & $b } @types : Any,
+	);
 }
 
-sub _build_type($self) {
-	return Type::Tiny->new(
-		constraint => sub { 
+my $Scope = Type::Tiny->new(
+	name => 'Scope',
+	constraint_generator => sub {
+		my $type = shift;
+		return sub {
 			local %JSON::Schema::AsType::SCOPE = ();
-			$self->base_type->check($_);
+			$type->check($_);
 		}
-	);
+	},
+	deep_explanation => sub($type,$value,$varname) {
+		my @whines;
+		my $inner = $type->parameters->[0];
+		push @whines, sprintf "%s was %s, and failed %s: %s", 
+			$varname, $value, $inner->name, join "\n", $inner->validate_explain($value)->@*;
+		return \@whines;
+	}
+);
+
+sub _build_type($self) {
+	return $Scope->of($self->base_type);
 }
 
 =pod
