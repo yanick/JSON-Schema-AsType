@@ -22,6 +22,7 @@ use JSON::Schema::AsType::Draft2019_09::Types qw/
   DependentRequired
   DependentSchemas
   UnevaluatedProperties
+  UnevaluatedItems
   /;
 
 with 'JSON::Schema::AsType::Draft7::Keywords' => { -exclude => [] };
@@ -100,6 +101,13 @@ sub _keyword_dependentSchemas {
 sub _keyword_unevaluatedProperties( $self, $subschema ) {
 	my $schema = $self->sub_schema( $subschema, '#./unevaluatedProperties' );
 
-	return UnevaluatedProperties [ $schema->base_type ];
+	return UnevaluatedProperties[ $schema->base_type ];
+
+}
+
+sub _keyword_unevaluatedItems( $self, $subschema ) {
+	my $schema = $self->sub_schema( $subschema, '#./unevaluatedItems' );
+
+	return UnevaluatedItems[ $schema->base_type ];
 
 }

@@ -53,6 +53,7 @@ use warnings;
 
 use feature qw/ module_true /;
 
+use Hash::Merge qw/ merge /;
 use Type::Utils -all;
 use Types::Standard qw/ 
     Str StrictNum HashRef ArrayRef 
@@ -68,6 +69,7 @@ use Type::Library
 		DependentRequired
 		DependentSchemas
 		UnevaluatedProperties
+		UnevaluatedItems
     );
 
 use List::MoreUtils qw/ zip none any all /;
@@ -148,4 +150,33 @@ declare UnevaluatedProperties =>
 
 			return all { $type->check($_) } map { $target->{$_} } @keys;
 		}
-	}
+	};
+
+declare UnevaluatedItems => 
+	constraint_generator => sub($type) {
+
+		return sub {
+			# only for arrays 
+			return 1 unless ref eq 'ARRAY';
+
+			use DDP;
+			p %JSON::Schema::AsType::SCOPE;
+
+			my $target = $_;
+
+			my %indexes;
+
+			for my $section ( qw/ items patternItems prefixItems unevaluatedItems / ) {
+				if( my $p = $JSON::Schema::AsType::SCOPE{$section} ) {
+					$indexes{$_}++ for @$p;
+				}
+			}
+
+			for my $i ( grep { !$indexes{$_} } 0..$target->$#* ) {
+				return 0 unless $type->check( $target->[$i] );
+				push $JSON::Schema::AsType::SCOPE{unevaluatedItems}->@*, $i;
+			}
+
+			return 1;
+		}
+	};
