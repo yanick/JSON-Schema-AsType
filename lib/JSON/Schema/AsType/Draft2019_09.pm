@@ -125,8 +125,9 @@ override all_keywords => sub($self) {
 	# the ones for which the order is important are first, 
 	# and filtered out later by the 'uniq'
     return uniq '$id', '$ref', '$recursiveRef',
-		qw/ properties patternProperties additionalProperties 
-			allOf anyOf oneOf if dependentSchemas unevaluatedProperties /,
+		qw/ properties items patternItems prefixItems patternProperties additionalProperties additionalItems
+			allOf anyOf oneOf if dependentSchemas unevaluatedProperties 
+			unevaluatedItems /,
 		sort map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 };
 
