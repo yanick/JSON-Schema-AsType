@@ -2,3 +2,6 @@
 .build
 taskchampion.sqlite3
 .envrc
+
+# git stuff
+*.orig
