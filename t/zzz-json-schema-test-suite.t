@@ -31,18 +31,6 @@ push $todo->{$_}{'const.json'}->@*,
   'float and integers are equal up to 64-bit representation limits'
   for 4, 6, 7, '2019-09';
 
-push $todo->{'2019-09'}{'unevaluatedItems.json'}->@*, 
-	'unevaluatedItems with tuple',
-	'unevaluatedItems with nested tuple',
-	'unevaluatedItems with if/then/else',
-	'unevaluatedItems with oneOf',
-	'unevaluatedItems before $ref',
-	'unevaluatedItems with $ref',
-	'item is evaluated in an uncle schema to unevaluatedItems',
-	'Evaluated items collection needs to consider instance location',
-	'unevaluatedItems with $recursiveRef',
-	'unevaluatedItems with anyOf';
-
 $todo->{'2019-09'}{ $_ . '.json' } = 1 for qw/
 
   vocabulary
