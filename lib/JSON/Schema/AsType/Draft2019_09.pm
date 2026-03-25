@@ -45,7 +45,17 @@ has is_own_metaschema => (
 
 has '+metaschema' => (
     default => sub($self) {
-        $self->is_own_metaschema ? $self : _metaschema();
+		return $self if $self->is_own_metaschema;
+
+		if( ref $self->schema eq 'HASH ') {
+		if( my $uri = $self->schema->{'$schema'} ) {
+			unless( ref $uri ) {
+				return $self->fetch( $uri );
+			}
+		}
+	}
+
+		return _metaschema();
     }
 );
 

@@ -22,7 +22,6 @@ has registry => (
     default => sub { +{} },
     traits  => ['Hash'],
     handles => {
-        register_schema => 'set',
     },
 );
 
@@ -35,11 +34,12 @@ sub all_schema_uris($self) {
     return sort keys $self->registry->%*;
 }
 
-around register_schema => sub {
+sub register_schema {
 
     # TODO Use a type instead to coerce into canonical
-    my ( $orig, $self, $uri, $schema ) = @_;
+    my ( $self, $uri, $schema ) = @_;
 
+	$DB::single = $uri =~/HASH/;
     $uri = URI->new($uri)->canonical;
 
     my $fragment = $uri->fragment;
@@ -58,7 +58,7 @@ around register_schema => sub {
         $schema = $self->sub_schema( $schema, $uri );
     }
 
-    $orig->( $self, $uri, $schema );
+    $self->registry->{$uri} = $schema; 
 };
 
 sub merge_register($self,$other) {
@@ -74,6 +74,8 @@ sub registered_schema( $self, $uri ) {
 
 sub fetch {
     my ( $self, $url ) = @_;
+
+	$DB::single = $url =~/HASH/;
 
 	$url = $self->resolve_uri( $url, $self->uri );
 

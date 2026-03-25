@@ -16,8 +16,6 @@ use JSON;
 		}
 	);
 
-	say "okay";
-
 	ok $schema->check( { type => 'string' }), 'all good';
 
 done_testing;

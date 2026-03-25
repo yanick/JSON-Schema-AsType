@@ -33,7 +33,6 @@ push $todo->{$_}{'const.json'}->@*,
 
 $todo->{'2019-09'}{ $_ . '.json' } = 1 for qw/
 
-  vocabulary
   infinite-loop-detection
   ref
   /;
@@ -85,14 +84,13 @@ sub run_schema_test( $draft, $test, $file, $TODO = [] ) {
 		$todo = todo "known todo"
 		  if any { $test->{description} eq $_ } @$TODO;
 
+		my $registry = registry($draft);
+
 		my $schema = JSON::Schema::AsType->new(
 			draft  => $draft,
-			schema => $test->{schema}
+			schema => $test->{schema},
+			registry => +{ %$registry },
 		);
-		my $registry = registry($draft);
-		for my $uri ( grep !/254/, keys %$registry ) {
-			$schema->register_schema( $uri => $registry->{$uri} );
-		}
 
 		for ( @{ $test->{tests} } ) {
 			my $desc = $_->{description};
