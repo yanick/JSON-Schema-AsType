@@ -61,6 +61,12 @@ around register_schema => sub {
     $orig->( $self, $uri, $schema );
 };
 
+sub merge_register($self,$other) {
+	for my( $url, $schema ) ($other->registry->%* ) {
+		$self->register_schema($url,$schema);
+	}
+}
+
 sub registered_schema( $self, $uri ) {
     $uri = URI->new($uri)->canonical;
     return $self->registry->{$uri};
@@ -110,11 +116,11 @@ sub fetch {
     }
 
     if (    $root_uri->host eq 'json-schema.org'
-        and $root_uri->path =~ m#/draft(?:-0?|/)([\d-]+)# 
+        and $root_uri->path =~ m#/draft(?:-0?|/)([\d-]+)/schema$# 
 	) {
         my $module = 'JSON::Schema::AsType::Draft' . $1 =~ s/-/_/r;
         my $ms     = use_module($module)->_metaschema;
-        $self->register_schema( $ms->uri => $ms );
+        $self->merge_register($ms);
         goto __SUB__;
     }
 
