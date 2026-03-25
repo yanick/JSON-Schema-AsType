@@ -43,7 +43,8 @@ subtest 'recursiveRef' => sub {
 			'$recursiveAnchor' => JSON::true
 			  '$defs' => {
 				'tree' => {
-					'$id' => 'https://example.com/unevaluated-items-with-recursive-ref/tree',
+					'$id' =>
+'https://example.com/unevaluated-items-with-recursive-ref/tree',
 					'type'             => 'array',
 					'$recursiveAnchor' => JSON::true,
 					'items'            => [
@@ -71,5 +72,24 @@ subtest 'recursiveRef' => sub {
 	);
 
 	ok $schema->check( [ 1, [ 2, [], 'b' ], 'a' ] );
+};
+
+subtest 'not' => sub {
+	my $schema = JSON::Schema::AsType->new(
+		draft  => '2019-09',
+		schema => {
+			'unevaluatedItems' => JSON::false,
+			'not'              => {
+				'not' => {
+					'items' => [
+						JSON::true, { 'const' => 'bar' }
+					]
+				}
+			},
+			'items' => [ { 'const' => 'foo' } ]
+		}
+	);
+
+	ok !$schema->check( [ 'foo', 'bar' ] );
 };
 done_testing

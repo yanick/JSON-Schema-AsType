@@ -167,7 +167,7 @@ sub _keyword_required {
 
 sub _keyword_not {
 	my ( $self, $schema ) = @_;
-	Not [ $self->sub_schema( $schema, '#./not' ) ];
+	Not [ $self->sub_schema( $schema, '#./not' )->base_type ];
 }
 
 sub _keyword_oneOf {

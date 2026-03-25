@@ -218,7 +218,7 @@ declare PatternProperties, constraint_generator => sub {
 declare Properties, constraint_generator => sub {
 	my %types = @_;
 
-	%types = pairmap { $a => Optional[$b] } %types;
+	%types = pairmap { $a => Optional [$b] } %types;
 
 	sub {
 		return 1 unless Object->check($_);
@@ -227,7 +227,7 @@ declare Properties, constraint_generator => sub {
 
 		$DB::single = 1;
 		for my $type ( grep { exists $t->{$_} } keys %types ) {
-			return 0 unless $types{$type}->check($t->{$type});
+			return 0 unless $types{$type}->check( $t->{$type} );
 			push $JSON::Schema::AsType::SCOPE{properties}->@*, $type;
 		}
 
@@ -247,10 +247,17 @@ declare Items, constraint_generator => sub {
 	  ? Tuple [ ( map { Optional [$_] } @$types ), slurpy Any ]
 	  : Tuple [ slurpy ArrayRef [$types] ];
 
-	return ~ArrayRef | ( $type & sub { 
-		push $JSON::Schema::AsType::SCOPE{items}->@*, 0..$_->$#*;
-		return 1;
-	} );
+	return ~ArrayRef | (
+		$type & sub {
+			if(ref $types eq 'ARRAY') {
+			push $JSON::Schema::AsType::SCOPE{items}->@*, 0 .. $types->$#*;
+			}
+			else {
+			push $JSON::Schema::AsType::SCOPE{items}->@*, 0 .. $_->$#*;
+		}
+			return 1;
+		}
+	);
 
 };
 
@@ -319,7 +326,7 @@ declare AllOf, constraint_generator => sub {
 		}
 
 		%JSON::Schema::AsType::SCOPE =
-			  merge( \%JSON::Schema::AsType::SCOPE, \%scope )->%*;
+		  merge( \%JSON::Schema::AsType::SCOPE, \%scope )->%*;
 
 		return 1;
 	}
@@ -338,7 +345,7 @@ declare AnyOf, constraint_generator => sub {
 
 			next unless $type->check($value);
 
-			%scope = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
+			%scope   = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
 			$matched = 1;
 		}
 
@@ -366,7 +373,7 @@ declare OneOf, constraint_generator => sub {
 
 			return 0 if $matched;
 
-			%scope = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
+			%scope   = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
 			$matched = 1;
 		}
 
