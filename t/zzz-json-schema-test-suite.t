@@ -46,8 +46,6 @@ push $todo->{'2019-09'}{'unevaluatedItems.json'}->@*,
 
 $todo->{'2019-09'}{ $_ . '.json' } = 1 for qw/
 
-  not
-
   vocabulary
   infinite-loop-detection
   ref
