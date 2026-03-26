@@ -38,7 +38,7 @@ no warnings 'uninitialized';
 
 our $strict_string = 1;
 
-our @DRAFT_VERSIONS = ( 3, 4, 6, 7, '2019-09' );
+our @DRAFT_VERSIONS = ( 3, 4, 6, 7, '2019-09', '2020-12' );
 
 has draft => (
     is      => 'ro',

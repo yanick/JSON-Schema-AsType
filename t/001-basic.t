@@ -15,11 +15,12 @@ my $schema = JSON::Schema::AsType->new( draft => 7, schema => {
 ok $schema->check({ foo => 1, bar => { two => 2 } }), "valid check";
 ok !$schema->check({ foo => 'potato', bar => { two => 2 } }), "invalid check";
 
-subtest '2019-09' => sub {
+subtest 'can create empty schemas' => sub {
     ok( JSON::Schema::AsType->new(
-        draft => '2019-09', schema => {}
-    ), 'can create a 2019-09 schema' );
+        draft => $_, schema => {}
+    ), $_ ) for qw/ 2019-09 2020-12 /;
 };
+
 
 done_testing;
 
