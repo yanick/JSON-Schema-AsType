@@ -1,5 +1,6 @@
 package JSON::Schema::AsType::Draft2019_09::Vocabulary::Applicator;
-# ABSTRACT: Role processing draft7 JSON Schema 
+
+# ABSTRACT: Role processing draft7 JSON Schema
 
 =head1 DESCRIPTION
 
@@ -15,3 +16,38 @@ use feature qw/ module_true /;
 
 use Moose::Role;
 
+with 'JSON::Schema::AsType::Draft7::Keywords' =>
+  { -excludes => [ map { "_keyword_$_" } qw/ minimum /,
+   '$id',
+   '$ref',
+  # "properties",
+  # "items",
+  # "patternProperties",
+  # "additionalProperties",
+  # "additionalItems",
+  # "allOf",
+  # "anyOf",
+  # "oneOf",
+ # "if",
+ "multipleOf",
+ "uniqueItems",
+ "minItems",
+ "exclusiveMaximum",
+ # "const",
+ # "dependencies",
+ "exclusiveMinimum",
+ "maxProperties",
+ "minLength",
+ "pattern",
+ # "enum",
+ # "definitions",
+ # "required",
+ "contains",
+ "maximum",
+ "maxItems",
+  "propertyNames",
+  "minProperties",
+  "maxLength",
+ # "type",
+ # "not" 
+	 ] };

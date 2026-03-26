@@ -60,7 +60,7 @@ use Type::Utils -all;
 use Types::Standard qw/
   Str StrictNum HashRef ArrayRef
   Int
-  Dict slurpy Optional Any
+  Dict Slurpy Optional Any slurpy
   Tuple
   ConsumerOf
   InstanceOf
@@ -220,19 +220,12 @@ declare Properties, constraint_generator => sub {
 
 	%types = pairmap { $a => Optional [$b] } %types;
 
-	sub {
-		return 1 unless Object->check($_);
-
-		my $t = $_;
-
-		$DB::single = 1;
-		for my $type ( grep { exists $t->{$_} } keys %types ) {
-			return 0 unless $types{$type}->check( $t->{$type} );
-			push $JSON::Schema::AsType::SCOPE{properties}->@*, $type;
-		}
-
-		return 1;
-	}
+	return ~HashRef     # not an object, don't care
+		| ( Dict[%types,Slurpy[Any]] & sub { 
+				my $value = $_;
+			push $JSON::Schema::AsType::SCOPE{properties}->@*, grep { exists $value->{$_} } keys %types;
+			return 1;
+	} );
 };
 
 declare Items, constraint_generator => sub {

@@ -75,7 +75,7 @@ sub registered_schema( $self, $uri ) {
 sub fetch {
     my ( $self, $url ) = @_;
 
-	$DB::single = $url =~/HASH/;
+	$DB::single = 1;
 
 	$url = $self->resolve_uri( $url, $self->uri );
 
@@ -116,6 +116,13 @@ sub fetch {
 
         return $self->register_schema( $jp_url => $s );
     }
+
+    if (    $root_uri->host eq 'json-schema.org'
+        and $root_uri->path eq '/v1'
+	) {
+		# TODO
+		return $self->new(schema => {}, uri => 'https://json-schema.org/v1');
+	}
 
     if (    $root_uri->host eq 'json-schema.org'
         and $root_uri->path =~ m#/draft(?:-0?|/)([\d-]+)/schema$# 

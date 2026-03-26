@@ -67,7 +67,7 @@ subtest '2' => sub {
 
 	is $schema->uri => 'https://example.com/recursiveRef8_main.json';
 
-	is [ $schema->all_schema_uris ] => [
+	is [ grep { /example.com/} $schema->all_schema_uris ] => [
 		"https://example.com/recursiveRef8_anyLeafNode.json",
 		"https://example.com/recursiveRef8_inner.json",
 		"https://example.com/recursiveRef8_integerNode.json",
