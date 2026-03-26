@@ -29,20 +29,21 @@ my $todo = {};
 
 push $todo->{$_}{'const.json'}->@*,
   'float and integers are equal up to 64-bit representation limits'
-  for 4, 6, 7, '2019-09';
+  for 4, 6, 7, '2019-09', '2020-12';
 
 push $todo->{'2019-09'}{'ref.json'}->@*,
   'refs with relative uris and defs',
   'relative refs with absolute uris and defs';
 
+push $todo->{'2020-12'}{'pattern.json'}->@*,
+	'pattern with Unicode property escape requires unicode mode';
+
 $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/
   uniqueItems
-  pattern
   defs
   items
   unevaluatedItems
   unevaluatedProperties
-  const
   dynamicRef
   ref
   /;
