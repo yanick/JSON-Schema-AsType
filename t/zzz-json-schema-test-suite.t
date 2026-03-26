@@ -32,8 +32,6 @@ push $todo->{$_}{'const.json'}->@*,
   for 4, 6, 7, '2019-09';
 
 $todo->{'2019-09'}{ $_ . '.json' } = 1 for qw/
-
-  infinite-loop-detection
   ref
   /;
 
