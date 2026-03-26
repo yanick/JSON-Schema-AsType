@@ -125,9 +125,6 @@ declare UnevaluatedProperties =>
 			# only for objects 
 			return 1 unless ref eq 'HASH';
 
-			use DDP;
-			p %JSON::Schema::AsType::SCOPE;
-
 			my $target = $_;
 
 			my %keys;
@@ -158,9 +155,6 @@ declare UnevaluatedItems =>
 		return sub {
 			# only for arrays 
 			return 1 unless ref eq 'ARRAY';
-
-			use DDP;
-			p %JSON::Schema::AsType::SCOPE;
 
 			my $target = $_;
 
