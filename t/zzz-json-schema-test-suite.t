@@ -31,9 +31,9 @@ push $todo->{$_}{'const.json'}->@*,
   'float and integers are equal up to 64-bit representation limits'
   for 4, 6, 7, '2019-09';
 
-$todo->{'2019-09'}{ $_ . '.json' } = 1 for qw/
-  ref
-  /;
+push $todo->{'2019-09'}{'ref.json'}->@*, 
+	'refs with relative uris and defs',
+	'relative refs with absolute uris and defs';
 
 run_draft_test_suite($_)
   for grep { !$target_draft or $_ eq $target_draft } qw/ 3 4 6 7 2019-09 /;
@@ -85,9 +85,9 @@ sub run_schema_test( $draft, $test, $file, $TODO = [] ) {
 		my $registry = registry($draft);
 
 		my $schema = JSON::Schema::AsType->new(
-			draft  => $draft,
-			schema => $test->{schema},
-			registry => +{ %$registry },
+			draft    => $draft,
+			schema   => $test->{schema},
+			registry => +{%$registry},
 		);
 
 		for ( @{ $test->{tests} } ) {
@@ -120,8 +120,9 @@ sub run_schema_test( $draft, $test, $file, $TODO = [] ) {
 			catch ($e) {
 				diag $e;
 				fail $_->{description};
-				note np $schema->schema;
-				note np $_->{data};
+				note Dumper( $schema->schema );
+				note Dumper( $_->{data} );
+
 				bail_out("peace out") if $ENV{'TEST_SCHEMA'};
 			};
 
