@@ -31,12 +31,26 @@ push $todo->{$_}{'const.json'}->@*,
   'float and integers are equal up to 64-bit representation limits'
   for 4, 6, 7, '2019-09';
 
-push $todo->{'2019-09'}{'ref.json'}->@*, 
-	'refs with relative uris and defs',
-	'relative refs with absolute uris and defs';
+push $todo->{'2019-09'}{'ref.json'}->@*,
+  'refs with relative uris and defs',
+  'relative refs with absolute uris and defs';
+
+$todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/
+	uniqueItems 
+	pattern
+	prefixItems
+	defs
+	items
+	unevaluatedItems
+	unevaluatedProperties
+	const
+	dynamicRef
+	ref
+/;
 
 run_draft_test_suite($_)
-  for grep { !$target_draft or $_ eq $target_draft } qw/ 3 4 6 7 2019-09 /;
+  for grep { !$target_draft or $_ eq $target_draft }
+  reverse @JSON::Schema::AsType::DRAFT_VERSIONS;
 
 done_testing;
 
