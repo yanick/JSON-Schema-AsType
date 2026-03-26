@@ -1,4 +1,5 @@
 package JSON::Schema::AsType::Draft2020_12::Types;
+
 # ABSTRACT: JSON-schema v6 keywords as types
 
 =head1  SYNOPSIS
@@ -55,30 +56,58 @@ use feature qw/ module_true /;
 
 use Hash::Merge qw/ merge /;
 use Type::Utils -all;
-use Types::Standard qw/ 
-    Str StrictNum HashRef ArrayRef 
-    Int
-    Dict slurpy Optional Any
-    Tuple
-    InstanceOf
-/;
+use Types::Standard qw/
+  Str StrictNum HashRef ArrayRef
+  Int
+  Dict slurpy Optional Any
+  Tuple
+  InstanceOf
+  /;
 
 use Type::Library
-    -base,
-    -declare => qw(
-    );
+  -base,
+  -declare => qw(
+  PrefixItems
+  );
 
 use List::MoreUtils qw/ zip none any all /;
-use List::Util qw/ pairs pairmap reduce uniq /;
+use List::Util      qw/ pairs pairmap reduce uniq /;
 
 use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Draft4::Types qw/
-    Integer Boolean Number String Null Object Array Items
-    ExclusiveMinimum ExclusiveMaximum Dependencies Dependency
-    Not MultipleOf
-/;
+  Integer Boolean Number String Null Object Array Items
+  ExclusiveMinimum ExclusiveMaximum Dependencies Dependency
+  Not MultipleOf
+  /;
 
 #__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, Items, ExclusiveMaximum, ExclusiveMinimum;
 
+declare PrefixItems,
+  constraint_generator => sub {
+	my $types = shift;
 
+	if ( Boolean->check($types) ) {
+		return $types ? Any : sub { !@$_ };
+	}
+
+	my $type =
+	  ref $types eq 'ARRAY'
+	  ? Tuple [ ( map { Optional [$_] } @$types ), slurpy Any ]
+	  : Tuple [ slurpy ArrayRef [$types] ];
+
+	return ~ArrayRef | (
+		$type & sub {
+			if ( ref $types eq 'ARRAY' ) {
+				push $JSON::Schema::AsType::SCOPE{prefixItems}->@*,
+				  0 .. $types->$#*;
+			}
+			else {
+				push $JSON::Schema::AsType::SCOPE{prefixItems}->@*,
+				  0 .. $_->$#*;
+			}
+			return 1;
+		}
+	);
+
+  };

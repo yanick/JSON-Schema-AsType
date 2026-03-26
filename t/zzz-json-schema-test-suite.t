@@ -38,7 +38,6 @@ push $todo->{'2019-09'}{'ref.json'}->@*,
 $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/
   uniqueItems
   pattern
-  prefixItems
   defs
   items
   unevaluatedItems

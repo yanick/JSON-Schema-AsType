@@ -13,9 +13,9 @@ L<JSON::Schema::AsType> schema cache.
 =cut
 
 use 5.42.0;
-
-use strict;
 use warnings;
+
+use feature qw/ signatures /;
 
 use Moose::Role;
 
@@ -269,8 +269,6 @@ sub _keyword_minimum {
 sub _keyword_additionalItems {
 	my ( $self, $s ) = @_;
 
-	$DB::single = 1;
-
 	# unless($s) {
 	#     my $items = $self->schema->{items} or return;
 	#     return if ref $items eq 'HASH';  # it's a schema, nevermind
@@ -293,15 +291,14 @@ sub _keyword_additionalItems {
 
 }
 
-sub _keyword_items {
-	my ( $self, $items ) = @_;
+sub _keyword_items ( $self, $items, $keyword = 'items' ){
 
 	if ( Boolean->check($items) ) {
 		return Items [$items];
 	}
 
 	if ( ref $items eq 'HASH' ) {
-		my $type = $self->sub_schema( $items, '#./items' )->type;
+		my $type = $self->sub_schema( $items, '#./'.$keyword )->type;
 
 		return Items [$type];
 	}
@@ -310,7 +307,7 @@ sub _keyword_items {
 	my @types;
 	my $i = 0;
 	for (@$items) {
-		push @types, $self->sub_schema( $_, '#./items/' . $i++ )->type;
+		push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
 	}
 
 	return Items [ \@types ];
