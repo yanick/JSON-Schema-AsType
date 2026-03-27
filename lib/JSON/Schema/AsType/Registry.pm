@@ -39,7 +39,6 @@ sub register_schema {
     # TODO Use a type instead to coerce into canonical
     my ( $self, $uri, $schema ) = @_;
 
-	$DB::single = $uri =~/HASH/;
     $uri = URI->new($uri)->canonical;
 
     my $fragment = $uri->fragment;
@@ -74,8 +73,6 @@ sub registered_schema( $self, $uri ) {
 
 sub fetch {
     my ( $self, $url ) = @_;
-
-	$DB::single = 1;
 
 	$url = $self->resolve_uri( $url, $self->uri );
 
@@ -149,7 +146,7 @@ sub resolve_json_pointer($self, $schema, $pointer, $url ) {
     $url = $self->resolve_uri($self->_has_id($schema),$url) if $self->_has_id($schema);
 
 	$pointer =~ s[^/][];
-	$DB::single = $pointer =~ m[foo];
+
 	my @path_entries = split '/', $pointer;
 	push @path_entries, '' if $pointer =~ m#/.*/$#;
     for my $path ( @path_entries ) {
@@ -157,7 +154,7 @@ sub resolve_json_pointer($self, $schema, $pointer, $url ) {
 
 		my $o = $schema;
        $schema = is_hashref($schema) ? $schema->{$path}:$schema->[$path];
-			$DB::single = !$schema;
+
         die "reference " . $url . "#$pointer not found\n" unless defined $schema;
 
         $path = $self->_escape_ref($path);
