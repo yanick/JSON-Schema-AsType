@@ -42,7 +42,6 @@ $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/
   defs
   unevaluatedItems
   unevaluatedProperties
-  dynamicRef
   ref
   /;
 
