@@ -69,6 +69,7 @@ use Type::Library
   -declare => qw(
   PrefixItems
   Contains
+  MinContains MaxContains
   );
 
 use List::MoreUtils qw/ zip none any all /;
@@ -116,6 +117,20 @@ declare Contains,
   constraint_generator => sub($type) {
 	  return sub { 
 		  return any { $type->check($_) } @$_ }
+  };
+
+declare MinContains,
+  constraint_generator => sub($min) {
+	  return sub { 
+		  annotation_for('contains')->@* >= $min;
+	  }
+  };
+
+declare MaxContains,
+  constraint_generator => sub($max) {
+	  return sub { 
+		  annotation_for('contains')->@* <= $max;
+	  }
   };
 
 declare Items, constraint_generator => sub {

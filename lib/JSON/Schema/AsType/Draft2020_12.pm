@@ -135,7 +135,18 @@ around sub_schema => sub ( $orig, $self, $subschema, $uri, $scoped = 1 ) {
 };
 
 my %keyword_index = reverse indexed '$id', '$ref', '$recursiveRef',
-  qw/ properties items prefixItems patternItems prefixItems patternProperties additionalProperties additionalItems
+  qw/ 
+      properties 
+	  items 
+	  contains
+	  minContains
+	  maxContains
+	  prefixItems 
+	  patternItems 
+	  prefixItems 
+	  patternProperties 
+	  additionalProperties 
+	  additionalItems
   allOf anyOf oneOf if dependentSchemas unevaluatedProperties
   unevaluatedItems /;
 

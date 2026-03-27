@@ -68,14 +68,18 @@ sub _keyword_contains( $self, $schema ) {
 
 	my $type = $self->sub_schema( $schema, '#./contains' )->type;
 
-	return ~ArrayRef | (
-		Contains [$type] & sub {
+	my $contains = sub {
 			my $v = $_;
 			add_annotation('contains',
 			  grep { $type->check( $v->[$_] ) } 0 .. $_->$#*
 			);
 			return 1;
-		}
-	);
+		};
+
+	$contains = Contains [$type] & $contains 
+		unless exists $self->schema->{minContains} 
+			and $self->schema->{minContains} == 0;
+
+	return ~ArrayRef | $contains;
 
 }

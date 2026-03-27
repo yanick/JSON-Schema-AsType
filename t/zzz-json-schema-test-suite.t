@@ -39,8 +39,6 @@ push $todo->{'2020-12'}{'pattern.json'}->@*,
 	'pattern with Unicode property escape requires unicode mode';
 
 $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/
-	minContains 
-	maxContains
   uniqueItems
   defs
   unevaluatedItems
