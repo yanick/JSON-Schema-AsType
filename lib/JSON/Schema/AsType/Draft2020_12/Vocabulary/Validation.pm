@@ -52,7 +52,7 @@ sub _find_dynamicAnchor($self,$ref) {
 
 			no warnings qw/ uninitialized /;
 
-			my $verdict = (ref($_) eq 'HASH') &&( $_->{'$dynamicAnchor'} eq $ref);
+			my $verdict = (ref($_) eq 'HASH') &&( ($_->{'$dynamicAnchor'} eq $ref)or( $ref eq $_->{'$anchor'}));
 
 			$anchor = $self->sub_schema( $_, join '/', '#', $context->{_path}->@* ) if $verdict;
 

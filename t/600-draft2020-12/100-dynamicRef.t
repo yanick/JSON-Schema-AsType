@@ -31,4 +31,27 @@ subtest 'A $dynamicRef to a $dynamicAnchor in the same schema resource behaves l
 
 };
 
+subtest 'A $dynamicRef to a $anchor in the same schema resource behaves like a normal $ref to an $anchor' => sub {
+	my $schema = JSON::Schema::AsType->new(
+		draft  => '2020-12',
+		schema => {
+			'$id'     => 'https://test.json-schema.org/dynamicRef-dynamicAnchor-same-schema/root',
+			'type'  => 'array',
+			'items' => {
+				'$dynamicRef' => '#items'
+			},
+			'$defs' => {
+				'foo' => {
+					'type'    => 'string',
+					'$anchor' => 'items'
+				}
+			},
+		},
+	);
+
+	ok $schema->check( ['foo','bar'] ), 'all good';
+	ok !$schema->check( ['foo',1] ), 'nope';
+
+};
+
 done_testing;
