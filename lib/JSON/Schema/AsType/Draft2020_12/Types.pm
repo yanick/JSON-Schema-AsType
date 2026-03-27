@@ -76,6 +76,7 @@ use List::Util      qw/ pairs pairmap reduce uniq /;
 
 use JSON::Schema::AsType;
 
+use JSON::Schema::AsType::Annotations;
 use JSON::Schema::AsType::Draft4::Types qw/
   Integer Boolean Number String Null Object Array Items
   ExclusiveMinimum ExclusiveMaximum Dependencies Dependency
@@ -100,12 +101,10 @@ declare PrefixItems,
 	return ~ArrayRef | (
 		$type & sub {
 			if ( ref $types eq 'ARRAY' ) {
-				push $JSON::Schema::AsType::SCOPE{prefixItems}->@*,
-				  0 .. $types->$#*;
+				add_annotation('prefixItems' => 0 .. $types->$#*);
 			}
 			else {
-				push $JSON::Schema::AsType::SCOPE{prefixItems}->@*,
-				  0 .. $_->$#*;
+				add_annotation('prefixItems' => 0 .. $_->$#*);
 			}
 			return 1;
 		}

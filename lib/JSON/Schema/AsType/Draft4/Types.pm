@@ -124,6 +124,7 @@ use List::AllUtils  qw/ none uniq /;
 use JSON qw/ to_json from_json /;
 
 use JSON::Schema::AsType;
+use JSON::Schema::AsType::Annotations;
 
 declare AdditionalProperties,
   constraint_generator => sub {
@@ -137,7 +138,7 @@ declare AdditionalProperties,
 			none { ref $_ ? $key =~ $_ : $key eq $_ } @$known_properties
 		} keys %$_;
 
-		push $JSON::Schema::AsType::SCOPE{additionalProperties}->@*, @add_keys;
+		add_annotation('additionalProperties',@add_keys);
 
 		if ( eval { $type_or_boolean->can('check') } ) {
 			my $obj = $_;
@@ -203,7 +204,7 @@ declare PatternProperties, constraint_generator => sub {
 			push @keys, grep { /$key/ } keys %$obj;
 		}
 
-		push $JSON::Schema::AsType::SCOPE{patternProperties}->@*, @keys;
+		add_annotation('patternProperties',@keys);
 
 		for my $key ( keys %props ) {
 			return
@@ -223,7 +224,7 @@ declare Properties, constraint_generator => sub {
 	return ~HashRef     # not an object, don't care
 		| ( Dict[%types,Slurpy[Any]] & sub { 
 				my $value = $_;
-			push $JSON::Schema::AsType::SCOPE{properties}->@*, grep { exists $value->{$_} } keys %types;
+			add_annotation('properties',grep { exists $value->{$_} } keys %types);
 			return 1;
 	} );
 };
@@ -243,10 +244,10 @@ declare Items, constraint_generator => sub {
 	return ~ArrayRef | (
 		$type & sub {
 			if(ref $types eq 'ARRAY') {
-			push $JSON::Schema::AsType::SCOPE{items}->@*, 0 .. $types->$#*;
+				add_annotation('items',0 .. $types->$#*);
 			}
 			else {
-			push $JSON::Schema::AsType::SCOPE{items}->@*, 0 .. $_->$#*;
+				add_annotation('items',0 .. $_->$#*);
 		}
 			return 1;
 		}
@@ -308,18 +309,20 @@ declare AllOf, constraint_generator => sub {
 		my $value = $_;
 
 		my $matched = 1;
-		my %scope;
+		my $scope = {};
 
 		for my $type (@types) {
-			local %JSON::Schema::AsType::SCOPE;
+			my %scope;
+			return 0 unless annotation_scope(sub {
+				return 0 unless $type->check($value);
 
-			return 0 unless $type->check($value);
-
-			%scope = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
+				$scope = annotation_merge($scope);
+				
+				return 1;
+			});
 		}
 
-		%JSON::Schema::AsType::SCOPE =
-		  merge( \%JSON::Schema::AsType::SCOPE, \%scope )->%*;
+		annotation_merge($scope);
 
 		return 1;
 	}
@@ -331,20 +334,19 @@ declare AnyOf, constraint_generator => sub {
 		my $value = $_;
 
 		my $matched = 0;
-		my %scope;
+		my $scope = {};
 
 		for my $type (@types) {
-			local %JSON::Schema::AsType::SCOPE;
+			annotation_scope(sub {
+				return unless $type->check($value);
 
-			next unless $type->check($value);
-
-			%scope   = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
-			$matched = 1;
+				$scope   = annotation_merge( $scope );
+				$matched = 1;
+			});
 		}
 
 		if ($matched) {
-			%JSON::Schema::AsType::SCOPE =
-			  merge( \%JSON::Schema::AsType::SCOPE, \%scope )->%*;
+			annotation_merge($scope);
 		}
 
 		return $matched;
@@ -357,22 +359,24 @@ declare OneOf, constraint_generator => sub {
 		my $value = $_;
 
 		my $matched = 0;
-		my %scope;
+		my $scope = {};
 
 		for my $type (@types) {
-			local %JSON::Schema::AsType::SCOPE;
+			return 0 unless annotation_scope(sub {
+				return 1 unless $type->check($value);
 
-			next unless $type->check($value);
+				return 0 if $matched;
 
-			return 0 if $matched;
+				$scope   = annotation_merge($scope);
+				$matched = 1;
 
-			%scope   = merge( \%scope, \%JSON::Schema::AsType::SCOPE )->%*;
-			$matched = 1;
+				return 1;
+
+			});
 		}
 
 		if ($matched) {
-			%JSON::Schema::AsType::SCOPE =
-			  merge( \%JSON::Schema::AsType::SCOPE, \%scope )->%*;
+			annotation_merge($scope);
 		}
 
 		return $matched;

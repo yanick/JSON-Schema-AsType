@@ -22,6 +22,7 @@ use JSON::Schema::AsType::Draft4::Types qw/ Boolean /;
 use JSON::Schema::AsType::Draft2019_09::Types qw/ /;
 use JSON::Schema::AsType::Draft2020_12::Types qw/ PrefixItems Items /;
 
+use JSON::Schema::AsType::Annotations;
 use JSON::Schema::AsType::Draft6::Keywords;
 
 with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Validation' => { -excludes => [ map { "_keyword_$_" } qw/items contains/] };

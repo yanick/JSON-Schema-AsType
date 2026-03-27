@@ -77,6 +77,8 @@ use List::Util qw/ pairs pairmap reduce uniq /;
 
 use JSON::Schema::AsType;
 
+use JSON::Schema::AsType::Annotations;
+
 use JSON::Schema::AsType::Draft4::Types qw/
     Integer Boolean Number String Null Object Array Items
     ExclusiveMinimum ExclusiveMaximum Dependencies Dependency
@@ -127,23 +129,11 @@ declare UnevaluatedProperties =>
 
 			my $target = $_;
 
-			my %keys;
-
-			if( my $p = $JSON::Schema::AsType::SCOPE{properties} ) {
-				$keys{$_} = 1 for @$p;
-			}
-			if( my $p = $JSON::Schema::AsType::SCOPE{patternProperties} ) {
-				$keys{$_} = 1 for @$p;
-			}
-			if( my $p = $JSON::Schema::AsType::SCOPE{additionalProperties} ) {
-				$keys{$_} = 1 for @$p;
-			}
-			if( my $p = $JSON::Schema::AsType::SCOPE{unevaluatedProperties} ) {
-				$keys{$_} = 1 for @$p;
-			}
+			my %keys = map { $_ => 1 } annotation_properties();
 
 			my @keys  = grep { !$keys{$_} } keys %$target;
-			push $JSON::Schema::AsType::SCOPE{unevaluatedProperties}->@*, @keys;
+
+			add_annotation( 'unevaluatedProperties', @keys );
 
 			return all { $type->check($_) } map { $target->{$_} } @keys;
 		}
@@ -160,15 +150,11 @@ declare UnevaluatedItems =>
 
 			my %indexes;
 
-			for my $section ( qw/ items patternItems prefixItems unevaluatedItems contains / ) {
-				if( my $p = $JSON::Schema::AsType::SCOPE{$section} ) {
-					$indexes{$_}++ for @$p;
-				}
-			}
+			$indexes{$_}++ for annotation_items();
 
 			for my $i ( grep { !$indexes{$_} } 0..$target->$#* ) {
 				return 0 unless $type->check( $target->[$i] );
-				push $JSON::Schema::AsType::SCOPE{unevaluatedItems}->@*, $i;
+				add_annotation('unevaluatedItems',$i);
 			}
 
 			return 1;

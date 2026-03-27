@@ -12,6 +12,8 @@ use Type::Tiny;
 use Moose::Role;
 use MooseX::MungeHas 'is_ro';
 
+use JSON::Schema::AsType::Annotations;
+
 has type => (
     is      => 'rwp',
     handles => [qw/ check validate validate_explain /],
@@ -57,8 +59,9 @@ my $Scope = Type::Tiny->new(
 	constraint_generator => sub {
 		my $type = shift;
 		return sub {
-			local %JSON::Schema::AsType::SCOPE = ();
-			$type->check($_);
+			annotation_scope(sub{
+				$type->check($_);
+			});
 		}
 	},
 	deep_explanation => sub($type,$value,$varname) {

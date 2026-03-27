@@ -3,6 +3,7 @@ use Test2::V1 -Pip;
 use feature qw/ signatures/;
 
 use JSON::Schema::AsType;
+use JSON::Schema::AsType::Annotations;
 use JSON;
 
 subtest 'unevaluatedProperties on its own' => sub {
@@ -39,7 +40,7 @@ subtest 'unevaluatedProperties with adjacent properties' => sub {
 
 subtest 'invalid unevaluatedProperties' => sub {
 
-	ok !keys %JSON::Schema::AsType::SCOPE, 'empty scope';
+	ok !keys annotations()->%*, 'empty scope';
 
 	my $schema = JSON::Schema::AsType->new(
 		draft  => '2019-09',

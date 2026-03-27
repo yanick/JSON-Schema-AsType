@@ -17,6 +17,7 @@ use feature qw/ module_true /;
 use Moose::Role;
 
 use Types::Standard                           qw/ Any ArrayRef /;
+use JSON::Schema::AsType::Annotations;
 use JSON::Schema::AsType::Draft4::Types       qw/ Boolean /;
 use JSON::Schema::AsType::Draft2019_09::Types qw/ /;
 use JSON::Schema::AsType::Draft2020_12::Types qw/ PrefixItems Items Contains/;
@@ -70,8 +71,9 @@ sub _keyword_contains( $self, $schema ) {
 	return ~ArrayRef | (
 		Contains [$type] & sub {
 			my $v = $_;
-			push $JSON::Schema::AsType::SCOPE{'contains'}->@*,
-			  grep { $type->check( $v->[$_] ) } 0 .. $_->$#*;
+			add_annotation('contains',
+			  grep { $type->check( $v->[$_] ) } 0 .. $_->$#*
+			);
 			return 1;
 		}
 	);
