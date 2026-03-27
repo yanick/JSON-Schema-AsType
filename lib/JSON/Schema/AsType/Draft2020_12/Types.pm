@@ -68,6 +68,7 @@ use Type::Library
   -base,
   -declare => qw(
   PrefixItems
+  Contains
   );
 
 use List::MoreUtils qw/ zip none any all /;
@@ -112,6 +113,12 @@ declare PrefixItems,
 
   };
 
+declare Contains,
+  constraint_generator => sub($type) {
+	  return sub { 
+		  return any { $type->check($_) } @$_ }
+  };
+
 declare Items, constraint_generator => sub {
 	if ( @_ > 1 ) {
 		my $to_skip = shift;
@@ -119,7 +126,10 @@ declare Items, constraint_generator => sub {
 		return sub {
 
 			return unless ref eq 'ARRAY';
-			my @additional = splice @$_, $to_skip;
+
+			my @v = @$_;
+
+			my @additional = splice @v, $to_skip;
 
 			if ( ref $schema eq 'JSON::PP::Boolean' ) {
 				my $verdict = @additional;

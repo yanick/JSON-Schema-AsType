@@ -16,38 +16,37 @@ use feature qw/ module_true /;
 
 use Moose::Role;
 
-use Types::Standard qw/ Any ArrayRef /;
-use JSON::Schema::AsType::Draft4::Types qw/ Boolean /;
+use Types::Standard                           qw/ Any ArrayRef /;
+use JSON::Schema::AsType::Draft4::Types       qw/ Boolean /;
 use JSON::Schema::AsType::Draft2019_09::Types qw/ /;
-use JSON::Schema::AsType::Draft2020_12::Types qw/ PrefixItems Items /;
+use JSON::Schema::AsType::Draft2020_12::Types qw/ PrefixItems Items Contains/;
 
 use JSON::Schema::AsType::Draft6::Keywords;
 
-with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Applicator' => {
-    -excludes => [ "_keyword_items" ],
-};
+with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Applicator' =>
+  { -excludes => [ map { "_keyword_$_" } qw/ contains items/ ] };
 
-sub _keyword_prefixItems ( $self, $items, $keyword = 'prefixItems' ){
+sub _keyword_prefixItems ( $self, $items, $keyword = 'prefixItems' ) {
 
-    if ( Boolean->check($items) ) {
-        return if $items;
-        return PrefixItems[JSON::false];
-    }
+	if ( Boolean->check($items) ) {
+		return if $items;
+		return PrefixItems [JSON::false];
+	}
 
-    if( ref $items eq 'HASH' ) {
-        my $type = $self->sub_schema($items,"#./$keyword")->type;
+	if ( ref $items eq 'HASH' ) {
+		my $type = $self->sub_schema( $items, "#./$keyword" )->type;
 
-        return PrefixItems[$type];
-    }
+		return PrefixItems [$type];
+	}
 
-    # TODO forward declaration not workie
-    my @types;
+	# TODO forward declaration not workie
+	my @types;
 	my $i = 0;
-    for ( @$items ) {
-        push @types, $self->sub_schema($_,"#./$keyword/".$i++)->type;
-    }
+	for (@$items) {
+		push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
+	}
 
-    return PrefixItems[\@types];
+	return PrefixItems [ \@types ];
 }
 
 sub _keyword_items {
@@ -60,6 +59,21 @@ sub _keyword_items {
 
 	my $to_skip = ( $self->schema->{prefixItems} || [] )->@*;
 
-	return ~ArrayRef|Items[ $to_skip, $schema ];
+	return ~ArrayRef | Items [ $to_skip, $schema ];
+
+}
+
+sub _keyword_contains( $self, $schema ) {
+
+	my $type = $self->sub_schema( $schema, '#./contains' )->type;
+
+	return ~ArrayRef | (
+		Contains [$type] & sub {
+			my $v = $_;
+			push $JSON::Schema::AsType::SCOPE{'contains'}->@*,
+			  grep { $type->check( $v->[$_] ) } 0 .. $_->$#*;
+			return 1;
+		}
+	);
 
 }

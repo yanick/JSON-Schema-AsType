@@ -160,7 +160,7 @@ declare UnevaluatedItems =>
 
 			my %indexes;
 
-			for my $section ( qw/ items patternItems prefixItems unevaluatedItems / ) {
+			for my $section ( qw/ items patternItems prefixItems unevaluatedItems contains / ) {
 				if( my $p = $JSON::Schema::AsType::SCOPE{$section} ) {
 					$indexes{$_}++ for @$p;
 				}
