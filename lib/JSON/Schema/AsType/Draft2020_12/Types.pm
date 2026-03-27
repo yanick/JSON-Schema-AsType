@@ -111,3 +111,37 @@ declare PrefixItems,
 	);
 
   };
+
+declare Items, constraint_generator => sub {
+	if ( @_ > 1 ) {
+		my $to_skip = shift;
+		my $schema  = shift;
+		return sub {
+
+			return unless ref eq 'ARRAY';
+			my @additional = splice @$_, $to_skip;
+
+			if ( ref $schema eq 'JSON::PP::Boolean' ) {
+				my $verdict = @additional;
+				$verdict = !$verdict unless $schema;
+				return $verdict;
+			}
+
+			return all { $schema->check($_) } @additional;
+		}
+	}
+	else {
+		my $size = shift;
+		if ( ref $size eq 'JSON::PP::Boolean' ) {
+			return sub {
+				my $s = ref($_) eq 'ARRAY' ? @_ : 0;
+				$DB::single = 1;
+				return !!$size ? $s : !$s;
+			}
+		}
+		return sub {
+			my $s = ref($_) eq 'ARRAY' ? @_ : 0;
+			$s <= $size;
+		};
+	}
+};

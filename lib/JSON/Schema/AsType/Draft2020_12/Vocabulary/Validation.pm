@@ -20,31 +20,9 @@ use Moose::Role;
 
 use JSON::Schema::AsType::Draft4::Types qw/ Boolean /;
 use JSON::Schema::AsType::Draft2019_09::Types qw/ /;
-use JSON::Schema::AsType::Draft2020_12::Types qw/ PrefixItems /;
+use JSON::Schema::AsType::Draft2020_12::Types qw/ PrefixItems Items /;
 
 use JSON::Schema::AsType::Draft6::Keywords;
 
-with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Validation' => { -exclude => [] };
+with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Validation' => { -excludes => [ '_keyword_items' ] };
 
-sub _keyword_prefixItems ( $self, $items, $keyword = 'prefixItems' ){
-
-    if ( Boolean->check($items) ) {
-        return if $items;
-        return PrefixItems[JSON::false];
-    }
-
-    if( ref $items eq 'HASH' ) {
-        my $type = $self->sub_schema($items,"#./$keyword")->type;
-
-        return PrefixItems[$type];
-    }
-
-    # TODO forward declaration not workie
-    my @types;
-	my $i = 0;
-    for ( @$items ) {
-        push @types, $self->sub_schema($_,"#./$keyword/".$i++)->type;
-    }
-
-    return PrefixItems[\@types];
-}

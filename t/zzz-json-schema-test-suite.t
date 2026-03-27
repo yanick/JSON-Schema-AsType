@@ -41,7 +41,6 @@ push $todo->{'2020-12'}{'pattern.json'}->@*,
 $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/
   uniqueItems
   defs
-  items
   unevaluatedItems
   unevaluatedProperties
   dynamicRef
