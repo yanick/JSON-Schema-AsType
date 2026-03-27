@@ -26,7 +26,7 @@ use JSON::Schema::AsType::Draft2020_12::Types qw/ MinContains MaxContains /;
 use JSON::Schema::AsType::Annotations;
 use JSON::Schema::AsType::Draft6::Keywords;
 
-with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Validation' => { -excludes => [ map { "_keyword_$_" } qw/items contains/] };
+with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Validation' => { -excludes => [ map { "_keyword_$_" } qw/items contains $ref/] };
 
 
 sub _keyword_minContains($self,$min) {
@@ -62,41 +62,3 @@ sub _find_dynamicAnchor($self,$ref) {
 
 }
 
-__PACKAGE__->meta->add_method(
-	'_keyword_$dynamicRef' => sub {
-		my ( $self, $ref ) = @_;
-
-		my $schema;
-
-		return Type::Tiny->new(
-			display_name => "DynamicRef($ref)",
-			constraint   => sub {
-
-				my $v = $_;
-
-				my $anchor;
-				my $parent = $self;
-
-				my $first_id;
-
-				$DB::single = 1;
-
-				$ref =~ s/^#//;
-				
-				$DB::single = 1;
-
-				while ( $parent = $parent->parent_schema ) {
-
-					$anchor = $parent->_find_dynamicAnchor($ref) and last;
-
-				}
-
-				die "anchor not found\n" unless $anchor;
-
-				# use DDP; p $anchor->schema;
-				# warn "checking for $v\n";
-				return $anchor->base_type->check($v);
-			},
-		);
-	}
-);
