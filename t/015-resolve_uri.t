@@ -21,6 +21,8 @@ my @cases = (
  	'http://localhost:1234/node' ],
  [ [ '#' , 'http://localhost:1234/tree#/properties/nodes/items'] => 
  	'http://localhost:1234/tree' ],
+ [ [ '#anchor' , 'http://localhost:1234/tree#/properties/nodes/items'] => 
+ 	'http://localhost:1234/tree#anchor' ],
 );
 
 is resolve_uri( $_->[0]->@* ) => $_->[1], $_->[2] // join ' + ', $_->[0]->@*

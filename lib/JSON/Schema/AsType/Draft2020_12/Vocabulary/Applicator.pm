@@ -60,7 +60,7 @@ sub _keyword_items {
 
 	my $to_skip = ( $self->schema->{prefixItems} || [] )->@*;
 
-	return ~ArrayRef | Items [ $to_skip, $schema ];
+	return ~ArrayRef | Items [ $to_skip, $schema->type ];
 
 }
 
@@ -98,10 +98,12 @@ __PACKAGE__->meta->add_method(
 				die if $::DEEP > 10;
 				my $v = $_;
 
-				$DB::single = 1;
 				$schema = $self->resolve_reference($ref);
 
-				return $self->sub_schema( $schema->schema, $schema->uri ) if $schema;
+                if( $schema ) {
+                    return $self->sub_schema( 
+                        $schema->schema, $schema->uri )->type->check($v)
+                }
 
 				my $m = '_keyword_$dynamicRef';
 				return $self->$m($ref);

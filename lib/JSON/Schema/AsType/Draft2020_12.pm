@@ -99,7 +99,8 @@ after _schema_trigger => sub ( $self, $schema, @ ) {
 
 			return unless ref $_ eq 'HASH';
 
-			my $anchor = $_->{'$anchor'} or return;
+			my $anchor = $_->{'$anchor'} 
+                || $_->{'$dynamicAnchor'} or return;
 
 			my $uri = URI->new( $self->uri );
 
