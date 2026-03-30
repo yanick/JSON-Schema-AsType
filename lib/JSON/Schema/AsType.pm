@@ -99,13 +99,7 @@ has uri => (
     }
 );
 
-# for 2019-09 and up
-has scoped => (
-	is => 'ro',
-	default => 1,
-);
-
-sub sub_schema( $self, $subschema, $uri, $scoped = 1 ) {
+sub sub_schema( $self, $subschema, $uri ) {
 
     $uri = $self->resolve_uri($uri) if $uri;
 
@@ -114,7 +108,7 @@ sub sub_schema( $self, $subschema, $uri, $scoped = 1 ) {
         schema        => $subschema,
         parent_schema => $self,
         registry      => $self->registry,
-		scoped 		  => $scoped,
+		strict_string => $self->strict_string,
         maybe uri     => $uri
     );
 

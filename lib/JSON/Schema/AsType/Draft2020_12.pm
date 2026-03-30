@@ -124,14 +124,14 @@ sub _after_build($self) {
 	ensure_all_roles( $self, @roles ) if @roles;
 }
 
-around sub_schema => sub ( $orig, $self, $subschema, $uri, $scoped = 1 ) {
+around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
 
 	# ah AH, resolve the subschema id
 	if ( my $id = $self->_has_id($subschema) ) {
 		$uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
 		$subschema->{'$id'} = "" . $uri;    # TODO sane?
 	}
-	$orig->( $self, $subschema, $uri, $scoped );
+	$orig->( $self, $subschema, $uri );
 };
 
 my %keyword_index = reverse indexed '$id', '$ref', '$recursiveRef',
