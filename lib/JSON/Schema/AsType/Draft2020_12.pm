@@ -124,10 +124,15 @@ after _schema_trigger => sub ( $self, $schema, @ ) {
     );
 };
 
+sub add_vocabulary($self,$vocab) {
+	push $self->vocabularies->@*, $vocab;
+	ensure_all_roles($self,$vocab)	;
+}
+
 sub _after_build($self) {
 
     my @roles =
-      grep { $_ } map { $self->vocabulary_role($_) } $self->vocabularies->@*;
+      map { $self->vocabulary_role($_) } $self->vocabularies->@*;
 
     ensure_all_roles( $self, @roles ) if @roles;
 }
