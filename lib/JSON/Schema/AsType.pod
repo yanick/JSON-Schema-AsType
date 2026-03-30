@@ -162,6 +162,72 @@ L<JSON::Schema::AsType> object.
 Returns the L<JSON::Schema::AsType> object associated with the 
 type referenced by C<$ref>.
 
+=method add_vocabulary($vocabulary_role) 
+
+	$schema->add_vocabulary('Anagram');
+
+Adds a vocabulary to the schema. C<$vocabulary_role> is the name of a role
+implementing the vocabulary keywords and behaviors. See the section C<ADDING A
+VOCABULARY> for more details.
+
+=head1 ADDING A VOCABULARY 
+
+Vocabularies have been introduced in draft 2019-09 of JSON Schema, but 
+they are available in all draft versions in JSON::Schema::AsType. They are,
+basically, sets of keywords and behaviors that we want our schema to have
+access to. For JSON::Schema::AsType, they are implemented using roles. 
+
+For example, let's say we want to implement a new C<anagram_of> keyword, which
+would ensure that a string in the schema is an anagram of a provided word. We
+could create the role C<Anagram>:
+
+	package Anagram;
+
+	use feature qw/ signatures module_true/;
+
+	use Type::Tiny;
+	use Types::Standard qw/ Str /;
+		
+	use Moose::Role;
+
+	sub _normalize_word($word) {
+		join '', sort split '', $word;
+	}
+
+	my $anagram_type = Type::Tiny->new( 
+		name => 'Anagram',
+		constraint_generator => sub($word) {
+			$word = _normalize_word($word);
+
+			return sub {
+				_normalize_word($_) eq $word;
+			}
+		},
+		deep_explanation => sub($type,$value,@) {
+			my $p = $type->parameters->[0];
+			[qq{"$value" is not an anagram of "$p"}];
+		},
+	);
+
+	sub _keyword_anagram_of($self, $word ) {
+		# don't check anagrams on non-strings
+		return ~Str | $anagram_type->of($word)
+	}
+
+And then, to have a schema use it:
+
+	my $schema = JSON::Schema::AsType->new(
+		schema => {
+			type => 'string',
+			anagram_of => 'meat',
+		}
+	);
+
+	print $schema->check('team');   # 1
+	print $schema->check('tomato'); # undef
+
+
+
 =head1 COMPLIANCE TO THE SPECS 
 
 L<JSON::Schema::AsType> passes all the JSON schema test suites 

@@ -22,7 +22,7 @@ use Clone 'clone';
 use URI;
 use Module::Runtime qw/ use_module /;
 
-use Moose::Util qw/ apply_all_roles /;
+use Moose::Util qw/ apply_all_roles ensure_all_roles /;
 
 use JSON;
 use Type::Utils qw( class_type );
@@ -87,6 +87,31 @@ has strict_string => (
 		return $JSON::Schema::AsType::strict_string;
 	},
 );
+
+our %VOCABULARY;
+
+has vocabularies => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub($self) {
+
+		return [] unless $self->metaschema;
+
+	my $v = $self->metaschema->schema->{'$vocabulary'} or return [];
+
+	return [ pairmap { ($a) x !!$b } %$v ];
+    }
+);
+
+sub add_vocabulary($self,$vocab) {
+	push $self->vocabularies->@*, $vocab;
+	ensure_all_roles($self,$vocab)	;
+}
+
+sub vocabulary_role( $self, $url ) {
+    $VOCABULARY{$url};
+}
+
 
 has uri => (
 	is  => 'ro',
@@ -184,6 +209,11 @@ sub BUILD {
 
 	# TODO move the role into a trait, which should take care of this
 	$self->_schema_trigger( $self->schema ) if $self->has_schema;
+
+    my @roles =
+      map { $self->vocabulary_role($_) } $self->vocabularies->@*;
+
+    ensure_all_roles( $self, @roles ) if @roles;
 
 	$self->_after_build if $self->can('_after_build');
 

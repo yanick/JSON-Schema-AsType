@@ -81,7 +81,9 @@ has vocabularies => (
     }
 );
 
-our %VOCABULARY = map {
+%JSON::Schema::AsType::VOCABULARY = (
+	%JSON::Schema::AsType::VOCABULARY,
+ map {
     m#([^/]+)$#;
     $_ => __PACKAGE__ . '::Vocabulary::' . ucfirst($1) =~ s/-//r
 } (
@@ -91,11 +93,7 @@ our %VOCABULARY = map {
     "https://json-schema.org/draft/2019-09/vocab/meta-data",
     "https://json-schema.org/draft/2019-09/vocab/format",
     "https://json-schema.org/draft/2019-09/vocab/content",
-);
-
-sub vocabulary_role( $self, $url ) {
-    $VOCABULARY{$url};
-}
+));
 
 # in D2019_09::Core ?
 after _schema_trigger => sub ( $self, $schema, @ ) {
@@ -122,14 +120,6 @@ after _schema_trigger => sub ( $self, $schema, @ ) {
 	}
     );
 };
-
-sub _after_build($self) {
-
-    my @roles =
-      grep { $_ } map { $self->vocabulary_role($_) } $self->vocabularies->@*;
-
-    ensure_all_roles( $self, @roles ) if @roles;
-}
 
 around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
 

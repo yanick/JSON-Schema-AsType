@@ -45,7 +45,6 @@ subtest 'custom vocab' => sub {
 
 	ok $schema->check($_), $_ for qw/ team meta /;
 	ok $schema->validate($_), $_ for 1, qw/ potato /;
-	print join "\n", $schema->validate_explain(1)->@*;
 };
 
 done_testing;
