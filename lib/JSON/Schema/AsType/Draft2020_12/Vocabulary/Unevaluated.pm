@@ -1,6 +1,6 @@
 package JSON::Schema::AsType::Draft2020_12::Vocabulary::Unevaluated;
 
-# ABSTRACT: Role processing draft7 JSON Schema
+# ABSTRACT: Unevaluated vocabulary for draft 2020-12 schemas
 
 =head1 DESCRIPTION
 

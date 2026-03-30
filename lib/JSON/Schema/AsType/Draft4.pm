@@ -1,12 +1,20 @@
 package JSON::Schema::AsType::Draft4;
 
+# ABSTRACT: A draft 4 JSON Schema
+
+=head1 DESCRIPTION 
+
+Internal module for L<JSON::Schema:::AsType>. 
+
+=cut
+
 use 5.42.0;
 use warnings;
-
 
 use feature ':5.42';
 
 use JSON;
+
 # use Data::Visitor::Tiny;
 use JSON::Schema::AsType::Visit;
 
@@ -23,64 +31,70 @@ use feature qw/ signatures /;
 has '+draft' => default => 4;
 
 has '+metaschema' => (
-	default => sub($self) { 
-		my $schema = _metaschema();
-		return $schema;
-	}
+    default => sub($self) {
+	my $schema = _metaschema();
+	return $schema;
+    }
 );
 
 my $_uri_port = 1;
 has '+uri' => default => sub($self) {
-	my $id = $self->_has_id($self->schema) // 'http://254.0.0.1:'.$_uri_port++;
-	$self->clear_parent_schema;
-	return $id;
+    my $id = $self->_has_id( $self->schema )
+      // 'http://254.0.0.1:' . $_uri_port++;
+    $self->clear_parent_schema;
+    return $id;
 };
 
 override all_keywords => sub {
-	my $self = shift;
+    my $self = shift;
 
-	# $ref trumps all
-	return '$ref' if $self->schema->{'$ref'};
+    # $ref trumps all
+    return '$ref' if $self->schema->{'$ref'};
 
-	return uniq 'id', super();
+    return uniq 'id', super();
 };
 
-sub _schema_trigger($self,$schema,@) {
-	return unless $schema; # TODO
-	JSON::Schema::AsType::Visit::visit( $schema, sub {
-		my ( $key, $valueref, $context ) = @_;
+sub _schema_trigger( $self, $schema, @ ) {
+    return unless $schema;    # TODO
+    JSON::Schema::AsType::Visit::visit(
+	$schema,
+	sub {
+	    my ( $key, $valueref, $context ) = @_;
 
-		return unless ref $_ eq 'HASH';
+	    return unless ref $_ eq 'HASH';
 
-		my $id = $self->_has_id($_) or return;
+	    my $id = $self->_has_id($_) or return;
 
-		# that doesn't look like a 'id' for the schema
-		return if ref $id;
+	    # that doesn't look like a 'id' for the schema
+	    return if ref $id;
 
-		$self->sub_schema($_,$id);
-	});
-};
-
-sub _has_id ($self,$schema = {} ) {
-	return unless ref $schema eq 'HASH';
-	return $schema->{id};
+	    $self->sub_schema( $_, $id );
+	}
+    );
 }
 
-around sub_schema => sub ($orig,$self,$subschema,$uri) {
+sub _has_id ( $self, $schema = {} ) {
+    return unless ref $schema eq 'HASH';
+    return $schema->{id};
+}
+
+around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
+
     # ah AH, resolve the subschema id
-    if(my $id = $self->_has_id($subschema)) {
-        $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
+    if ( my $id = $self->_has_id($subschema) ) {
+	$uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
     }
-    $orig->($self,$subschema,$uri);
+    $orig->( $self, $subschema, $uri );
 };
 
 sub _metaschema {
-	state $METASCHEMA = __PACKAGE__->new(
-		uri => "https://json-schema.org/draft-04/schema",
-		schema => from_json join '', <DATA>,
-	);
+    state $METASCHEMA = __PACKAGE__->new(
+	uri    => "https://json-schema.org/draft-04/schema",
+	schema => from_json join '',
+	<DATA>,
+    );
 
-	return $METASCHEMA;
+    return $METASCHEMA;
 }
 
 __DATA__

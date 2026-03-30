@@ -1,51 +1,10 @@
 package JSON::Schema::AsType::Draft2020_12::Types;
 
-# ABSTRACT: JSON-schema v6 keywords as types
+# ABSTRACT: Type::Tiny types for draft 2020-12 schemas
 
-=head1  SYNOPSIS
+=head1 DESCRIPTION 
 
-    use JSON::Schema::AsType::Draft6::Types '-all';
-
-    my $type = Object & 
-        Properties[
-            foo => Minimum[3]
-        ];
-
-    $type->check({ foo => 5 });  # => 1
-    $type->check({ foo => 1 });  # => 0
-
-=head1 EXPORTED TYPES
-
-        Null Boolean Array Object String Integer Pattern Number Enum
-
-        OneOf AllOf AnyOf 
-
-        Not
-
-        Minimum ExclusiveMinimum Maximum ExclusiveMaximum MultipleOf
-
-        MaxLength MinLength
-
-        Items AdditionalItems MaxItems MinItems UniqueItems
-
-        PatternProperties AdditionalProperties MaxProperties MinProperties
-
-        Dependencies Dependency
-
-=head2 Schema
-
-Only verifies that the variable is a L<Type::Tiny>. 
-
-Can coerce the value from a hashref defining the schema.
-
-    my $schema = Schema->coerce( \%schema );
-
-    # equivalent to
-
-    $schema = JSON::Schema::AsType::Draft4->new(
-        draft => 6,
-        schema => \%schema;
-    )->type;
+Internal module for L<JSON::Schema:::AsType>. 
 
 =cut
 
@@ -88,84 +47,82 @@ use JSON::Schema::AsType::Draft4::Types qw/
 
 declare PrefixItems,
   constraint_generator => sub {
-	my $types = shift;
+    my $types = shift;
 
-	if ( Boolean->check($types) ) {
-		return $types ? Any : sub { !@$_ };
+    if ( Boolean->check($types) ) {
+	return $types ? Any : sub { !@$_ };
+    }
+
+    my $type =
+      ref $types eq 'ARRAY'
+      ? Tuple [ ( map { Optional [$_] } @$types ), slurpy Any ]
+      : Tuple [ slurpy ArrayRef [$types] ];
+
+    return ~ArrayRef | (
+	$type & sub {
+	    if ( ref $types eq 'ARRAY' ) {
+		add_annotation( 'prefixItems' => 0 .. $types->$#* );
+	    }
+	    else {
+		add_annotation( 'prefixItems' => 0 .. $_->$#* );
+	    }
+	    return 1;
 	}
-
-	my $type =
-	  ref $types eq 'ARRAY'
-	  ? Tuple [ ( map { Optional [$_] } @$types ), slurpy Any ]
-	  : Tuple [ slurpy ArrayRef [$types] ];
-
-	return ~ArrayRef | (
-		$type & sub {
-			if ( ref $types eq 'ARRAY' ) {
-				add_annotation('prefixItems' => 0 .. $types->$#*);
-			}
-			else {
-				add_annotation('prefixItems' => 0 .. $_->$#*);
-			}
-			return 1;
-		}
-	);
+    );
 
   };
 
-declare Contains,
-  constraint_generator => sub($type) {
-	  return sub { 
-		  return any { $type->check($_) } @$_ }
-  };
+declare Contains, constraint_generator => sub($type) {
+    return sub {
+	return any { $type->check($_) } @$_;
+    }
+};
 
-declare MinContains,
-  constraint_generator => sub($min) {
-	  return sub { 
-		  annotation_for('contains')->@* >= $min;
-	  }
-  };
+declare MinContains, constraint_generator => sub($min) {
+    return sub {
+	annotation_for('contains')->@* >= $min;
+    }
+};
 
-declare MaxContains,
-  constraint_generator => sub($max) {
-	  return sub { 
-		  annotation_for('contains')->@* <= $max;
-	  }
-  };
+declare MaxContains, constraint_generator => sub($max) {
+    return sub {
+	annotation_for('contains')->@* <= $max;
+    }
+};
 
 declare Items, constraint_generator => sub {
-	if ( @_ > 1 ) {
-		my $to_skip = shift;
-		my $schema  = shift;
-		return sub {
+    if ( @_ > 1 ) {
+	my $to_skip = shift;
+	my $schema  = shift;
+	return sub {
 
-			return unless ref eq 'ARRAY';
+	    return unless ref eq 'ARRAY';
 
-			my @v = @$_;
+	    my @v = @$_;
 
-			my @additional = splice @v, $to_skip;
+	    my @additional = splice @v, $to_skip;
 
-			if ( ref $schema eq 'JSON::PP::Boolean' ) {
-				my $verdict = @additional;
-				$verdict = !$verdict unless $schema;
-				return $verdict;
-			}
+	    if ( ref $schema eq 'JSON::PP::Boolean' ) {
+		my $verdict = @additional;
+		$verdict = !$verdict unless $schema;
+		return $verdict;
+	    }
 
-			return all { $schema->check($_) } @additional;
-		}
+	    return all { $schema->check($_) } @additional;
 	}
-	else {
-		my $size = shift;
-		if ( ref $size eq 'JSON::PP::Boolean' ) {
-			return sub {
-				my $s = ref($_) eq 'ARRAY' ? @_ : 0;
-				$DB::single = 1;
-				return !!$size ? $s : !$s;
-			}
-		}
-		return sub {
-			my $s = ref($_) eq 'ARRAY' ? @_ : 0;
-			$s <= $size;
-		};
+    }
+    else {
+	my $size = shift;
+	if ( ref $size eq 'JSON::PP::Boolean' ) {
+	    return sub {
+		my $s = ref($_) eq 'ARRAY' ? @_ : 0;
+		$DB::single = 1;
+		return !!$size ? $s : !$s;
+	    }
 	}
+	return sub {
+	    my $s = ref($_) eq 'ARRAY' ? @_ : 0;
+	    $s <= $size;
+	};
+    }
 };

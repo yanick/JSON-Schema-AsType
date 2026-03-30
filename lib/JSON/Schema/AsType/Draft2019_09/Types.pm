@@ -1,50 +1,10 @@
 package JSON::Schema::AsType::Draft2019_09::Types;
-# ABSTRACT: JSON-schema v6 keywords as types
 
-=head1  SYNOPSIS
+# ABSTRACT: Type::Tiny types for draft 2019-09 schemas
 
-    use JSON::Schema::AsType::Draft6::Types '-all';
+=head1 DESCRIPTION 
 
-    my $type = Object & 
-        Properties[
-            foo => Minimum[3]
-        ];
-
-    $type->check({ foo => 5 });  # => 1
-    $type->check({ foo => 1 });  # => 0
-
-=head1 EXPORTED TYPES
-
-        Null Boolean Array Object String Integer Pattern Number Enum
-
-        OneOf AllOf AnyOf 
-
-        Not
-
-        Minimum ExclusiveMinimum Maximum ExclusiveMaximum MultipleOf
-
-        MaxLength MinLength
-
-        Items AdditionalItems MaxItems MinItems UniqueItems
-
-        PatternProperties AdditionalProperties MaxProperties MinProperties
-
-        Dependencies Dependency
-
-=head2 Schema
-
-Only verifies that the variable is a L<Type::Tiny>. 
-
-Can coerce the value from a hashref defining the schema.
-
-    my $schema = Schema->coerce( \%schema );
-
-    # equivalent to
-
-    $schema = JSON::Schema::AsType::Draft4->new(
-        draft => 6,
-        schema => \%schema;
-    )->type;
+Internal module for L<JSON::Schema:::AsType>. 
 
 =cut
 
@@ -55,108 +15,107 @@ use feature qw/ module_true /;
 
 use Hash::Merge qw/ merge /;
 use Type::Utils -all;
-use Types::Standard qw/ 
-    Str StrictNum HashRef ArrayRef 
-    Int
-    Dict slurpy Optional Any
-    Tuple
-    InstanceOf
-/;
+use Types::Standard qw/
+  Str StrictNum HashRef ArrayRef
+  Int
+  Dict slurpy Optional Any
+  Tuple
+  InstanceOf
+  /;
 
 use Type::Library
-    -base,
-    -declare => qw(
-		DependentRequired
-		DependentSchemas
-		UnevaluatedProperties
-		UnevaluatedItems
-    );
+  -base,
+  -declare => qw(
+  DependentRequired
+  DependentSchemas
+  UnevaluatedProperties
+  UnevaluatedItems
+  );
 
 use List::MoreUtils qw/ zip none any all /;
-use List::Util qw/ pairs pairmap reduce uniq /;
+use List::Util      qw/ pairs pairmap reduce uniq /;
 
 use JSON::Schema::AsType;
 
 use JSON::Schema::AsType::Annotations;
 
 use JSON::Schema::AsType::Draft4::Types qw/
-    Integer Boolean Number String Null Object Array Items
-    ExclusiveMinimum ExclusiveMaximum Dependencies Dependency
-    Not MultipleOf
-/;
+  Integer Boolean Number String Null Object Array Items
+  ExclusiveMinimum ExclusiveMaximum Dependencies Dependency
+  Not MultipleOf
+  /;
 
 #__PACKAGE__->meta->add_type( $_ ) for Integer, Boolean, Number, String, Null, Object, Array, Items, ExclusiveMaximum, ExclusiveMinimum;
 
+declare DependentRequired => constraint_generator => sub($depends) {
+    return sub {
 
-declare DependentRequired => 
-    constraint_generator => sub($depends) {
-		return sub {
-			# only for objects
-			return 1 unless ref eq 'HASH';
+	# only for objects
+	return 1 unless ref eq 'HASH';
 
-			for my ($prop, $deps ) (%$depends)  {
-				next unless exists $_->{$prop};
-				for my $d (@$deps) {
-					return 0 unless exists $_->{$d};
-				}
-			}
-			return 1;
-		}
-    };
+	for my ( $prop, $deps ) (%$depends) {
+	    next unless exists $_->{$prop};
+	    for my $d (@$deps) {
+		return 0 unless exists $_->{$d};
+	    }
+	}
+	return 1;
+    }
+};
 
-declare DependentSchemas =>
-    constraint_generator => sub($depends) {
+declare DependentSchemas => constraint_generator => sub($depends) {
 
-		return sub {
-			# only for objects
-			return 1 unless ref eq 'HASH';
+    return sub {
 
-			for my ($prop, $dep ) (%$depends)  {
-				next unless exists $_->{$prop};
-				return 0 unless $dep->check($_);
-			}
+	# only for objects
+	return 1 unless ref eq 'HASH';
 
-			return 1;
-		}
-    };
+	for my ( $prop, $dep ) (%$depends) {
+	    next     unless exists $_->{$prop};
+	    return 0 unless $dep->check($_);
+	}
 
-declare UnevaluatedProperties => 
-	constraint_generator => sub($type) {
+	return 1;
+    }
+};
 
-		return sub {
-			# only for objects 
-			return 1 unless ref eq 'HASH';
+declare UnevaluatedProperties => constraint_generator => sub($type) {
 
-			my $target = $_;
+    return sub {
 
-			my %keys = map { $_ => 1 } annotation_properties();
+	# only for objects
+	return 1 unless ref eq 'HASH';
 
-			my @keys  = grep { !$keys{$_} } keys %$target;
+	my $target = $_;
 
-			add_annotation( 'unevaluatedProperties', @keys );
+	my %keys = map { $_ => 1 } annotation_properties();
 
-			return all { $type->check($_) } map { $target->{$_} } @keys;
-		}
-	};
+	my @keys = grep { !$keys{$_} } keys %$target;
 
-declare UnevaluatedItems => 
-	constraint_generator => sub($type) {
+	add_annotation( 'unevaluatedProperties', @keys );
 
-		return sub {
-			# only for arrays 
-			return 1 unless ref eq 'ARRAY';
+	return all { $type->check($_) } map { $target->{$_} } @keys;
+    }
+};
 
-			my $target = $_;
+declare UnevaluatedItems => constraint_generator => sub($type) {
 
-			my %indexes;
+    return sub {
 
-			$indexes{$_}++ for annotation_items();
+	# only for arrays
+	return 1 unless ref eq 'ARRAY';
 
-			for my $i ( grep { !$indexes{$_} } 0..$target->$#* ) {
-				return 0 unless $type->check( $target->[$i] );
-				add_annotation('unevaluatedItems',$i);
-			}
+	my $target = $_;
 
-			return 1;
-		}
-	};
+	my %indexes;
+
+	$indexes{$_}++ for annotation_items();
+
+	for my $i ( grep { !$indexes{$_} } 0 .. $target->$#* ) {
+	    return 0 unless $type->check( $target->[$i] );
+	    add_annotation( 'unevaluatedItems', $i );
+	}
+
+	return 1;
+    }
+};

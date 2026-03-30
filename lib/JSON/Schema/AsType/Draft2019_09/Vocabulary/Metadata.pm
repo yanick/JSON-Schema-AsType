@@ -1,5 +1,6 @@
 package JSON::Schema::AsType::Draft2019_09::Vocabulary::Metadata;
-# ABSTRACT: Role processing draft7 JSON Schema 
+
+# ABSTRACT: Metadata vocabulary for draft 2019-09 schemas
 
 =head1 DESCRIPTION
 

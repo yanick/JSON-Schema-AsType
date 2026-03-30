@@ -1,5 +1,6 @@
 package JSON::Schema::AsType::Draft2020_12::Vocabulary::Core;
-# ABSTRACT: Role processing draft7 JSON Schema 
+
+# ABSTRACT: Core vocabulary for draft 2020-12 schemas
 
 =head1 DESCRIPTION
 

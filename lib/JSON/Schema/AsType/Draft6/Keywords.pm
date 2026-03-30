@@ -7,9 +7,6 @@ package JSON::Schema::AsType::Draft6::Keywords;
 This role is not intended to be used directly. It is used internally
 by L<JSON::Schema::AsType> objects.
 
-Importing this module auto-populate the Draft4 schema in the
-L<JSON::Schema::AsType> schema cache.
-
 =cut
 
 use 5.42.0;
@@ -35,99 +32,99 @@ use JSON::Schema::AsType::Draft6::Types '-all';
 with 'JSON::Schema::AsType::Draft4::Keywords';
 
 override _build_type => sub {
-	my $self = shift;
+    my $self = shift;
 
-	return super() if ref $self->schema eq 'HASH';
+    return super() if ref $self->schema eq 'HASH';
 
-	return ( ( $self->schema eq JSON::true ) ? Any : ~Any );
+    return ( ( $self->schema eq JSON::true ) ? Any : ~Any );
 
 };
 
 sub _keyword_const {
-	my $self = shift;
+    my $self = shift;
 
-	$self->_keyword_enum( [@_] );
+    $self->_keyword_enum( [@_] );
 }
 
 sub _keyword_contains {
-	my ( $self, $type ) = @_;
+    my ( $self, $type ) = @_;
 
-	my $min = $self->schema->{minContains} // 1;       # for 2019-09
-	my $max = $self->schema->{maxContains} // 9E99;    # for 2019-09
+    my $min = $self->schema->{minContains} // 1;       # for 2019-09
+    my $max = $self->schema->{maxContains} // 9E99;    # for 2019-09
 
-	if ( JSON::is_bool($type) ) {
-		if ($type) {
-			$min = 1;
-		}
-		else {
-			$max = 0;
-		}
+    if ( JSON::is_bool($type) ) {
+	if ($type) {
+	    $min = 1;
 	}
+	else {
+	    $max = 0;
+	}
+    }
 
-	return Contains [ $self->sub_schema( $type, '#./contains' )->type, $min,
-		$max ];
+    return Contains [ $self->sub_schema( $type, '#./contains' )->type, $min,
+	$max ];
 
 }
 
 sub _keyword_exclusiveMaximum {
-	my ( $self, $maximum ) = @_;
+    my ( $self, $maximum ) = @_;
 
-	ExclusiveMaximum [$maximum];
+    ExclusiveMaximum [$maximum];
 }
 
 sub _keyword_exclusiveMinimum {
-	my ( $self, $maximum ) = @_;
+    my ( $self, $maximum ) = @_;
 
-	ExclusiveMinimum [$maximum];
+    ExclusiveMinimum [$maximum];
 }
 
 sub _keyword_propertyNames {
-	my ( $self, $schema ) = @_;
+    my ( $self, $schema ) = @_;
 
-	PropertyNames [ $self->sub_schema( $schema, '#./propertyNames' )->type ];
+    PropertyNames [ $self->sub_schema( $schema, '#./propertyNames' )->type ];
 }
 
 sub _keyword_items( $self, $items, $keyword = 'items' ) {
 
-	if ( Boolean->check($items) ) {
-		return if $items;
-		return Items [JSON::false];
-	}
+    if ( Boolean->check($items) ) {
+	return if $items;
+	return Items [JSON::false];
+    }
 
-	if ( ref $items eq 'HASH' ) {
-		my $type = $self->sub_schema( $items, "#./$keyword" )->type;
+    if ( ref $items eq 'HASH' ) {
+	my $type = $self->sub_schema( $items, "#./$keyword" )->type;
 
-		return Items [$type];
-	}
+	return Items [$type];
+    }
 
-	# TODO forward declaration not workie
-	my @types;
-	my $i = 0;
-	for (@$items) {
-		push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
-	}
+    # TODO forward declaration not workie
+    my @types;
+    my $i = 0;
+    for (@$items) {
+	push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
+    }
 
-	return Items [ \@types ];
+    return Items [ \@types ];
 }
 
 sub _keyword_dependencies {
-	my ( $self, $dependencies ) = @_;
+    my ( $self, $dependencies ) = @_;
 
-	return Dependencies [
-		pairmap {
-			  $a => ( ref $b eq 'HASH' or ref $b eq 'JSON::PP::Boolean' )
-			? $self->sub_schema( $b, '#./dependencies/' . $a )
-			: $b
-		} %$dependencies
-	];
+    return Dependencies [
+	pairmap {
+	      $a => ( ref $b eq 'HASH' or ref $b eq 'JSON::PP::Boolean' )
+	    ? $self->sub_schema( $b, '#./dependencies/' . $a )
+	    : $b
+	} %$dependencies
+    ];
 
 }
 
 __PACKAGE__->meta->add_method(
-	'_keyword_$id' => sub {
-		my $self = shift;
-		$self->_keyword_id(@_);
-	}
+    '_keyword_$id' => sub {
+	my $self = shift;
+	$self->_keyword_id(@_);
+    }
 );
 
 1;

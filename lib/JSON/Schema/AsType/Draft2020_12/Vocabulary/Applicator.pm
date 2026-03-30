@@ -1,11 +1,10 @@
 package JSON::Schema::AsType::Draft2020_12::Vocabulary::Applicator;
 
-# ABSTRACT: Role processing draft7 JSON Schema
+# ABSTRACT: Draft 2020-12 Applicator vocabulary
 
-=head1 DESCRIPTION
+=head1 DESCRIPTION 
 
-This role is not intended to be used directly. It is used internally
-by L<JSON::Schema::AsType> objects.
+Internal module for L<JSON::Schema:::AsType>. 
 
 =cut
 
@@ -16,7 +15,7 @@ use feature qw/ module_true /;
 
 use Moose::Role;
 
-use Types::Standard                           qw/ Any ArrayRef /;
+use Types::Standard qw/ Any ArrayRef /;
 use JSON::Schema::AsType::Annotations;
 use JSON::Schema::AsType::Draft4::Types       qw/ Boolean /;
 use JSON::Schema::AsType::Draft2019_09::Types qw/ /;
@@ -29,57 +28,56 @@ with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Applicator' =>
 
 sub _keyword_prefixItems ( $self, $items, $keyword = 'prefixItems' ) {
 
-	if ( Boolean->check($items) ) {
-		return if $items;
-		return PrefixItems [JSON::false];
-	}
+    if ( Boolean->check($items) ) {
+	return if $items;
+	return PrefixItems [JSON::false];
+    }
 
-	if ( ref $items eq 'HASH' ) {
-		my $type = $self->sub_schema( $items, "#./$keyword" )->type;
+    if ( ref $items eq 'HASH' ) {
+	my $type = $self->sub_schema( $items, "#./$keyword" )->type;
 
-		return PrefixItems [$type];
-	}
+	return PrefixItems [$type];
+    }
 
-	# TODO forward declaration not workie
-	my @types;
-	my $i = 0;
-	for (@$items) {
-		push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
-	}
+    # TODO forward declaration not workie
+    my @types;
+    my $i = 0;
+    for (@$items) {
+	push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
+    }
 
-	return PrefixItems [ \@types ];
+    return PrefixItems [ \@types ];
 }
 
 sub _keyword_items {
-	my ( $self, $s ) = @_;
+    my ( $self, $s ) = @_;
 
-	my $schema = $self->sub_schema( $s, '#./items' );
+    my $schema = $self->sub_schema( $s, '#./items' );
 
-	# items is schema => additionalItems does nothing
-	return Any if ref $self->schema->{prefixItems} eq 'HASH';
+    # items is schema => additionalItems does nothing
+    return Any if ref $self->schema->{prefixItems} eq 'HASH';
 
-	my $to_skip = ( $self->schema->{prefixItems} || [] )->@*;
+    my $to_skip = ( $self->schema->{prefixItems} || [] )->@*;
 
-	return ~ArrayRef | Items [ $to_skip, $schema ];
+    return ~ArrayRef | Items [ $to_skip, $schema ];
 
 }
 
 sub _keyword_contains( $self, $schema ) {
 
-	my $type = $self->sub_schema( $schema, '#./contains' )->type;
+    my $type = $self->sub_schema( $schema, '#./contains' )->type;
 
-	my $contains = sub {
-			my $v = $_;
-			add_annotation('contains',
-			  grep { $type->check( $v->[$_] ) } 0 .. $_->$#*
-			);
-			return 1;
-		};
+    my $contains = sub {
+	my $v = $_;
+	add_annotation( 'contains',
+	    grep { $type->check( $v->[$_] ) } 0 .. $_->$#* );
+	return 1;
+    };
 
-	$contains = Contains [$type] & $contains 
-		unless exists $self->schema->{minContains} 
-			and $self->schema->{minContains} == 0;
+    $contains = Contains [$type] & $contains
+      unless exists $self->schema->{minContains}
+      and $self->schema->{minContains} == 0;
 
-	return ~ArrayRef | $contains;
+    return ~ArrayRef | $contains;
 
 }
