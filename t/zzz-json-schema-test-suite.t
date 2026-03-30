@@ -43,6 +43,7 @@ $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/
   unevaluatedItems
   unevaluatedProperties
   ref
+  dynamicRef
   /;
 
 run_draft_test_suite($_)

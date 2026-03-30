@@ -122,6 +122,8 @@ subtest 'The recursive part is valid against the root' => sub {
             '$schema' => 'https://json-schema.org/draft/2020-12/schema',
             '$ref'    => 'extended',
             '$dynamicAnchor' => 'meta',
+            'type'       => 'object',
+            'properties' => { 'foo' => { 'const' => 'pass' } },
             '$defs'          => {
                 'bar' => {
                     'properties' =>
@@ -138,8 +140,6 @@ subtest 'The recursive part is valid against the root' => sub {
                       'https://test.json-schema.org/relative-dynamic-reference/extended'
                 }
             },
-            'type'       => 'object',
-            'properties' => { 'foo' => { 'const' => 'pass' } }
         }
     );
 
@@ -149,6 +149,13 @@ subtest 'The recursive part is valid against the root' => sub {
         }
       ),
       'all good';
+
+    ok $schema->validate(
+        {   'foo' => 'pass',
+            'bar' => { 'baz' => { 'foo' => 'fail' } }
+        }
+      ),
+      'should fail';
 };
 
 done_testing;
