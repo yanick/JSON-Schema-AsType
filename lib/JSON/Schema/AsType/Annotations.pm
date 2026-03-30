@@ -1,4 +1,11 @@
 package JSON::Schema::AsType::Annotations;
+# ABSTRACT: Manage scope annotations for schema
+
+=head1 DESCRIPTION 
+
+Internal module for L<JSON::Schema:::AsType>. 
+
+=cut
 
 use 5.42.0;
 use warnings;
