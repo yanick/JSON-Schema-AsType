@@ -109,6 +109,7 @@ sub sub_schema( $self, $subschema, $uri ) {
         parent_schema => $self,
         registry      => $self->registry,
 		strict_string => $self->strict_string,
+		fetch_remote  => $self->fetch_remote,
         maybe uri     => $uri
     );
 
