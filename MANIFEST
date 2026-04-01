@@ -70,9 +70,6 @@ t/450-draft2019-vocabulary.t
 t/500-draft2020-pattern.t
 t/basic.t
 t/corpus/settlers.json
-t/draft3.t
-t/draft4.t
-t/draft6.t
 t/fetch.t
 t/json-schema-test-suite/CONTRIBUTING.md
 t/json-schema-test-suite/LICENSE
@@ -635,5 +632,6 @@ t/spec-schema.t
 t/string_number.t
 t/types_draft3.t
 t/types_draft4.t
+t/zzz-json-schema-test-suite-optional.t
 t/zzz-json-schema-test-suite.t
 xt/release/unused-vars.t

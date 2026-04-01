@@ -27,6 +27,16 @@ my ( $target_draft, $target_file, $target_test ) = split ':', $ENV{TEST_SCHEMA};
 
 my $todo = {};
 
+push $todo->{4}{'ecmascript-regex.json'}->@*,
+  'pattern with non-ASCII digits',
+  '\w in patterns matches [A-Za-z0-9_], not unicode letters',
+  'patterns always use unicode semantics with pattern',
+  'ECMA 262 \S matches everything but whitespace',
+  'ECMA 262 \s matches whitespace',
+  'ECMA 262 \W matches everything but ascii letters',
+  'ECMA 262 \D matches everything but ascii digits',
+  'ECMA 262 \d matches ascii digits only';
+
 run_draft_test_suite($_)
   for grep { !$target_draft or $_ eq $target_draft }
   reverse @JSON::Schema::AsType::DRAFT_VERSIONS;
