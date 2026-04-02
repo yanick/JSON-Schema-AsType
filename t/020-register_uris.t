@@ -1,13 +1,13 @@
 use strict;
 use warnings;
 
-use Test::More tests => 2;
-use Test::Deep;
+use Test2::V1 -Pip;
 
 use JSON::Schema::AsType;
 use JSON qw/ from_json /;
 
-my $schema = JSON::Schema::AsType->new( schema => from_json  <<'JSON' );
+my $schema =
+  JSON::Schema::AsType->new( draft => 4, schema => from_json <<'JSON' );
 {
     "id": "http://localhost:1234/tree",
     "description": "tree of nodes",
@@ -35,23 +35,21 @@ my $schema = JSON::Schema::AsType->new( schema => from_json  <<'JSON' );
 }
 JSON
 
-$schema->type;
+like [ $schema->all_schema_uris ], bag {
+	item 'http://localhost:1234/node';
+	item 'http://localhost:1234/tree';
+};
 
-cmp_deeply [ $schema->all_schema_uris ], bag(
-    qw'
-        http://json-schema.org/draft-04/schema
-        https://json-schema.org/draft-04/schema
-        http://localhost:1234/node
-        http://localhost:1234/tree
-    '
+ok $schema->check(
+	{
+		meta  => 'root',
+		nodes => [
+			{
+				value   => 1,
+				subtree => { meta => "child", "nodes" => [] }
+			}
+		]
+	}
 );
 
-ok $schema->check({
-        meta => 'root',
-        nodes => [ {
-            value  => 1,
-            subtree => { meta => "child", "nodes" => [ ] }
-        }]
-});
-
-#diag explain $schema->all_schemas;
+done_testing;

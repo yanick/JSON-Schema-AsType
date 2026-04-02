@@ -56,7 +56,9 @@ will work too, but that's deprecated and will eventually go away.
 
 =method new( %args )
 
-    my $schema = JSON::Schema::AsType->new( schema => $my_schema );
+    my $schema = JSON::Schema::AsType->new( 
+		schema => $json_schema 
+	);
 
 The class constructor. Accepts the following arguments.
 
@@ -72,22 +74,44 @@ An error will be thrown is neither C<schema> nor C<uri> is given.
 
 =item uri => $uri
 
-Optional uri associated with the schema. 
+Optional uri associated with the schema. If not provided, a local 
+uri C<http://254.0.0.1:$port> will be assigned to the schema.
 
-If provided, the schema will also 
-be added to a schema cache. There is currently no way to prevent this. 
-If this is an issue for you, you can manipulate the cache by accessing 
-C<%JSON::Schema::AsType::EXTERNAL_SCHEMAS> directly.
+=item draft => $version
 
-=item draft_version => $version
+The version of the JSON-Schema specification to use. Accepts C<3>, C<4>,
+C<6>, C<7>, C<2019-09>, and C<2020-12>. Defaults to C<2020-12>. 
 
-The version of the JSON-Schema specification to use. Accepts C<3>  or C<4>,
-defaults to '4'. 
+=item fetch_remote => $boolean 
+
+If sets to true, allows C<fetch> to retrieve remote schemas. 
+
+=item registry => $registry 
+
+	JSON::Schema::AsType->new(
+		schema => {
+			'$id' => 'http://localhost/foo',
+			$ref => 'bar',
+		}
+		registry => {
+			'http://localhost/bar' => {
+				type => 'string'
+			}
+		}
+	);
+
+Registry of schemas that can be used by the current schema. 
 
 
 =back
 
-=cut
+=method metaschema 
+
+Returns the metaschema of the current schema, based on its C<draft> version.
+
+=method uri
+
+Returns the URI of the schema, as a L<URI> object.
 
 =method type
 
@@ -109,74 +133,25 @@ Returns a log explanation if C<$struct> didn't validate, nothing otherwise.
 
 Like C<validate>, but validates the schema itself against its specification.
 
-
     print $schema->validate_schema;
-
-    # equivalent to
-
-    print $schema->specification_schema->validate($schema);
 
 =method validate_explain_schema
 
 Like C<validate_explain>, but validates the schema itself against its specification.
 
-=method draft_version
+=method draft
 
 Returns the draft version used by the object.
 
-=method spec 
-
-Returns the L<JSON::Schema::AsType> object associated with the
-specs of this object's schema. 
-
-I.e., if the current object is a draft4 schema, C<spec> will
-return the schema definining draft4.
-
-=cut
 
 =method schema
 
 Returns the JSON schema, as a hashref.
 
-=cut
-
-=method parent_schema 
-
-Returns the L<JSON::Schema::AsType> object for the parent schema, or
-C<undef> is the current schema is the top-level one.
-
-=cut
-
 =method fetch( $url )
 
-Fetches the schema at the given C<$url>. If already present, it will use the schema in
-the cache. If not, the newly fetched schema will be added to the cache.
-
-=cut
-
-=method uri 
-
-Returns the uri associated with the schema, if any.
-
-=method specification
-
-Returns the JSON Schema specification used by the object.
-
-=method specification_schema
-
-Returns the L<JSON::Schema::AsType> object representing the schema of 
-the current object's specification.
-
-=method root_schema
-
-Returns the top-level schema including this schema.
-
-=method is_root_schema
-
-Returns C<true> if this schema is a top-level
-schema.
-
-=cut
+Fetches the schema at the given C<$url> and returns it as a 
+L<JSON::Schema::AsType> object. 
 
 =method resolve_reference( $ref )
 
@@ -187,3 +162,101 @@ schema.
 Returns the L<JSON::Schema::AsType> object associated with the 
 type referenced by C<$ref>.
 
+=method add_vocabulary($vocabulary_role) 
+
+	$schema->add_vocabulary('Anagram');
+
+Adds a vocabulary to the schema. C<$vocabulary_role> is the name of a role
+implementing the vocabulary keywords and behaviors. See the section C<ADDING A
+VOCABULARY> for more details.
+
+=head1 ADDING A VOCABULARY 
+
+Vocabularies have been introduced in draft 2019-09 of JSON Schema, but 
+they are available in all draft versions in JSON::Schema::AsType. They are,
+basically, sets of keywords and behaviors that we want our schema to have
+access to. For JSON::Schema::AsType, they are implemented using roles. 
+
+For example, let's say we want to implement a new C<anagram_of> keyword, which
+would ensure that a string in the schema is an anagram of a provided word. We
+could create the role C<Anagram>:
+
+	package Anagram;
+
+	use feature qw/ signatures module_true/;
+
+	use Type::Tiny;
+	use Types::Standard qw/ Str /;
+		
+	use Moose::Role;
+
+	sub _normalize_word($word) {
+		join '', sort split '', $word;
+	}
+
+	my $anagram_type = Type::Tiny->new( 
+		name => 'Anagram',
+		constraint_generator => sub($word) {
+			$word = _normalize_word($word);
+
+			return sub {
+				_normalize_word($_) eq $word;
+			}
+		},
+		deep_explanation => sub($type,$value,@) {
+			my $p = $type->parameters->[0];
+			[qq{"$value" is not an anagram of "$p"}];
+		},
+	);
+
+	sub _keyword_anagram_of($self, $word ) {
+		# don't check anagrams on non-strings
+		return ~Str | $anagram_type->of($word)
+	}
+
+And then, to have a schema use it:
+
+	my $schema = JSON::Schema::AsType->new(
+		schema => {
+			type => 'string',
+			anagram_of => 'meat',
+		}
+	);
+
+	print $schema->check('team');   # 1
+	print $schema->check('tomato'); # undef
+
+
+
+=head1 COMPLIANCE TO THE SPECS 
+
+L<JSON::Schema::AsType> passes all the JSON schema test suites 
+L<https://github.com/json-schema-org/JSON-Schema-Test-Suite> excepts 
+for the following:
+
+	drafts  |  test file / test 
+	------- | ------------------
+ 	all     | const.json / float and integers are equal up to 64-bit representation limits
+	2019-09 | ref.json / refs with relative uris and defs
+	2019-09 | ref.json / relative refs with absolute uris and defs
+	2020-12 | pattern.json / pattern with Unicode property escape requires unicode mode
+	2020-12 | defs.json / * 
+	2020-12 | unevaluatedItems / *
+	2020-12 | unevaluatedProperties / * 
+	2020-12 | dynamicRef / * 
+	2020-12 | ref / *
+
+=head2 Known limitations/design decisions 
+
+=over 
+
+=item JSON Schema assumes a 64-bit representation of floats and integers, 
+whereas L<JSON::Schema::AsType> adheres to whatever the local perl supports.
+
+=item For C<pattern>s, L<JSON::Schema::AsType> assumes we always are in
+unicode mode.
+
+=item Some hairy C<ref> tests are failing for drafts C<2019-09> and
+C<2020-12>. For most common uses, that shouldn't be a problem.
+
+=back

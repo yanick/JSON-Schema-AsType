@@ -121,6 +121,7 @@ test_type(
 
 subtest anyof => sub {
     my $type = AnyOf[ Integer, Minimum[2] ];
+	ok Number->check(1.5);
     ok !$type->check(1.5);
 };
 
@@ -150,7 +151,7 @@ sub test_type {
             for my $test ( @$bad ) {
                 my $error = $type->validate($test);
                 ok $error, join '', 'value: ', explain $test;
-                diag $error unless $printed++;
+                #                diag $error unless $printed++;
             }
         } if $bad;
     };
