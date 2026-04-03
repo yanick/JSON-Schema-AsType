@@ -42,6 +42,8 @@ Then you can set the object's attribute C<strict_string> to C<0>.
 Setting the global variable C<$JSON::Schema::AsType::strict_string> to C<0>
 will work too, but that's deprecated and will eventually go away.
 
+=begin :postlude 
+
 =head1 SEE ALSO
 
 =over
@@ -52,7 +54,7 @@ will work too, but that's deprecated and will eventually go away.
 
 =back
 
-=cut
+=end :postlude
 
 =method new( %args )
 
