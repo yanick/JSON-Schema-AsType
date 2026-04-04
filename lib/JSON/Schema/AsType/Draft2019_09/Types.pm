@@ -50,16 +50,16 @@ use JSON::Schema::AsType::Draft4::Types qw/
 declare DependentRequired => constraint_generator => sub($depends) {
     return sub {
 
-	# only for objects
-	return 1 unless ref eq 'HASH';
+        # only for objects
+        return 1 unless ref eq 'HASH';
 
-	for my ( $prop, $deps ) (%$depends) {
-	    next unless exists $_->{$prop};
-	    for my $d (@$deps) {
-		return 0 unless exists $_->{$d};
-	    }
-	}
-	return 1;
+        for my ( $prop, $deps ) (%$depends) {
+            next unless exists $_->{$prop};
+            for my $d (@$deps) {
+                return 0 unless exists $_->{$d};
+            }
+        }
+        return 1;
     }
 };
 
@@ -67,15 +67,15 @@ declare DependentSchemas => constraint_generator => sub($depends) {
 
     return sub {
 
-	# only for objects
-	return 1 unless ref eq 'HASH';
+        # only for objects
+        return 1 unless ref eq 'HASH';
 
-	for my ( $prop, $dep ) (%$depends) {
-	    next     unless exists $_->{$prop};
-	    return 0 unless $dep->check($_);
-	}
+        for my ( $prop, $dep ) (%$depends) {
+            next     unless exists $_->{$prop};
+            return 0 unless $dep->check($_);
+        }
 
-	return 1;
+        return 1;
     }
 };
 
@@ -83,18 +83,18 @@ declare UnevaluatedProperties => constraint_generator => sub($type) {
 
     return sub {
 
-	# only for objects
-	return 1 unless ref eq 'HASH';
+        # only for objects
+        return 1 unless ref eq 'HASH';
 
-	my $target = $_;
+        my $target = $_;
 
-	my %keys = map { $_ => 1 } annotation_properties();
+        my %keys = map { $_ => 1 } annotation_properties();
 
-	my @keys = grep { !$keys{$_} } keys %$target;
+        my @keys = grep { !$keys{$_} } keys %$target;
 
-	add_annotation( 'unevaluatedProperties', @keys );
+        add_annotation( 'unevaluatedProperties', @keys );
 
-	return all { $type->check($_) } map { $target->{$_} } @keys;
+        return all { $type->check($_) } map { $target->{$_} } @keys;
     }
 };
 
@@ -102,20 +102,20 @@ declare UnevaluatedItems => constraint_generator => sub($type) {
 
     return sub {
 
-	# only for arrays
-	return 1 unless ref eq 'ARRAY';
+        # only for arrays
+        return 1 unless ref eq 'ARRAY';
 
-	my $target = $_;
+        my $target = $_;
 
-	my %indexes;
+        my %indexes;
 
-	$indexes{$_}++ for annotation_items();
+        $indexes{$_}++ for annotation_items();
 
-	for my $i ( grep { !$indexes{$_} } 0 .. $target->$#* ) {
-	    return 0 unless $type->check( $target->[$i] );
-	    add_annotation( 'unevaluatedItems', $i );
-	}
+        for my $i ( grep { !$indexes{$_} } 0 .. $target->$#* ) {
+            return 0 unless $type->check( $target->[$i] );
+            add_annotation( 'unevaluatedItems', $i );
+        }
 
-	return 1;
+        return 1;
     }
 };

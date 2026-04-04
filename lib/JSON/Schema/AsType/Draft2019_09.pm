@@ -34,9 +34,9 @@ has '+uri' => lazy => 1,
     my $id = $self->_has_id( $self->schema );
 
     unless ($id) {
-	do {
-	    $id = 'http://254.0.0.1:' . $_uri_port++;
-	} while $self->registered_schema($id);
+        do {
+            $id = 'http://254.0.0.1:' . $_uri_port++;
+        } while $self->registered_schema($id);
     }
 
     # TODO not required?
@@ -54,19 +54,19 @@ has is_own_metaschema => (
 
 has '+metaschema' => (
     default => sub($self) {
-	return $self if $self->is_own_metaschema;
+        return $self if $self->is_own_metaschema;
 
-	if ( ref $self->schema eq 'HASH' ) {
-	    if ( my $uri = $self->schema->{'$schema'} ) {
-		unless ( ref $uri ) {
-		    return $self->fetch($uri);
-		}
-	    }
-	}
+        if ( ref $self->schema eq 'HASH' ) {
+            if ( my $uri = $self->schema->{'$schema'} ) {
+                unless ( ref $uri ) {
+                    return $self->fetch($uri);
+                }
+            }
+        }
 
-	return $self->parent_schema->metaschema if $self->parent_schema;
+        return $self->parent_schema->metaschema if $self->parent_schema;
 
-	return _metaschema();
+        return _metaschema();
     }
 );
 
@@ -75,49 +75,49 @@ has vocabularies => (
     lazy    => 1,
     default => sub($self) {
 
-	my $v = $self->metaschema->schema->{'$vocabulary'} or return [];
+        my $v = $self->metaschema->schema->{'$vocabulary'} or return [];
 
-	return [ pairmap { ($a) x !!$b } %$v ];
+        return [ pairmap { ($a) x !!$b } %$v ];
     }
 );
 
 %JSON::Schema::AsType::VOCABULARY = (
-	%JSON::Schema::AsType::VOCABULARY,
- map {
-    m#([^/]+)$#;
-    $_ => __PACKAGE__ . '::Vocabulary::' . ucfirst($1) =~ s/-//r
-} (
-    "https://json-schema.org/draft/2019-09/vocab/core",
-    "https://json-schema.org/draft/2019-09/vocab/applicator",
-    "https://json-schema.org/draft/2019-09/vocab/validation",
-    "https://json-schema.org/draft/2019-09/vocab/meta-data",
-    "https://json-schema.org/draft/2019-09/vocab/format",
-    "https://json-schema.org/draft/2019-09/vocab/content",
-));
+    %JSON::Schema::AsType::VOCABULARY,
+    map {
+        m#([^/]+)$#;
+        $_ => __PACKAGE__ . '::Vocabulary::' . ucfirst($1) =~ s/-//r
+    } ( "https://json-schema.org/draft/2019-09/vocab/core",
+        "https://json-schema.org/draft/2019-09/vocab/applicator",
+        "https://json-schema.org/draft/2019-09/vocab/validation",
+        "https://json-schema.org/draft/2019-09/vocab/meta-data",
+        "https://json-schema.org/draft/2019-09/vocab/format",
+        "https://json-schema.org/draft/2019-09/vocab/content",
+      )
+);
 
 # in D2019_09::Core ?
 after _schema_trigger => sub ( $self, $schema, @ ) {
     JSON::Schema::AsType::Visit::visit(
-	$schema,
-	sub {
-	    my ( $key, $valueref, $context ) = @_;
+        $schema,
+        sub {
+            my ( $key, $valueref, $context ) = @_;
 
-	    return unless ref $_ eq 'HASH';
+            return unless ref $_ eq 'HASH';
 
-	    my $anchor = $_->{'$anchor'} or return;
+            my $anchor = $_->{'$anchor'} or return;
 
-	    my $uri = URI->new( $self->uri );
+            my $uri = URI->new( $self->uri );
 
-	    if ( my $id = $self->_has_id($_) ) {
-		$uri = $self->resolve_uri($id);
-	    }
+            if ( my $id = $self->_has_id($_) ) {
+                $uri = $self->resolve_uri($id);
+            }
 
-	    $uri->fragment($anchor);
+            $uri->fragment($anchor);
 
-	    #$self->sub_schema( $_, $uri);
-	    $self->register_schema( $uri => $_ );
-	    return;
-	}
+            #$self->sub_schema( $_, $uri);
+            $self->register_schema( $uri => $_ );
+            return;
+        }
     );
 };
 
@@ -125,8 +125,8 @@ around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
 
     # ah AH, resolve the subschema id
     if ( my $id = $self->_has_id($subschema) ) {
-	$uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
-	$subschema->{'$id'} = "" . $uri;    # TODO sane?
+        $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
+        $subschema->{'$id'} = "" . $uri;    # TODO sane?
     }
     $orig->( $self, $subschema, $uri );
 };
@@ -139,25 +139,25 @@ my %keyword_index = reverse indexed '$id', '$ref', '$recursiveRef',
 override all_keywords => sub($self) {
 
     return nsort_by {
-	$keyword_index{$_} // 999
+        $keyword_index{$_} // 999
     }
     map { /^_keyword_(.*)/ } $self->meta->get_method_list;
 };
 
 sub _schema_trigger( $self, $schema, @ ) {
     JSON::Schema::AsType::Visit::visit(
-	$schema,
-	sub {
-	    my ( $key, $valueref, $context ) = @_;
+        $schema,
+        sub {
+            my ( $key, $valueref, $context ) = @_;
 
-	    return unless ref $_ eq 'HASH';
+            return unless ref $_ eq 'HASH';
 
-	    my $id = $self->_has_id($_) or return;
-	    $DB::single = ref $id;
+            my $id = $self->_has_id($_) or return;
+            $DB::single = ref $id;
 
-	    $self->sub_schema( $_, $id );
-	    return;
-	}
+            $self->sub_schema( $_, $id );
+            return;
+        }
     );
 }
 
@@ -172,18 +172,18 @@ sub _metaschema {
     state @docs = ( from_json join '', <DATA> )->@*;
 
     state $METASCHEMA = __PACKAGE__->new(
-	uri               => "https://json-schema.org/draft/2019-09/schema",
-	schema            => shift @docs,
-	is_own_metaschema => 1,
+        uri               => "https://json-schema.org/draft/2019-09/schema",
+        schema            => shift @docs,
+        is_own_metaschema => 1,
     );
 
     state $done = 0;
 
     if ( not $done ) {
-	$METASCHEMA->register_schema(
-	    "https://json-schema.org/v1" => $METASCHEMA, );
-	$METASCHEMA->register_schema( $_->{'$id'} => $_ ) for @docs;
-	$done++;
+        $METASCHEMA->register_schema(
+            "https://json-schema.org/v1" => $METASCHEMA, );
+        $METASCHEMA->register_schema( $_->{'$id'} => $_ ) for @docs;
+        $done++;
     }
 
     return $METASCHEMA;

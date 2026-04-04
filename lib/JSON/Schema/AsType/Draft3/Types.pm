@@ -60,15 +60,15 @@ declare Dependency, constraint_generator => sub {
     my ( $property, $dep ) = @_;
 
     sub {
-	return 1 unless Object->check($_);
-	return 1 unless exists $_->{$property};
+        return 1 unless Object->check($_);
+        return 1 unless exists $_->{$property};
 
-	my $obj = $_;
+        my $obj = $_;
 
-	return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
-	return exists $obj->{$dep} unless ref $dep;
+        return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
+        return exists $obj->{$dep} unless ref $dep;
 
-	return $dep->check($_);
+        return $dep->check($_);
     }
 };
 
@@ -76,7 +76,7 @@ declare Properties => constraint_generator => sub {
     my $type = Dict [ @_, slurpy Any ];
 
     sub {
-	!Object->check($_) or $type->check($_);
+        !Object->check($_) or $type->check($_);
     }
 };
 
@@ -98,7 +98,7 @@ coerce Schema, from HashRef, via {
     my $schema = JSON::Schema::AsType->new( draft => 3, schema => $_ );
 
     if ( $schema->validate_schema ) {
-	die "not a valid draft3 json schema\n";
+        die "not a valid draft3 json schema\n";
     }
 
     $schema->type

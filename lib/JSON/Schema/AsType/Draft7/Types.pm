@@ -37,7 +37,7 @@ declare If => constraint_generator => sub {
     my ( $if, $then, $else ) = @_;
 
     return sub {
-	$if->check($_) ? $then->check($_) : $else->check($_);
+        $if->check($_) ? $then->check($_) : $else->check($_);
     }
 
 };
@@ -48,7 +48,7 @@ coerce Schema, from HashRef, via {
     my $schema = JSON::Schema::AsType->new( draft => 7, schema => $_ );
 
     if ( $schema->validate_schema ) {
-	die "not a valid draft7 json schema\n";
+        die "not a valid draft7 json schema\n";
     }
 
     $schema->type

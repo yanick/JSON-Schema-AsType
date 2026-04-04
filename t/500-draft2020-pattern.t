@@ -9,12 +9,13 @@ use JSON::Schema::AsType;
 use JSON;
 
 my $schema = JSON::Schema::AsType->new(
-	draft  => '2020-12',
-	schema => {
-		type => 'string', pattern => '^\\p{Letter}+$'
-	},
+    draft  => '2020-12',
+    schema => {
+        type    => 'string',
+        pattern => '^\\p{Letter}+$'
+    },
 );
 
-ok $schema->check( 'Ï' ), 'all good';
+ok $schema->check('Ï'), 'all good';
 
 done_testing;

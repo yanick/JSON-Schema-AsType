@@ -36,20 +36,18 @@ my $schema =
 JSON
 
 like [ $schema->all_schema_uris ], bag {
-	item 'http://localhost:1234/node';
-	item 'http://localhost:1234/tree';
+    item 'http://localhost:1234/node';
+    item 'http://localhost:1234/tree';
 };
 
 ok $schema->check(
-	{
-		meta  => 'root',
-		nodes => [
-			{
-				value   => 1,
-				subtree => { meta => "child", "nodes" => [] }
-			}
-		]
-	}
+    {   meta  => 'root',
+        nodes => [
+            {   value   => 1,
+                subtree => { meta => "child", "nodes" => [] }
+            }
+        ]
+    }
 );
 
 done_testing;

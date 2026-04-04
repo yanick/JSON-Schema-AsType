@@ -29,55 +29,55 @@ with 'JSON::Schema::AsType::Draft7::Keywords' => { -exclude => [] };
 
 __PACKAGE__->meta->add_method(
     '_keyword_$recursiveRef' => sub {
-	my ( $self, $ref ) = @_;
+        my ( $self, $ref ) = @_;
 
-	my $schema;
+        my $schema;
 
-	return Type::Tiny->new(
-	    name         => 'RecursiveRef',
-	    display_name => "RecursiveRef($ref)",
-	    constraint   => sub {
+        return Type::Tiny->new(
+            name         => 'RecursiveRef',
+            display_name => "RecursiveRef($ref)",
+            constraint   => sub {
 
-		my $v = $_;
+                my $v = $_;
 
-		my $anchor;
-		my $parent = $self;
+                my $anchor;
+                my $parent = $self;
 
-		my $first_id;
+                my $first_id;
 
-		while ( $parent = $parent->parent_schema ) {
+                while ( $parent = $parent->parent_schema ) {
 
-		    # warn "===> ".$parent->uri, "\n";
-		    # warn "anchor: ", $anchor && $anchor->uri, "\n";
-		    # warn "first ", $first_id && $first_id->uri, "\n";
-		    if (    $parent->schema->{'$id'}
-			and !$parent->schema->{'$recursiveAnchor'}
-			and not $first_id )
-		    {
-			$first_id = $parent;
-			last;
-		    }
-		    $anchor = $parent if $parent->schema->{'$recursiveAnchor'};
-		}
+                    # warn "===> ".$parent->uri, "\n";
+                    # warn "anchor: ", $anchor && $anchor->uri, "\n";
+                    # warn "first ", $first_id && $first_id->uri, "\n";
+                    if (    $parent->schema->{'$id'}
+                        and !$parent->schema->{'$recursiveAnchor'}
+                        and not $first_id ) {
+                        $first_id = $parent;
+                        last;
+                    }
+                    $anchor = $parent
+                      if $parent->schema->{'$recursiveAnchor'};
+                }
 
-		# warn "anchor: ", $anchor && $anchor->uri, "\n";
-		# warn "first ", $first_id && $first_id->uri, "\n";
+                # warn "anchor: ", $anchor && $anchor->uri, "\n";
+                # warn "first ", $first_id && $first_id->uri, "\n";
 
-		if ( !$anchor ) {
-		    if ($first_id) {
-			return $first_id->check($v);
-		    }
-		    my $method = '_keyword_$ref';
-		    my $type   = $self->$method($ref);
-		    $type = $type->base_type if $type->can('base_type');
-		    return $type->check($v);
-		}
+                if ( !$anchor ) {
+                    if ($first_id) {
+                        return $first_id->check($v);
+                    }
+                    my $method = '_keyword_$ref';
+                    my $type   = $self->$method($ref);
+                    $type = $type->base_type if $type->can('base_type');
+                    return $type->check($v);
+                }
 
-		# use DDP; p $anchor->schema;
-		# warn "checking for $v\n";
-		return $anchor->base_type->check($v);
-	    },
-	);
+                # use DDP; p $anchor->schema;
+                # warn "checking for $v\n";
+                return $anchor->base_type->check($v);
+            },
+        );
     }
 );
 
@@ -92,7 +92,7 @@ sub _keyword_dependentSchemas {
 
     my %depends =
       pairmap {
-	$a => $self->sub_schema( $b, "#./dependentSchema/$a" )->base_type }
+        $a => $self->sub_schema( $b, "#./dependentSchema/$a" )->base_type }
       %$depends;
 
     DependentSchemas [ \%depends ];

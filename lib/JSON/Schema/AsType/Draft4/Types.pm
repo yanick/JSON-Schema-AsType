@@ -90,21 +90,21 @@ declare AdditionalProperties,
     my ( $known_properties, $type_or_boolean ) = @_;
 
     sub {
-	return 1 unless Object->check($_);
+        return 1 unless Object->check($_);
 
-	my @add_keys = grep {
-	    my $key = $_;
-	    none { ref $_ ? $key =~ $_ : $key eq $_ } @$known_properties
-	} keys %$_;
+        my @add_keys = grep {
+            my $key = $_;
+            none { ref $_ ? $key =~ $_ : $key eq $_ } @$known_properties
+        } keys %$_;
 
-	add_annotation( 'additionalProperties', @add_keys );
+        add_annotation( 'additionalProperties', @add_keys );
 
-	if ( eval { $type_or_boolean->can('check') } ) {
-	    my $obj = $_;
-	    return all { $type_or_boolean->check( $obj->{$_} ) } @add_keys;
-	}
+        if ( eval { $type_or_boolean->can('check') } ) {
+            my $obj = $_;
+            return all { $type_or_boolean->check( $obj->{$_} ) } @add_keys;
+        }
 
-	return not( @add_keys and not $type_or_boolean );
+        return not( @add_keys and not $type_or_boolean );
     }
   };
 
@@ -119,10 +119,10 @@ declare Enum, constraint_generator => sub {
     my @items = @_;
 
     sub {
-	my $j = $_;
+        my $j = $_;
 
-	# TODO horrible corner case for the test suite, worth it?
-	any { eq_deeply( $_, $j ) } @items;
+        # TODO horrible corner case for the test suite, worth it?
+        any { eq_deeply( $_, $j ) } @items;
     }
 };
 
@@ -139,14 +139,14 @@ declare Dependency, constraint_generator => sub {
     my ( $property, $dep ) = @_;
 
     sub {
-	return 1 unless Object->check($_);
-	return 1 unless exists $_->{$property};
+        return 1 unless Object->check($_);
+        return 1 unless exists $_->{$property};
 
-	my $obj = $_;
+        my $obj = $_;
 
-	return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
+        return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
 
-	return $dep->check($_);
+        return $dep->check($_);
     }
 };
 
@@ -154,24 +154,24 @@ declare PatternProperties, constraint_generator => sub {
     my %props = @_;
 
     sub {
-	return 1 unless Object->check($_);
+        return 1 unless Object->check($_);
 
-	my $obj = $_;
+        my $obj = $_;
 
-	my @keys;
-	for my $key ( keys %props ) {
-	    push @keys, grep { /$key/ } keys %$obj;
-	}
+        my @keys;
+        for my $key ( keys %props ) {
+            push @keys, grep { /$key/ } keys %$obj;
+        }
 
-	add_annotation( 'patternProperties', @keys );
+        add_annotation( 'patternProperties', @keys );
 
-	for my $key ( keys %props ) {
-	    return
-	      unless all { $props{$key}->check( $obj->{$_} ) }
-	      grep { /$key/ } keys %$_;
-	}
+        for my $key ( keys %props ) {
+            return
+              unless all { $props{$key}->check( $obj->{$_} ) }
+              grep { /$key/ } keys %$_;
+        }
 
-	return 1;
+        return 1;
 
     }
 };
@@ -182,12 +182,12 @@ declare Properties, constraint_generator => sub {
 
     return ~HashRef    # not an object, don't care
       | (
-	Dict [ %types, Slurpy [Any] ] & sub {
-	    my $value = $_;
-	    add_annotation( 'properties',
-		grep { exists $value->{$_} } keys %types );
-	    return 1;
-	}
+        Dict [ %types, Slurpy [Any] ] & sub {
+            my $value = $_;
+            add_annotation( 'properties',
+                grep { exists $value->{$_} } keys %types );
+            return 1;
+        }
       );
 };
 
@@ -195,7 +195,7 @@ declare Items, constraint_generator => sub {
     my $types = shift;
 
     if ( Boolean->check($types) ) {
-	return $types ? Any : sub { !@$_ };
+        return $types ? Any : sub { !@$_ };
     }
 
     my $type =
@@ -204,150 +204,150 @@ declare Items, constraint_generator => sub {
       : Tuple [ slurpy ArrayRef [$types] ];
 
     return ~ArrayRef | (
-	$type & sub {
-	    if ( ref $types eq 'ARRAY' ) {
-		add_annotation( 'items', 0 .. $types->$#* );
-	    }
-	    else {
-		add_annotation( 'items', 0 .. $_->$#* );
-	    }
-	    return 1;
-	}
+        $type & sub {
+            if ( ref $types eq 'ARRAY' ) {
+                add_annotation( 'items', 0 .. $types->$#* );
+            }
+            else {
+                add_annotation( 'items', 0 .. $_->$#* );
+            }
+            return 1;
+        }
     );
 
 };
 
 declare AdditionalItems, constraint_generator => sub {
     if ( @_ > 1 ) {
-	my $to_skip = shift;
-	my $schema  = shift;
-	return sub {
+        my $to_skip = shift;
+        my $schema  = shift;
+        return sub {
 
-	    return unless ref eq 'ARRAY';
-	    my @additional = splice @$_, $to_skip;
+            return unless ref eq 'ARRAY';
+            my @additional = splice @$_, $to_skip;
 
-	    if ( ref $schema eq 'JSON::PP::Boolean' ) {
-		my $verdict = @additional;
-		$verdict = !$verdict unless $schema;
-		return $verdict;
-	    }
+            if ( ref $schema eq 'JSON::PP::Boolean' ) {
+                my $verdict = @additional;
+                $verdict = !$verdict unless $schema;
+                return $verdict;
+            }
 
-	    return all { $schema->check($_) } @additional;
-	}
+            return all { $schema->check($_) } @additional;
+        }
     }
     else {
-	my $size = shift;
-	if ( ref $size eq 'JSON::PP::Boolean' ) {
-	    return sub {
-		my $s = ref($_) eq 'ARRAY' ? @_ : 0;
-		$DB::single = 1;
-		return !!$size ? $s : !$s;
-	    }
-	}
-	return sub {
-	    my $s = ref($_) eq 'ARRAY' ? @_ : 0;
-	    $s <= $size;
-	};
+        my $size = shift;
+        if ( ref $size eq 'JSON::PP::Boolean' ) {
+            return sub {
+                my $s = ref($_) eq 'ARRAY' ? @_ : 0;
+                $DB::single = 1;
+                return !!$size ? $s : !$s;
+            }
+        }
+        return sub {
+            my $s = ref($_) eq 'ARRAY' ? @_ : 0;
+            $s <= $size;
+        };
     }
 };
 
 declare MaxLength, constraint_generator => sub {
     my $length = shift;
     sub {
-	!String->check($_) or $length >= length;
+        !String->check($_) or $length >= length;
     }
 };
 
 declare MinLength, constraint_generator => sub {
     my $length = shift;
     sub {
-	!String->check($_) or $length <= length;
+        !String->check($_) or $length <= length;
     }
 };
 
 declare AllOf, constraint_generator => sub {
     my @types = @_;
     sub {
-	my $value = $_;
+        my $value = $_;
 
-	my $matched = 1;
-	my $scope   = {};
+        my $matched = 1;
+        my $scope   = {};
 
-	for my $type (@types) {
-	    my %scope;
-	    return 0 unless annotation_scope(
-		sub {
-		    return 0 unless $type->check($value);
+        for my $type (@types) {
+            my %scope;
+            return 0 unless annotation_scope(
+                sub {
+                    return 0 unless $type->check($value);
 
-		    $scope = annotation_merge($scope);
+                    $scope = annotation_merge($scope);
 
-		    return 1;
-		}
-	    );
-	}
+                    return 1;
+                }
+            );
+        }
 
-	annotation_merge($scope);
+        annotation_merge($scope);
 
-	return 1;
+        return 1;
     }
 };
 
 declare AnyOf, constraint_generator => sub {
     my @types = @_;
     sub {
-	my $value = $_;
+        my $value = $_;
 
-	my $matched = 0;
-	my $scope   = {};
+        my $matched = 0;
+        my $scope   = {};
 
-	for my $type (@types) {
-	    annotation_scope(
-		sub {
-		    return unless $type->check($value);
+        for my $type (@types) {
+            annotation_scope(
+                sub {
+                    return unless $type->check($value);
 
-		    $scope   = annotation_merge($scope);
-		    $matched = 1;
-		}
-	    );
-	}
+                    $scope   = annotation_merge($scope);
+                    $matched = 1;
+                }
+            );
+        }
 
-	if ($matched) {
-	    annotation_merge($scope);
-	}
+        if ($matched) {
+            annotation_merge($scope);
+        }
 
-	return $matched;
+        return $matched;
     }
 };
 
 declare OneOf, constraint_generator => sub {
     my @types = @_;
     sub {
-	my $value = $_;
+        my $value = $_;
 
-	my $matched = 0;
-	my $scope   = {};
+        my $matched = 0;
+        my $scope   = {};
 
-	for my $type (@types) {
-	    return 0 unless annotation_scope(
-		sub {
-		    return 1 unless $type->check($value);
+        for my $type (@types) {
+            return 0 unless annotation_scope(
+                sub {
+                    return 1 unless $type->check($value);
 
-		    return 0 if $matched;
+                    return 0 if $matched;
 
-		    $scope   = annotation_merge($scope);
-		    $matched = 1;
+                    $scope   = annotation_merge($scope);
+                    $matched = 1;
 
-		    return 1;
+                    return 1;
 
-		}
-	    );
-	}
+                }
+            );
+        }
 
-	if ($matched) {
-	    annotation_merge($scope);
-	}
+        if ($matched) {
+            annotation_merge($scope);
+        }
 
-	return $matched;
+        return $matched;
     }
 };
 
@@ -359,8 +359,8 @@ declare MaxProperties, constraint_generator => sub {
 declare MinProperties, constraint_generator => sub {
     my $nbr = shift;
     sub {
-	!Object->check($_)
-	  or $nbr <= scalar keys %$_;
+        !Object->check($_)
+          or $nbr <= scalar keys %$_;
     },;
 };
 
@@ -380,9 +380,9 @@ declare Object => as HashRef, where sub { ref eq 'HASH' };
 declare Required, constraint_generator => sub {
     my @keys = @_;
     sub {
-	return 1 unless Object->check($_);
-	my $obj = $_;
-	all { exists $obj->{$_} } @keys;
+        return 1 unless Object->check($_);
+        my $obj = $_;
+        all { exists $obj->{$_} } @keys;
     }
 };
 
@@ -402,7 +402,7 @@ declare Number => where sub {
     my $b_obj = B::svref_2object( \$_ );
     my $flags = $b_obj->FLAGS;
     return ( $flags & ( B::SVp_IOK | B::SVp_NOK )
-	  and not( $flags & B::SVp_POK ) );
+          and not( $flags & B::SVp_POK ) );
 };
 
 declare
@@ -441,7 +441,7 @@ declare 'MaxItems', constraint_generator => sub {
     my $max = shift;
 
     return sub {
-	ref ne 'ARRAY' or @$_ <= $max;
+        ref ne 'ARRAY' or @$_ <= $max;
     };
 };
 
@@ -449,7 +449,7 @@ declare 'MinItems', constraint_generator => sub {
     my $min = shift;
 
     return sub {
-	ref ne 'ARRAY' or @$_ >= $min;
+        ref ne 'ARRAY' or @$_ >= $min;
     };
 };
 
@@ -457,41 +457,41 @@ declare 'MultipleOf', constraint_generator => sub {
     my $num = shift;
 
     return sub {
-	return 1 unless Number->check($_);
-	my ( $q, $r ) = Math::BigFloat->new($_)->bdiv($num);
-	return !$r;
+        return 1 unless Number->check($_);
+        my ( $q, $r ) = Math::BigFloat->new($_)->bdiv($num);
+        return !$r;
     }
 };
 
 declare Minimum, constraint_generator => sub {
     my $minimum = shift;
     return sub {
-	!Number->check($_)
-	  or $_ >= $minimum;
+        !Number->check($_)
+          or $_ >= $minimum;
     };
 };
 
 declare ExclusiveMinimum, constraint_generator => sub {
     my $minimum = shift;
     return sub {
-	!StrictNum->check($_)
-	  or $_ > $minimum;
+        !StrictNum->check($_)
+          or $_ > $minimum;
     }
 };
 
 declare Maximum, constraint_generator => sub {
     my $max = shift;
     return sub {
-	!StrictNum->check($_)
-	  or $_ <= $max;
+        !StrictNum->check($_)
+          or $_ <= $max;
     };
 };
 
 declare ExclusiveMaximum, constraint_generator => sub {
     my $max = shift;
     return sub {
-	!StrictNum->check($_)
-	  or $_ < $max;
+        !StrictNum->check($_)
+          or $_ < $max;
     }
 };
 
@@ -501,7 +501,7 @@ coerce Schema, from HashRef, via {
     my $schema = JSON::Schema::AsType->new( draft => 4, schema => $_ );
 
     if ( $schema->validate_schema ) {
-	die "not a valid draft4 json schema\n";
+        die "not a valid draft4 json schema\n";
     }
 
     $schema->type

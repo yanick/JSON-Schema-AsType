@@ -31,31 +31,31 @@ use JSON::Schema::AsType::Draft4::Types '-all';
 
 __PACKAGE__->meta->add_method(
     '_keyword_$ref' => sub {
-	my ( $self, $ref ) = @_;
+        my ( $self, $ref ) = @_;
 
-	my $schema;
+        my $schema;
 
-	return Type::Tiny->new(
-	    name         => 'Ref',
-	    display_name => "Ref($ref)",
-	    constraint   => sub {
-		local $::DEEP = ( $::DEEP // 0 ) + 1;
-		die if $::DEEP > 10;
-		my $v = $_;
-		$schema = $self->resolve_reference($ref);
-		$schema = $self->sub_schema( $schema->schema, $schema->uri );
+        return Type::Tiny->new(
+            name         => 'Ref',
+            display_name => "Ref($ref)",
+            constraint   => sub {
+                local $::DEEP = ( $::DEEP // 0 ) + 1;
+                die if $::DEEP > 10;
+                my $v = $_;
+                $schema = $self->resolve_reference($ref);
+                $schema = $self->sub_schema( $schema->schema, $schema->uri );
 
-		my $result = $schema->base_type->check($v) || 0;
+                my $result = $schema->base_type->check($v) || 0;
 
-		return $result;
-	    },
-	    message => sub {
-		join "\n",
-		  "ref schema is "
-		  . to_json( $schema->schema, { allow_nonref => 1 } ),
-		  @{ $schema->validate_explain($_) };
-	    }
-	);
+                return $result;
+            },
+            message => sub {
+                join "\n",
+                  "ref schema is "
+                  . to_json( $schema->schema, { allow_nonref => 1 } ),
+                  @{ $schema->validate_explain($_) };
+            }
+        );
     }
 );
 
@@ -96,11 +96,11 @@ sub _keyword_dependencies {
     my ( $self, $dependencies ) = @_;
 
     return Dependencies [
-	pairmap {
-	      $a => ref $b eq 'HASH'
-	    ? $self->sub_schema( $b, "#./dependencies/$a" )
-	    : $b
-	} %$dependencies
+        pairmap {
+              $a => ref $b eq 'HASH'
+            ? $self->sub_schema( $b, "#./dependencies/$a" )
+            : $b
+          } %$dependencies
     ];
 
 }
@@ -113,19 +113,20 @@ sub _keyword_additionalProperties {
       if ref $addi eq 'HASH';
 
     my @known_keys = (
-	eval                { keys %{ $self->schema->{properties} } },
-	map { qr/$_/ } eval { keys %{ $self->schema->{patternProperties} } }
+        eval                { keys %{ $self->schema->{properties} } },
+        map { qr/$_/ } eval { keys %{ $self->schema->{patternProperties} } }
     );
 
     return AdditionalProperties [ \@known_keys,
-	$add_schema ? $add_schema->type : $addi ];
+        $add_schema ? $add_schema->type : $addi ];
 }
 
 sub _keyword_patternProperties {
     my ( $self, $properties ) = @_;
 
     my %prop_schemas =
-      pairmap { $a => $self->sub_schema( $b, "#./patternProperties/$a" )->type }
+      pairmap {
+        $a => $self->sub_schema( $b, "#./patternProperties/$a" )->type }
       %$properties;
 
     return PatternProperties [%prop_schemas];
@@ -135,11 +136,11 @@ sub _keyword_properties {
     my ( $self, $properties ) = @_;
 
     Properties [
-	pairmap {
-	    my $schema = $self->sub_schema( $b, "#./properties/$a" );
-	    $a => $schema->type;
-	}
-	%$properties
+        pairmap {
+            my $schema = $self->sub_schema( $b, "#./properties/$a" );
+            $a => $schema->type;
+        }
+        %$properties
     ];
 
 }
@@ -171,8 +172,8 @@ sub _keyword_oneOf {
     my ( $self, $options ) = @_;
 
     OneOf [
-	pairmap { $self->sub_schema( $b, "#./oneOf/$a" )->base_type }
-	indexed @$options
+        pairmap { $self->sub_schema( $b, "#./oneOf/$a" )->base_type }
+        indexed @$options
     ];
 }
 
@@ -181,7 +182,7 @@ sub _keyword_anyOf {
 
     my $i = 0;
     AnyOf [ map { $self->sub_schema( $_, '#./anyOf/' . $i++ )->base_type }
-	  @$options ];
+          @$options ];
 }
 
 sub _keyword_allOf {
@@ -189,7 +190,7 @@ sub _keyword_allOf {
 
     my $i = 0;
     AllOf [ map { $self->sub_schema( $_, "#./allOf/" . $i++ )->base_type }
-	  @$options ];
+          @$options ];
 }
 
 sub _keyword_type {
@@ -199,16 +200,16 @@ sub _keyword_type {
       Object, Array, Boolean, Null;
 
     unless ( $self->strict_string ) {
-	$keyword_map{number}  = LaxNumber;
-	$keyword_map{integer} = LaxInteger;
-	$keyword_map{string}  = LaxString;
+        $keyword_map{number}  = LaxNumber;
+        $keyword_map{integer} = LaxInteger;
+        $keyword_map{string}  = LaxString;
     }
 
     return $keyword_map{$struct_type}
       if $keyword_map{$struct_type};
 
     if ( ref $struct_type eq 'ARRAY' ) {
-	return AnyOf [ map { $self->_keyword_type($_) } @$struct_type ];
+        return AnyOf [ map { $self->_keyword_type($_) } @$struct_type ];
     }
 
     return;
@@ -257,7 +258,7 @@ sub _keyword_minimum {
     my ( $self, $minimum ) = @_;
 
     if ( $self->schema->{exclusiveMinimum} ) {
-	return ExclusiveMinimum [$minimum];
+        return ExclusiveMinimum [$minimum];
     }
 
     return Minimum [$minimum];
@@ -291,20 +292,20 @@ sub _keyword_additionalItems {
 sub _keyword_items ( $self, $items, $keyword = 'items' ) {
 
     if ( Boolean->check($items) ) {
-	return Items [$items];
+        return Items [$items];
     }
 
     if ( ref $items eq 'HASH' ) {
-	my $type = $self->sub_schema( $items, '#./' . $keyword )->type;
+        my $type = $self->sub_schema( $items, '#./' . $keyword )->type;
 
-	return Items [$type];
+        return Items [$type];
     }
 
     # TODO forward declaration not workie
     my @types;
     my $i = 0;
     for (@$items) {
-	push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
+        push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
     }
 
     return Items [ \@types ];

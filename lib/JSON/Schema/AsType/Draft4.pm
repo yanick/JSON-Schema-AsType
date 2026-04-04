@@ -32,8 +32,8 @@ has '+draft' => default => 4;
 
 has '+metaschema' => (
     default => sub($self) {
-	my $schema = _metaschema();
-	return $schema;
+        my $schema = _metaschema();
+        return $schema;
     }
 );
 
@@ -57,19 +57,19 @@ override all_keywords => sub {
 sub _schema_trigger( $self, $schema, @ ) {
     return unless $schema;    # TODO
     JSON::Schema::AsType::Visit::visit(
-	$schema,
-	sub {
-	    my ( $key, $valueref, $context ) = @_;
+        $schema,
+        sub {
+            my ( $key, $valueref, $context ) = @_;
 
-	    return unless ref $_ eq 'HASH';
+            return unless ref $_ eq 'HASH';
 
-	    my $id = $self->_has_id($_) or return;
+            my $id = $self->_has_id($_) or return;
 
-	    # that doesn't look like a 'id' for the schema
-	    return if ref $id;
+            # that doesn't look like a 'id' for the schema
+            return if ref $id;
 
-	    $self->sub_schema( $_, $id );
-	}
+            $self->sub_schema( $_, $id );
+        }
     );
 }
 
@@ -82,16 +82,16 @@ around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
 
     # ah AH, resolve the subschema id
     if ( my $id = $self->_has_id($subschema) ) {
-	$uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
+        $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
     }
     $orig->( $self, $subschema, $uri );
 };
 
 sub _metaschema {
     state $METASCHEMA = __PACKAGE__->new(
-	uri    => "https://json-schema.org/draft-04/schema",
-	schema => from_json join '',
-	<DATA>,
+        uri    => "https://json-schema.org/draft-04/schema",
+        schema => from_json join '',
+        <DATA>,
     );
 
     return $METASCHEMA;

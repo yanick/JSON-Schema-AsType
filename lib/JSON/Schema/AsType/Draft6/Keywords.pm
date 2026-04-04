@@ -53,16 +53,16 @@ sub _keyword_contains {
     my $max = $self->schema->{maxContains} // 9E99;    # for 2019-09
 
     if ( JSON::is_bool($type) ) {
-	if ($type) {
-	    $min = 1;
-	}
-	else {
-	    $max = 0;
-	}
+        if ($type) {
+            $min = 1;
+        }
+        else {
+            $max = 0;
+        }
     }
 
     return Contains [ $self->sub_schema( $type, '#./contains' )->type, $min,
-	$max ];
+        $max ];
 
 }
 
@@ -87,21 +87,21 @@ sub _keyword_propertyNames {
 sub _keyword_items( $self, $items, $keyword = 'items' ) {
 
     if ( Boolean->check($items) ) {
-	return if $items;
-	return Items [JSON::false];
+        return if $items;
+        return Items [JSON::false];
     }
 
     if ( ref $items eq 'HASH' ) {
-	my $type = $self->sub_schema( $items, "#./$keyword" )->type;
+        my $type = $self->sub_schema( $items, "#./$keyword" )->type;
 
-	return Items [$type];
+        return Items [$type];
     }
 
     # TODO forward declaration not workie
     my @types;
     my $i = 0;
     for (@$items) {
-	push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
+        push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
     }
 
     return Items [ \@types ];
@@ -111,19 +111,19 @@ sub _keyword_dependencies {
     my ( $self, $dependencies ) = @_;
 
     return Dependencies [
-	pairmap {
-	      $a => ( ref $b eq 'HASH' or ref $b eq 'JSON::PP::Boolean' )
-	    ? $self->sub_schema( $b, '#./dependencies/' . $a )
-	    : $b
-	} %$dependencies
+        pairmap {
+              $a => ( ref $b eq 'HASH' or ref $b eq 'JSON::PP::Boolean' )
+            ? $self->sub_schema( $b, '#./dependencies/' . $a )
+            : $b
+          } %$dependencies
     ];
 
 }
 
 __PACKAGE__->meta->add_method(
     '_keyword_$id' => sub {
-	my $self = shift;
-	$self->_keyword_id(@_);
+        my $self = shift;
+        $self->_keyword_id(@_);
     }
 );
 

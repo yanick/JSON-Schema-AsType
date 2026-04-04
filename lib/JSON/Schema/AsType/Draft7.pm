@@ -37,7 +37,7 @@ has '+draft' => default => "7";
 
 has '+metaschema' => (
     default => sub($self) {
-	_metaschema();
+        _metaschema();
     }
 );
 
@@ -54,24 +54,24 @@ around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
 
     # ah AH, resolve the subschema id
     if ( my $id = $self->_has_id($subschema) ) {
-	$uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
+        $uri = $self->resolve_uri($id) unless $subschema->{'$ref'};
     }
     $orig->( $self, $subschema, $uri );
 };
 
 sub _schema_trigger( $self, $schema, @ ) {
     JSON::Schema::AsType::Visit::visit(
-	$schema,
-	sub {
-	    my ( $key, $valueref, $context ) = @_;
+        $schema,
+        sub {
+            my ( $key, $valueref, $context ) = @_;
 
-	    return unless ref $_ eq 'HASH';
+            return unless ref $_ eq 'HASH';
 
-	    my $id = $self->_has_id($_) or return;
+            my $id = $self->_has_id($_) or return;
 
-	    $self->sub_schema( $_, $id );
-	    return;
-	}
+            $self->sub_schema( $_, $id );
+            return;
+        }
     );
 }
 
@@ -82,9 +82,9 @@ sub _has_id ( $self, $schema = {} ) {
 
 sub _metaschema {
     state $METASCHEMA = __PACKAGE__->new(
-	uri    => "https://json-schema.org/draft-07/schema",
-	schema => from_json join '',
-	<DATA>
+        uri    => "https://json-schema.org/draft-07/schema",
+        schema => from_json join '',
+        <DATA>
     );
 
     return $METASCHEMA;

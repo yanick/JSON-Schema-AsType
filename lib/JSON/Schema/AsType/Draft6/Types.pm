@@ -46,28 +46,29 @@ __PACKAGE__->meta->add_type($_)
   Boolean, Number, String, Null, Object, Array, Items, ExclusiveMaximum,
   ExclusiveMinimum;
 
-declare Contains, constraint_generator => sub( $type, $min = 1, $max = 9E99 ) {
+declare Contains,
+  constraint_generator => sub( $type, $min = 1, $max = 9E99 ) {
 
     return sub {
-	return 1 unless Array->check($_);
+        return 1 unless Array->check($_);
 
-	my @contains = map { $type->check($_) } @$_;
+        my @contains = map { $type->check($_) } @$_;
 
-	$JSON::Schema::AsType::CONTEXT{contains} = \@contains;
+        $JSON::Schema::AsType::CONTEXT{contains} = \@contains;
 
-	return $min <= @contains <= $max;
+        return $min <= @contains <= $max;
     }
-};
+  };
 
 declare PropertyNames, constraint_generator => sub {
     my $type = shift;
     return sub {
-	return 1 unless Object->check($_);
+        return 1 unless Object->check($_);
 
-	return 1         if $type eq Any;
-	return !keys %$_ if $type eq ~Any;
+        return 1         if $type eq Any;
+        return !keys %$_ if $type eq ~Any;
 
-	return all { $type->check($_) } keys %$_;
+        return all { $type->check($_) } keys %$_;
     };
 };
 
@@ -81,15 +82,15 @@ declare Dependency, constraint_generator => sub {
     my ( $property, $dep ) = @_;
 
     sub {
-	return 1 unless Object->check($_);
-	return 1 unless exists $_->{$property};
+        return 1 unless Object->check($_);
+        return 1 unless exists $_->{$property};
 
-	my $obj = $_;
+        my $obj = $_;
 
-	return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
-	return exists $obj->{$dep} unless ref $dep;
+        return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
+        return exists $obj->{$dep} unless ref $dep;
 
-	return $dep->check($_);
+        return $dep->check($_);
     }
 };
 
@@ -97,7 +98,7 @@ declare Properties => constraint_generator => sub {
     my $type = Dict [ @_, slurpy Any ];
 
     sub {
-	!Object->check($_) or $type->check($_);
+        !Object->check($_) or $type->check($_);
     }
 };
 
@@ -119,7 +120,7 @@ coerce Schema, from HashRef, via {
     my $schema = JSON::Schema::AsType->new( draft => 6, schema => $_ );
 
     if ( $schema->validate_schema ) {
-	die "not a valid draft6 json schema\n";
+        die "not a valid draft6 json schema\n";
     }
 
     $schema->type

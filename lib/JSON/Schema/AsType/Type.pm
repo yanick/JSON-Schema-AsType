@@ -56,30 +56,30 @@ sub _build_base_type {
       map { $self->_process_keyword($_) } $self->all_active_keywords;
 
     return Type::Tiny->new(
-	display_name => $self->uri,
-	parent       => @types ? reduce { $a & $b } @types : Any,
+        display_name => $self->uri,
+        parent       => @types ? reduce { $a & $b } @types : Any,
     );
 }
 
 my $Scope = Type::Tiny->new(
     name                 => 'Scope',
     constraint_generator => sub {
-	my $type = shift;
-	return sub {
-	    annotation_scope(
-		sub {
-		    $type->check($_);
-		}
-	    );
-	}
+        my $type = shift;
+        return sub {
+            annotation_scope(
+                sub {
+                    $type->check($_);
+                }
+            );
+        }
     },
     deep_explanation => sub( $type, $value, $varname ) {
-	my @whines;
-	my $inner = $type->parameters->[0];
-	push @whines, sprintf "%s was %s, and failed %s: %s",
-	  $varname, $value, $inner->name, join "\n",
-	  $inner->validate_explain($value)->@*;
-	return \@whines;
+        my @whines;
+        my $inner = $type->parameters->[0];
+        push @whines, sprintf "%s was %s, and failed %s: %s",
+          $varname, $value, $inner->name, join "\n",
+          $inner->validate_explain($value)->@*;
+        return \@whines;
     }
 );
 

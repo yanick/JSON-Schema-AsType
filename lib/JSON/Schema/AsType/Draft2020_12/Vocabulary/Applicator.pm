@@ -29,21 +29,21 @@ with 'JSON::Schema::AsType::Draft2019_09::Vocabulary::Applicator' =>
 sub _keyword_prefixItems ( $self, $items, $keyword = 'prefixItems' ) {
 
     if ( Boolean->check($items) ) {
-	return if $items;
-	return PrefixItems [JSON::false];
+        return if $items;
+        return PrefixItems [JSON::false];
     }
 
     if ( ref $items eq 'HASH' ) {
-	my $type = $self->sub_schema( $items, "#./$keyword" )->type;
+        my $type = $self->sub_schema( $items, "#./$keyword" )->type;
 
-	return PrefixItems [$type];
+        return PrefixItems [$type];
     }
 
     # TODO forward declaration not workie
     my @types;
     my $i = 0;
     for (@$items) {
-	push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
+        push @types, $self->sub_schema( $_, "#./$keyword/" . $i++ )->type;
     }
 
     return PrefixItems [ \@types ];
@@ -68,10 +68,10 @@ sub _keyword_contains( $self, $schema ) {
     my $type = $self->sub_schema( $schema, '#./contains' )->type;
 
     my $contains = sub {
-	my $v = $_;
-	add_annotation( 'contains',
-	    grep { $type->check( $v->[$_] ) } 0 .. $_->$#* );
-	return 1;
+        my $v = $_;
+        add_annotation( 'contains',
+            grep { $type->check( $v->[$_] ) } 0 .. $_->$#* );
+        return 1;
     };
 
     $contains = Contains [$type] & $contains
