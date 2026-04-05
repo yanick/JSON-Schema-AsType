@@ -24,7 +24,7 @@ my $jsts_dir = path(__FILE__)->parent->child('json-schema-test-suite');
 memoize('registry');
 
 my ( $target_draft, $target_file, $target_test ) = split ':',
-  $ENV{TEST_SCHEMA};
+  $ENV{TEST_SCHEMA} // '';
 
 my $todo = {};
 
