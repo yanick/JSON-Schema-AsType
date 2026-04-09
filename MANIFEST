@@ -13,6 +13,7 @@ SECURITY.md
 SIGNATURE
 TODO
 contrib/run_suite
+contrib/test-suite-summary.pl
 cpanfile
 doap.xml
 lib/JSON/Schema/AsType.pm
@@ -627,5 +628,6 @@ t/nested-refs.t
 t/schema-coerce.t
 t/string_number.t
 t/types_draft3.t
+t/zzz-json-schema-test-suite-optional.t
 t/zzz-json-schema-test-suite.t
 xt/release/unused-vars.t
