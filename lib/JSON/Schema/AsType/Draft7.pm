@@ -63,8 +63,6 @@ sub _schema_trigger( $self, $schema, @ ) {
     JSON::Schema::AsType::Visit::visit(
         $schema,
         sub {
-            my ( $key, $valueref, $context ) = @_;
-
             return unless ref $_ eq 'HASH';
 
             my $id = $self->_has_id($_) or return;

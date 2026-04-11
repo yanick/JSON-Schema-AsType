@@ -44,10 +44,7 @@ sub register_schema {
     # TODO Use a type instead to coerce into canonical
     my ( $self, $uri, $schema ) = @_;
 
-    $DB::single = $uri =~ /HASH/;
     $uri        = URI->new($uri)->canonical;
-
-    my $fragment = $uri->fragment;
 
     if ( my $already = $self->registered_schema($uri) ) {
         my $s = $schema;
@@ -97,8 +94,6 @@ sub fetch {
     $url->scheme("https")
       if $url->can('host')
       and $url->host eq 'json-schema.org';
-
-    my $fragment = $url->fragment;
 
     #    $url->fragment( $fragment =~ s[/+$][]r ) if $fragment;
 
@@ -166,9 +161,8 @@ sub resolve_json_pointer( $self, $schema, $pointer, $url ) {
     for my $path (@path_entries) {
         $path = $self->_unescape_ref($path);
 
-        my $o = $schema;
         $schema = is_hashref($schema) ? $schema->{$path} : $schema->[$path];
-        $DB::single = !$schema;
+
         die "reference " . $url . "#$pointer not found\n"
           unless defined $schema;
 

@@ -31,8 +31,7 @@ sub _visit {
         $vr = $type eq 'ARRAY' ? \( $ref->[$idx] ) : \( $ref->{$idx} );
         local $_ = $v;
 
-        # Wrap $fcn in dummy for loop to guard against bare 'next' in $fcn
-        for my $dummy (0) { $fcn->( $idx, $vr, $ctx ) }
+        $fcn->( $idx, $vr, $ctx );
         if ( ref($v) eq 'ARRAY' || ref($v) eq 'HASH' ) {
             $ctx->{_depth}++;
             push $ctx->{_path}->@*, $idx;
