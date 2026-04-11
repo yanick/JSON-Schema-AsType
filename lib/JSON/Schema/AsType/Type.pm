@@ -1,12 +1,8 @@
 package JSON::Schema::AsType::Type;
-
+our $AUTHORITY = 'cpan:YANICK';
+$JSON::Schema::AsType::Type::VERSION = '1.0.0';
 # ABSTRACT: JSON::Schema::AsType role providing all Type::Tiny methods
 
-=head1 DESCRIPTION 
-
-Internal module for L<JSON::Schema:::AsType>. 
-
-=cut
 
 use 5.42.0;
 use warnings;
@@ -87,9 +83,23 @@ sub _build_type($self) {
     return $Scope->of( $self->base_type );
 }
 
+__END__
+
 =pod
-$JSON::Schema::AsType::Type::INDENT = 0;
-around check => sub($orig,$self,$value) {
+
+=encoding UTF-8
+
+=head1 NAME
+
+JSON::Schema::AsType::Type - JSON::Schema::AsType role providing all Type::Tiny methods
+
+=head1 VERSION
+
+version 1.0.0
+
+=head1 DESCRIPTION 
+
+Internal module for L<JSON::Schema:::AsType>. 
 
     use DDP;
     say "\t" x $JSON::Schema::AsType::Type::INDENT, "checking ", $self->uri;
@@ -105,4 +115,16 @@ around check => sub($orig,$self,$value) {
     return $verdict;
 
 };
+
+=head1 AUTHOR
+
+Yanick Champoux <yanick@babyl.dyndns.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2026 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut

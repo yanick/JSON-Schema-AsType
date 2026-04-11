@@ -1,12 +1,8 @@
 package JSON::Schema::AsType::Draft3::Types;
-
+our $AUTHORITY = 'cpan:YANICK';
+$JSON::Schema::AsType::Draft3::Types::VERSION = '1.0.0';
 # ABSTRACT: JSON-schema v3 keywords as types
 
-=head1 DESCRIPTION 
-
-Internal module for L<JSON::Schema:::AsType>. 
-
-=cut
 
 use strict;
 use warnings;
@@ -105,3 +101,34 @@ coerce Schema, from HashRef, via {
 };
 
 1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+JSON::Schema::AsType::Draft3::Types - JSON-schema v3 keywords as types
+
+=head1 VERSION
+
+version 1.0.0
+
+=head1 DESCRIPTION 
+
+Internal module for L<JSON::Schema:::AsType>. 
+
+=head1 AUTHOR
+
+Yanick Champoux <yanick@babyl.dyndns.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2026 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

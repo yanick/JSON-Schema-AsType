@@ -1,13 +1,8 @@
 package JSON::Schema::AsType::Visit;
-
+our $AUTHORITY = 'cpan:YANICK';
+$JSON::Schema::AsType::Visit::VERSION = '1.0.0';
 # ABSTRACT: Visit each node of a schema.
 
-=head1 DESCRIPTION 
-
-Internal module for L<JSON::Schema:::AsType>. Slightly tweaked version of 
-L<Data::Visitor::Tiny>.
-
-=cut
 
 use Carp;
 
@@ -43,3 +38,35 @@ sub _visit {
 }
 
 1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+JSON::Schema::AsType::Visit - Visit each node of a schema.
+
+=head1 VERSION
+
+version 1.0.0
+
+=head1 DESCRIPTION 
+
+Internal module for L<JSON::Schema:::AsType>. Slightly tweaked version of 
+L<Data::Visitor::Tiny>.
+
+=head1 AUTHOR
+
+Yanick Champoux <yanick@babyl.dyndns.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2026 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

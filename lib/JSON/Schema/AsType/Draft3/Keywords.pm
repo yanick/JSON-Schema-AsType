@@ -1,16 +1,8 @@
 package JSON::Schema::AsType::Draft3::Keywords;
-
+our $AUTHORITY = 'cpan:YANICK';
+$JSON::Schema::AsType::Draft3::Keywords::VERSION = '1.0.0';
 # ABSTRACT: Role processing draft3 JSON Schema
 
-=head1 DESCRIPTION
-
-This role is not intended to be used directly. It is used internally
-by L<JSON::Schema::AsType> objects.
-
-Importing this module auto-populate the Draft3 schema in the
-L<JSON::Schema::AsType> schema cache.
-
-=cut
 
 use strict;
 use warnings;
@@ -115,3 +107,38 @@ sub _keyword_dependencies {
 }
 
 1;
+
+__END__
+
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+JSON::Schema::AsType::Draft3::Keywords - Role processing draft3 JSON Schema
+
+=head1 VERSION
+
+version 1.0.0
+
+=head1 DESCRIPTION
+
+This role is not intended to be used directly. It is used internally
+by L<JSON::Schema::AsType> objects.
+
+Importing this module auto-populate the Draft3 schema in the
+L<JSON::Schema::AsType> schema cache.
+
+=head1 AUTHOR
+
+Yanick Champoux <yanick@babyl.dyndns.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2026 by Yanick Champoux.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
