@@ -9,7 +9,12 @@ L<Data::Visitor::Tiny>.
 
 =cut
 
+use 5.42.0;
+use warnings;
+
 use Carp;
+
+use feature qw/ signatures /;
 
 sub visit {
     my ( $ref, $fcn ) = @_;
@@ -41,5 +46,41 @@ sub _visit {
         }
     }
 }
+
+sub walk($struct,$func,$path=undef,$root=undef) {
+
+	my $ref = ref $struct or return;
+
+	unless($path) {
+		$path = [];
+		$root = $struct;
+	}
+
+	if( $ref eq 'HASH') {
+		for my $key ( sort keys %$struct ) {
+			# $key, $value, $parent, $path, $root
+			local $_ = $struct->{$key};
+			my @path = (@$path,$key);
+			my $result = $func->( $key, $_, $struct, \@path, $root );
+			no warnings qw/ uninitialized /;
+			walk($struct->{$key},$func,\@path,$root) unless $result eq 'STOP';
+		}
+		return;
+	}
+
+	if( $ref eq 'ARRAY') {
+		for my $i ( 0..$struct->$#* ) {
+			# $key, $value, $parent, $path, $root
+			local $_ = $struct->[$i];
+			my @path = (@$path,$i);
+			my $result = $func->( $i, $_, $struct, \@path, $root );
+			no warnings qw/ uninitialized /;
+			walk($struct->[$i],$func,\@path,$root) unless $result eq 'STOP';
+		}
+		return;
+	}
+
+}
+
 
 1;

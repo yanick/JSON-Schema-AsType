@@ -61,6 +61,191 @@ __PACKAGE__->meta->add_method(
 	}
 );
 
+sub _keyword_format ($self, $format ) {
+
+	if($format eq 'ip-address') {
+		return Type::Tiny->new(
+			display_name => "Format($format)",
+			constraint   => sub {
+				require Data::Validate::IP;
+				return Data::Validate::IP::is_ipv4($_);
+			},
+		);
+	}
+
+	if($format eq 'color') {
+		return Type::Tiny->new(
+			display_name => "Format($format)",
+			constraint   => sub {
+				return 1 if /^#[A-F\d]{6}$/i;
+				return 1 if /^#[A-F\d]{3}$/i;
+				my $c = $_;
+				return any { 
+					$c eq $_
+				} _css_colors();
+			},
+		);
+	}
+
+
+
+}
+
+sub _css_colors {
+
+return qw/
+  aliceblue
+  antiquewhite
+  aqua
+  aquamarine
+  azure
+  beige
+  bisque
+  black
+  blanchedalmond
+  blue
+  blueviolet
+  brown
+  burlywood
+  cadetblue
+  chartreuse
+  chocolate
+  coral
+  cornflowerblue
+  cornsilk
+  crimson
+  cyan
+  darkblue
+  darkcyan
+  darkgoldenrod
+  darkgray
+  darkgreen
+  darkgrey
+  darkkhaki
+  darkmagenta
+  darkolivegreen
+  darkorange
+  darkorchid
+  darkred
+  darksalmon
+  darkseagreen
+  darkslateblue
+  darkslategray
+  darkslategrey
+  darkturquoise
+  darkviolet
+  deeppink
+  deepskyblue
+  dimgray
+  dimgrey
+  dodgerblue
+  firebrick
+  floralwhite
+  forestgreen
+  fuchsia
+  gainsboro
+  ghostwhite
+  goldenrod
+  gold
+  gray
+  green
+  greenyellow
+  grey
+  honeydew
+  hotpink
+  indianred
+  indigo
+  ivory
+  khaki
+  lavenderblush
+  lavender
+  lawngreen
+  lemonchiffon
+  lightblue
+  lightcoral
+  lightcyan
+  lightgoldenrodyellow
+  lightgray
+  lightgreen
+  lightgrey
+  lightpink
+  lightsalmon
+  lightseagreen
+  lightskyblue
+  lightslategray
+  lightslategrey
+  lightsteelblue
+  lightyellow
+  lime
+  limegreen
+  linen
+  magenta
+  maroon
+  mediumaquamarine
+  mediumblue
+  mediumorchid
+  mediumpurple
+  mediumseagreen
+  mediumslateblue
+  mediumspringgreen
+  mediumturquoise
+  mediumvioletred
+  midnightblue
+  mintcream
+  mistyrose
+  moccasin
+  navajowhite
+  navy
+  oldlace
+  olive
+  olivedrab
+  orange
+  orangered
+  orchid
+  palegoldenrod
+  palegreen
+  paleturquoise
+  palevioletred
+  papayawhip
+  peachpuff
+  peru
+  pink
+  plum
+  powderblue
+  purple
+  rebeccapurple
+  red
+  rosybrown
+  royalblue
+  saddlebrown
+  salmon
+  sandybrown
+  seagreen
+  seashell
+  sienna
+  silver
+  skyblue
+  slateblue
+  slategray
+  slategrey
+  snow
+  springgreen
+  steelblue
+  tan
+  teal
+  thistle
+  tomato
+  turquoise
+  violet
+  wheat
+  white
+  whitesmoke
+  yellow
+  yellowgreen
+/;
+
+}
+
 sub _keyword_id {
 
 	# done as part of the initial visit
@@ -69,9 +254,9 @@ sub _keyword_id {
 sub _keyword_definitions {
 	my ( $self, $defs ) = @_;
 
+	return;
 	$self->sub_schema( $defs->{$_}, "#./definitions/$_" ) for keys %$defs;
 
-	return;
 }
 
 sub _keyword_pattern {
