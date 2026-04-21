@@ -63,6 +63,7 @@ __PACKAGE__->meta->add_method(
 
 my %formats = (
 	'ip-address' => IPAddress,
+	color => CSSColor,
 );
 
 sub _keyword_format ($self, $format ) {

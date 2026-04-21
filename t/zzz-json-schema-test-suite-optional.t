@@ -40,7 +40,6 @@ $todo->{4}{'ecmascript-regex.json'}{$_} = 'known TODO'
 
 my @optional_files = (
 	'3',       'bignum.json',
-	'3',       'color.json',
 	'3',       'date-time.json',
 	'3',       'date.json',
 	'3',       'ecmascript-regex.json',

@@ -232,6 +232,8 @@ And then, to have a schema use it:
 
 =over
 
+=item color
+
 =item ip-address
 
 =back

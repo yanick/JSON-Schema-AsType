@@ -11,6 +11,8 @@ Internal module for L<JSON::Schema:::AsType>.
 use 5.42.0;
 use warnings;
 
+use feature qw/ module_true /;
+
 use Test::Deep::NoTest qw/ eq_deeply /;
 
 use Math::BigFloat;
@@ -75,6 +77,7 @@ use Type::Library
   Schema
 
   IPAddress
+  CSSColor
 
   );
 
@@ -515,4 +518,157 @@ declare IPAddress, as ~String | sub {
 	return Data::Validate::IP::is_ipv4($_);
 };
 
-1;
+declare CSSColor, as ~String | sub {
+	return 1 if /^#[A-F\d]{6}$/i or/^#[A-F\d]{3}$/i;
+	my $c = $_; return any { $c eq $_ } qw/
+  aliceblue
+  antiquewhite
+  aqua
+  aquamarine
+  azure
+  beige
+  bisque
+  black
+  blanchedalmond
+  blue
+  blueviolet
+  brown
+  burlywood
+  cadetblue
+  chartreuse
+  chocolate
+  coral
+  cornflowerblue
+  cornsilk
+  crimson
+  cyan
+  darkblue
+  darkcyan
+  darkgoldenrod
+  darkgray
+  darkgreen
+  darkgrey
+  darkkhaki
+  darkmagenta
+  darkolivegreen
+  darkorange
+  darkorchid
+  darkred
+  darksalmon
+  darkseagreen
+  darkslateblue
+  darkslategray
+  darkslategrey
+  darkturquoise
+  darkviolet
+  deeppink
+  deepskyblue
+  dimgray
+  dimgrey
+  dodgerblue
+  firebrick
+  floralwhite
+  forestgreen
+  fuchsia
+  gainsboro
+  ghostwhite
+  goldenrod
+  gold
+  gray
+  green
+  greenyellow
+  grey
+  honeydew
+  hotpink
+  indianred
+  indigo
+  ivory
+  khaki
+  lavenderblush
+  lavender
+  lawngreen
+  lemonchiffon
+  lightblue
+  lightcoral
+  lightcyan
+  lightgoldenrodyellow
+  lightgray
+  lightgreen
+  lightgrey
+  lightpink
+  lightsalmon
+  lightseagreen
+  lightskyblue
+  lightslategray
+  lightslategrey
+  lightsteelblue
+  lightyellow
+  lime
+  limegreen
+  linen
+  magenta
+  maroon
+  mediumaquamarine
+  mediumblue
+  mediumorchid
+  mediumpurple
+  mediumseagreen
+  mediumslateblue
+  mediumspringgreen
+  mediumturquoise
+  mediumvioletred
+  midnightblue
+  mintcream
+  mistyrose
+  moccasin
+  navajowhite
+  navy
+  oldlace
+  olive
+  olivedrab
+  orange
+  orangered
+  orchid
+  palegoldenrod
+  palegreen
+  paleturquoise
+  palevioletred
+  papayawhip
+  peachpuff
+  peru
+  pink
+  plum
+  powderblue
+  purple
+  rebeccapurple
+  red
+  rosybrown
+  royalblue
+  saddlebrown
+  salmon
+  sandybrown
+  seagreen
+  seashell
+  sienna
+  silver
+  skyblue
+  slateblue
+  slategray
+  slategrey
+  snow
+  springgreen
+  steelblue
+  tan
+  teal
+  thistle
+  tomato
+  turquoise
+  violet
+  wheat
+  white
+  whitesmoke
+  yellow
+  yellowgreen
+/;
+
+};
