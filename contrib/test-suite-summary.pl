@@ -9,33 +9,115 @@ use TAP::Parser;
 
 my @lines =
   map { s/^(\s*)//; { indent => length($1) / 4, test => $_ } }
-  grep { /^\s*(not )?ok/ } path('./results.tap')->lines;
+  grep { /^\s*(not )?ok\s+\S/ } path(shift)->lines;
+
+for (@lines) {
+	$_->{test} =~ /(not ok|ok) \d+ - (.*?)(?: \{)?$/g;
+	$_->{passed} = $1 eq 'ok';
+	$_->{name}   = $2;
+	$_->{name} =~ s#t/.*draft[\d-]+/##;
+	$_->{todo} = $1 if $_->{test} =~ /# TODO (.*)/;
+}
 
 my @tests = ( { test => 'main', subtests => [], indent => -1 } );
 my @level = $tests[0];
 
 for my $l (@lines) {
-    pop @level while $level[-1]->{indent} >= $l->{indent};
+	pop @level while $level[-1]->{indent} >= $l->{indent};
 
-    $level[-1]->{subtests} //= [];
-    push $level[-1]->{subtests}->@*, $l;
-    push @level,                     $l;
+	$level[-1]->{subtests} //= [];
+	push $level[-1]->{subtests}->@*, $l;
+	push @level,                     $l;
 }
 
-print_test($_) for @tests;
+@tests = $tests[0]->{subtests}->@*;
 
-sub print_test( $t, $prefix = '' ) {
-    my ( $verdict, $name ) =
-      $t->{test} =~ /(ok|not ok) \d+ - (.*?)(?: \{)?$/g;
-    $name =~ s#t/.*draft[\d-]+/##;
-    $prefix = join '|', grep { $_ } $prefix, $name;
+use DDP;
 
-    if ( $t->{subtests} ) {
-        print_test( $_, $prefix ) for $t->{subtests}->@*;
-    }
-    else {
-        say $prefix unless $verdict eq 'ok';
-    }
+process_test($_) for @tests;
+
+print <<~END;
+	<style>
+		details {
+			max-width: 60em;
+			margin-left: 2em;
+			margin-bottom: 0.5em;
+		}	
+		summary {
+			display: flex;
+		}
+		.name { 
+			flex: 1;
+		}
+		button { margin-bottom: 1em; }
+	</style>
+	<button onclick="document.querySelectorAll('.all-passed').forEach( elt => elt.hidden = true)">hide successes</button>
+END
+print_html($_) for @tests;
+
+# my %x = map print_todos($_) => @tests;
+# use Data::Dumper;
+# say Dumper( \%x );
+
+sub print_html($t) {
+
+	#return if $t->{passed} == $t->{total};
+
+	if ( $t->{subtests} ) {
+		my $percent    = int 100 * $t->{passed} / $t->{total};
+		my $all_passed = $t->{passed} == $t->{total};
+		print <<~"END";
+			<details open class="@{[ 'all-passed' x !!$all_passed]}">
+				<summary>
+				<span class="name">@{[ $t->{ name } ]}</span>
+				<span>@{[ $t->{passed}]}/@{[ $t->{total }]} ($percent%)</span>
+				</summary>
+		END
+
+		print_html($_) for $t->{subtests}->@*;
+
+		print "</details>";
+		return;
+
+	}
+
+	print <<~"END";
+		<div>
+			<span>@{[ $t->{ name } ]}</span>
+			<span>@{[ $t->{todo}]}</span>
+		</div>
+	END
+
+}
+
+sub print_todos($t) {
+
+	return () if $t->{passed} == $t->{total};
+
+	unless ( $t->{subtests} ) {
+		return ( $t->{name} => $t->{todo} // 'TODO' );
+	}
+
+	return $t->{name} => +{ map { print_todos($_) } $t->{subtests}->@* };
+
+}
+
+sub process_test( $t, $indent = 0 ) {
+
+	my ( $passed, $total ) = ( 0, 0 );
+	my @lines;
+	if ( $t->{subtests} ) {
+		for ( $t->{subtests}->@* ) {
+			process_test( $_, $indent + 1 );
+			$passed += $_->{passed};
+			$total  += $_->{total};
+		}
+		$t->{passed} = $passed;
+		$t->{total}  = $total;
+		return;
+	}
+
+	$t->{total} = 1;
 }
 
 __END__
