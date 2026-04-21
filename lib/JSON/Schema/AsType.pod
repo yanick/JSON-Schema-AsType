@@ -236,6 +236,8 @@ And then, to have a schema use it:
 
 =item ip-address
 
+=item ipv6
+
 =back
 
 

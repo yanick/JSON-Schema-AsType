@@ -77,6 +77,7 @@ use Type::Library
   Schema
 
   IPAddress
+  IPv6Address
   CSSColor
 
   );
@@ -516,6 +517,11 @@ coerce Schema, from HashRef, via {
 declare IPAddress, as ~String | sub {
 	require Data::Validate::IP;
 	return Data::Validate::IP::is_ipv4($_);
+};
+
+declare IPv6Address, as ~String | sub {
+	require Data::Validate::IP;
+	return Data::Validate::IP::is_ipv6($_);
 };
 
 declare CSSColor, as ~String | sub {
