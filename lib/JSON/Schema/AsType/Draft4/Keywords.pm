@@ -61,6 +61,14 @@ __PACKAGE__->meta->add_method(
 	}
 );
 
+my %formats = (
+	'ip-address' => IPAddress,
+);
+
+sub _keyword_format ($self, $format ) {
+	return $formats{$format} // Any;
+}
+
 sub _keyword_id {
 
 	# done as part of the initial visit

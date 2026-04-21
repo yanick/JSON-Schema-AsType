@@ -228,6 +228,13 @@ And then, to have a schema use it:
 	print $schema->check('team');   # 1
 	print $schema->check('tomato'); # undef
 
+=head1 SUPPORTED FORMATS
+
+=over
+
+=item ip-address
+
+=back
 
 
 =head1 COMPLIANCE TO THE SPECS 

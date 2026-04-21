@@ -46,7 +46,6 @@ my @optional_files = (
 	'3',       'ecmascript-regex.json',
 	'3',       'email.json',
 	'3',       'host-name.json',
-	'3',       'ip-address.json',
 	'3',       'ipv6.json',
 	'3',       'regex.json',
 	'3',       'time.json',
@@ -311,7 +310,7 @@ sub explain_failure( $schema, $data, $valid ) {
 	return unless $ENV{TEST_SCHEMA};
 
 	if ($valid) {
-		note $schema->validate($data);
+		note join "\n", $schema->validate_explain($data)->@*;
 	}
 	else {
 		note "should have failed, but passed";

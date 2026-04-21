@@ -74,6 +74,8 @@ use Type::Library
 
   Schema
 
+  IPAddress
+
   );
 
 use List::MoreUtils qw/ all any zip none /;
@@ -505,6 +507,12 @@ coerce Schema, from HashRef, via {
     }
 
     $schema->type
+};
+
+
+declare IPAddress, as ~String | sub {
+	require Data::Validate::IP;
+	return Data::Validate::IP::is_ipv4($_);
 };
 
 1;
