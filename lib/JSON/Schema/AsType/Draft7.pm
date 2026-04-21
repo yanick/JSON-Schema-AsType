@@ -60,15 +60,19 @@ around sub_schema => sub ( $orig, $self, $subschema, $uri ) {
 };
 
 sub _schema_trigger( $self, $schema, @ ) {
-    JSON::Schema::AsType::Visit::visit(
+    JSON::Schema::AsType::Visit::walk(
         $schema,
-        sub {
+        sub($key,@) {
+			return 'STOP' if $key eq 'enum' or $key eq 'const';
+
             return unless ref $_ eq 'HASH';
 
             my $id = $self->_has_id($_) or return;
 
+            # that doesn't look like a 'id' for the schema
+            return if ref $id;
+
             $self->sub_schema( $_, $id );
-            return;
         }
     );
 }

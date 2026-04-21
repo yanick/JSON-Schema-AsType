@@ -78,7 +78,6 @@ my @optional_files = (
 	'6',       'uri-reference.json',
 	'6',       'uri-template.json',
 	'6',       'uri.json',
-	'6',       'id.json',
 	'6',       'non-bmp-regex.json',
 	'6',       'unknownKeyword.json',
 	'7',       'bignum.json',
@@ -104,7 +103,6 @@ my @optional_files = (
 	'7',       'uri-reference.json',
 	'7',       'uri-template.json',
 	'7',       'uri.json',
-	'7',       'id.json',
 	'7',       'non-bmp-regex.json',
 	'7',       'unknownKeyword.json',
 	'2019-09', 'anchor.json',
@@ -133,7 +131,6 @@ my @optional_files = (
 	'2019-09', 'uri-template.json',
 	'2019-09', 'uri.json',
 	'2019-09', 'uuid.json',
-	'2019-09', 'id.json',
 	'2019-09', 'no-schema.json',
 	'2019-09', 'non-bmp-regex.json',
 	'2019-09', 'refOfUnknownKeyword.json',
@@ -167,7 +164,6 @@ my @optional_files = (
 	'2020-12', 'uri-template.json',
 	'2020-12', 'uri.json',
 	'2020-12', 'uuid.json',
-	'2020-12', 'id.json',
 	'2020-12', 'no-schema.json',
 	'2020-12', 'non-bmp-regex.json',
 	'2020-12', 'refOfUnknownKeyword.json',
@@ -268,19 +264,19 @@ sub test_suite( $draft, $test, $file, $todo = {} ) {
 				ok $schema->check( $_->{data} ) ^^ !$_->{valid}, $desc
 				  or explain_failure( $schema, $_->{data}, $_->{valid} );
 
-			# local $TODO = 'known to fail'
-			#   if any { $desc eq $_ }
-			#   'a string is still not an integer, even if it looks like one',
-			#   'ignores non-strings',
-			#   'a string is still a string, even if it looks like a number',
-			#   'a string is still not a number, even if it looks like one';
+			  # local $TODO = 'known to fail'
+			  #   if any { $desc eq $_ }
+			  #   'a string is still not an integer, even if it looks like one',
+			  #   'ignores non-strings',
+			  #   'a string is still a string, even if it looks like a number',
+			  #   'a string is still not a number, even if it looks like one';
 
-   # Test that the result from check is the same as what is in the spec.
-   # If the check should be true and the result is false, do validate_explain.
-   # try {
-   # 	is !!$schema->check( $_->{data} ) => !!$_->{valid},
-   # 	  $_->{description}
-   # 	  or do {
+	 # Test that the result from check is the same as what is in the spec.
+	 # If the check should be true and the result is false, do validate_explain.
+	 # try {
+	 # 	is !!$schema->check( $_->{data} ) => !!$_->{valid},
+	 # 	  $_->{description}
+	 # 	  or do {
 
 				# 		note $schema->type->display_name;
 				# 		my $validation = $schema->validate_explain( $_->{data} );
@@ -304,7 +300,6 @@ sub test_suite( $draft, $test, $file, $todo = {} ) {
 			}
 		}
 		catch ($e) {
-			my $todo = todo "TODO";
 			fail "test errored";
 			note $e;
 		}
@@ -322,8 +317,7 @@ sub explain_failure( $schema, $data, $valid ) {
 		note "should have failed, but passed";
 	}
 
-	note Data::Dumper->Dump( [ $schema->schema, $data ],
-		[qw/ schema data /] );
+	note Data::Dumper->Dump( [ $schema->schema, $data ], [qw/ schema data /] );
 }
 
 sub registry($draft) {

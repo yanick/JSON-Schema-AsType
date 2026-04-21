@@ -87,9 +87,11 @@ has '+metaschema' => (
 
 # in D2019_09::Core ?
 after _schema_trigger => sub ( $self, $schema, @ ) {
-    JSON::Schema::AsType::Visit::visit(
+    JSON::Schema::AsType::Visit::walk(
         $schema,
-        sub {
+        sub($key,@) {
+			return 'STOP' if $key eq 'enum' or $key eq 'const';
+
             return unless ref $_ eq 'HASH';
 
             my $anchor = $_->{'$anchor'} or return;
@@ -143,9 +145,11 @@ override all_keywords => sub($self) {
 };
 
 sub _schema_trigger( $self, $schema, @ ) {
-    JSON::Schema::AsType::Visit::visit(
+    JSON::Schema::AsType::Visit::walk(
         $schema,
-        sub {
+        sub($key,@) {
+			return 'STOP' if $key eq 'enum' or $key eq 'const';
+
             return unless ref $_ eq 'HASH';
 
             my $id = $self->_has_id($_) or return;

@@ -3,6 +3,7 @@ Revision history for JSON-Schema-AsType
 {{$NEXT}}
  - API CHANGES
  - NEW FEATURES
+ 	* Passes more optional tests.
  - ENHANCEMENTS
  - BUG FIXES
  - DOCUMENTATION

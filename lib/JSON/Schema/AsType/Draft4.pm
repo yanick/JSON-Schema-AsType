@@ -56,9 +56,11 @@ override all_keywords => sub {
 
 sub _schema_trigger( $self, $schema, @ ) {
     return unless $schema;    # TODO
-    JSON::Schema::AsType::Visit::visit(
+    JSON::Schema::AsType::Visit::walk(
         $schema,
-        sub {
+        sub($key,@) {
+			return 'STOP' if $key eq 'enum' or $key eq 'const';
+
             return unless ref $_ eq 'HASH';
 
             my $id = $self->_has_id($_) or return;
