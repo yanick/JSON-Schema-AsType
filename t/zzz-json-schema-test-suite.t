@@ -40,7 +40,7 @@ push $todo->{'2020-12'}{'pattern.json'}->@*,
   'pattern with Unicode property escape requires unicode mode';
 
 push $todo->{'2020-12'}{'format.json'}->@*,
-  'ipv6 format';
+  'ipv6 format', 'ipv4 format';
 
 $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/
   defs
