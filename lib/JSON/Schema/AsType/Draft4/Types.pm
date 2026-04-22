@@ -87,6 +87,7 @@ use Type::Library
   Regex
   Time
   Uri
+  UUID
 
   );
 
@@ -594,6 +595,11 @@ declare Email, as ~String | sub {
 declare Uri, as ~String | sub {
 	require Data::Validate::URI;
 		Data::Validate::URI::is_uri($_);
+};
+
+declare UUID, as ~String | sub {
+	my $char = qr/[\da-f]/i;
+	return 1 if /^$char{8}(-$char{4}){3}-$char{12}$/;
 };
 
 declare Hostname, as ~String | sub {

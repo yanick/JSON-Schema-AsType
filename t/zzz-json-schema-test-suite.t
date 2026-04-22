@@ -48,6 +48,7 @@ push $todo->{'2020-12'}{'format.json'}->@*,
   'regex format',
   'uri format',
   'json-pointer format',
+  'uuid format',
   'date format';
 
 $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/

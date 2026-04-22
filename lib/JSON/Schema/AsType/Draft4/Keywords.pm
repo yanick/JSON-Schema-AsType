@@ -75,6 +75,7 @@ my %formats = (
 	regex          => Regex,
 	time           => Time,
 	uri => Uri,
+	uuid => UUID
 );
 
 sub _keyword_format ( $self, $format ) {
