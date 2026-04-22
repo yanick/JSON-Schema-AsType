@@ -69,6 +69,7 @@ my %formats = (
 	'ip-address' => IPAddress,
 	ipv4         => IPAddress,
 	ipv6         => IPv6Address,
+	regex        => Regex,
 	time         => Time,
 );
 

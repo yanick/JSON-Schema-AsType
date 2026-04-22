@@ -82,6 +82,7 @@ use Type::Library
   Hostname
   IPAddress
   IPv6Address
+  Regex
   Time
 
   );
@@ -562,6 +563,16 @@ declare IPAddress, as ~String | sub {
 declare IPv6Address, as ~String | sub {
 	require Data::Validate::IP;
 	return Data::Validate::IP::is_ipv6($_);
+};
+
+declare Regex, as ~String | sub {
+	try {
+		qr/$_/;
+		return 1;
+	}
+	catch($e) {
+		return 0;
+	}
 };
 
 declare Hostname, as ~String | sub {

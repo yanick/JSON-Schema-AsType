@@ -24,32 +24,24 @@ my $jsts_dir = path(__FILE__)->parent->child('json-schema-test-suite');
 memoize('registry');
 
 my ( $target_draft, $target_file, $target_test, $target_check ) = split ':',
-  $ENV{TEST_SCHEMA}//'';
+  $ENV{TEST_SCHEMA} // '';
 
 my $todo = {};
 
-$todo->{4}{'ecmascript-regex.json'}{$_} = 'known TODO'
-  for 'pattern with non-ASCII digits',
-  '\w in patterns matches [A-Za-z0-9_], not unicode letters',
-  'patterns always use unicode semantics with pattern',
-  'ECMA 262 \S matches everything but whitespace',
-  'ECMA 262 \s matches whitespace',
-  'ECMA 262 \W matches everything but ascii letters',
-  'ECMA 262 \D matches everything but ascii digits',
-  'ECMA 262 \d matches ascii digits only';
+my @drafts = qw/ 3 4 6 7 2019-09 2020-12 /;
 
-$todo->{$_}{'bignum.json'} = "don't do bignums" for qw/
-	3 4 6 7 2019-09 2020-12
-/;
+for my $draft (@drafts) {
+	$todo->{$draft}{'ecmascript-regex.json'} = 'known TODO';
+}
+
+$todo->{$_}{'bignum.json'} = "don't do bignums" for @drafts;
 
 my @optional_files = (
-	'3',       'ecmascript-regex.json',
 	'3',       'email.json',
 	'3',       'regex.json',
 	'3',       'uri.json',
 	'3',       'non-bmp-regex.json',
 	'3',       'zeroTerminatedFloats.json',
-	'4',       'ecmascript-regex.json',
 	'4',       'float-overflow.json',
 	'4',       'email.json',
 	'4',       'hostname.json',
@@ -57,7 +49,6 @@ my @optional_files = (
 	'4',       'uri.json',
 	'4',       'non-bmp-regex.json',
 	'4',       'zeroTerminatedFloats.json',
-	'6',       'ecmascript-regex.json',
 	'6',       'float-overflow.json',
 	'6',       'email.json',
 	'6',       'hostname.json',
@@ -70,7 +61,6 @@ my @optional_files = (
 	'6',       'unknownKeyword.json',
 	'7',       'content.json',
 	'7',       'cross-draft.json',
-	'7',       'ecmascript-regex.json',
 	'7',       'float-overflow.json',
 	'7',       'email.json',
 	'7',       'hostname.json',
@@ -91,7 +81,6 @@ my @optional_files = (
 	'2019-09', 'anchor.json',
 	'2019-09', 'cross-draft.json',
 	'2019-09', 'dependencies-compatibility.json',
-	'2019-09', 'ecmascript-regex.json',
 	'2019-09', 'float-overflow.json',
 	'2019-09', 'duration.json',
 	'2019-09', 'email.json',
@@ -117,11 +106,9 @@ my @optional_files = (
 	'2020-12', 'cross-draft.json',
 	'2020-12', 'dependencies-compatibility.json',
 	'2020-12', 'dynamicRef.json',
-	'2020-12', 'ecmascript-regex.json',
 	'2020-12', 'float-overflow.json',
 	'2020-12', 'format-assertion.json',
 	'2020-12', 'duration.json',
-	'2020-12', 'ecmascript-regex.json',
 	'2020-12', 'email.json',
 	'2020-12', 'hostname.json',
 	'2020-12', 'idn-email.json',
