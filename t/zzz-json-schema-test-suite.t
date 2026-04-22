@@ -41,6 +41,8 @@ push $todo->{'2020-12'}{'pattern.json'}->@*,
 
 push $todo->{'2020-12'}{'format.json'}->@*,
   'ipv6 format', 'ipv4 format',
+  'date-time format',
+  'time format',
   'date format';
 
 $todo->{'2020-12'}{ $_ . '.json' } = 1 for qw/

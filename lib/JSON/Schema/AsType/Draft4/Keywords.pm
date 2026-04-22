@@ -62,14 +62,16 @@ __PACKAGE__->meta->add_method(
 );
 
 my %formats = (
-	color => CSSColor,
-	date => Date,
+	color        => CSSColor,
+	date         => Date,
+	'date-time'  => DateTime,
 	'ip-address' => IPAddress,
-	ipv4 => IPAddress,
-	ipv6 => IPv6Address,
+	ipv4         => IPAddress,
+	ipv6         => IPv6Address,
+	time         => Time,
 );
 
-sub _keyword_format ($self, $format ) {
+sub _keyword_format ( $self, $format ) {
 	return $formats{$format} // Any;
 }
 
@@ -114,7 +116,7 @@ sub _keyword_dependencies {
 			  $a => ref $b eq 'HASH'
 			? $self->sub_schema( $b, "#./dependencies/$a" )
 			: $b
-		  } %$dependencies
+		} %$dependencies
 	];
 
 }
@@ -139,8 +141,7 @@ sub _keyword_patternProperties {
 	my ( $self, $properties ) = @_;
 
 	my %prop_schemas =
-	  pairmap {
-		$a => $self->sub_schema( $b, "#./patternProperties/$a" )->type }
+	  pairmap { $a => $self->sub_schema( $b, "#./patternProperties/$a" )->type }
 	  %$properties;
 
 	return PatternProperties [%prop_schemas];

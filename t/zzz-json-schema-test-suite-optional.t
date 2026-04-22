@@ -45,7 +45,6 @@ my @optional_files = (
 	'3',       'email.json',
 	'3',       'host-name.json',
 	'3',       'regex.json',
-	'3',       'time.json',
 	'3',       'uri.json',
 	'3',       'non-bmp-regex.json',
 	'3',       'zeroTerminatedFloats.json',

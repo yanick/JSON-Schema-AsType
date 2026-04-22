@@ -78,8 +78,10 @@ use Type::Library
 
   CSSColor
   Date
+  DateTime
   IPAddress
   IPv6Address
+  Time
 
   );
 
@@ -94,303 +96,303 @@ use JSON::Schema::AsType::Annotations;
 
 declare AdditionalProperties,
   constraint_generator => sub {
-    my ( $known_properties, $type_or_boolean ) = @_;
+	my ( $known_properties, $type_or_boolean ) = @_;
 
-    sub {
-        return 1 unless Object->check($_);
+	sub {
+		return 1 unless Object->check($_);
 
-        my @add_keys = grep {
-            my $key = $_;
-            none { ref $_ ? $key =~ $_ : $key eq $_ } @$known_properties
-        } keys %$_;
+		my @add_keys = grep {
+			my $key = $_;
+			none { ref $_ ? $key =~ $_ : $key eq $_ } @$known_properties
+		} keys %$_;
 
-        add_annotation( 'additionalProperties', @add_keys );
+		add_annotation( 'additionalProperties', @add_keys );
 
-        if ( eval { $type_or_boolean->can('check') } ) {
-            my $obj = $_;
-            return all { $type_or_boolean->check( $obj->{$_} ) } @add_keys;
-        }
+		if ( eval { $type_or_boolean->can('check') } ) {
+			my $obj = $_;
+			return all { $type_or_boolean->check( $obj->{$_} ) } @add_keys;
+		}
 
-        return not( @add_keys and not $type_or_boolean );
-    }
+		return not( @add_keys and not $type_or_boolean );
+	}
   };
 
 declare UniqueItems, where {
-    return 1 unless Array->check($_);
-    @$_ == uniq map { to_json $_, { allow_nonref => 1, canonical => 1 } } @$_
+	return 1 unless Array->check($_);
+	@$_ == uniq map { to_json $_, { allow_nonref => 1, canonical => 1 } } @$_
 };
 
 my $json = JSON->new->allow_nonref->canonical;
 
 declare Enum, constraint_generator => sub {
-    my @items = @_;
+	my @items = @_;
 
-    sub {
-        my $j = $_;
+	sub {
+		my $j = $_;
 
-        # TODO horrible corner case for the test suite, worth it?
-        any { eq_deeply( $_, $j ) } @items;
-    }
+		# TODO horrible corner case for the test suite, worth it?
+		any { eq_deeply( $_, $j ) } @items;
+	}
 };
 
 # Dependencies[ foo => $type, bar => [ 'baz' ] ]
 # TODO name of generated type should be better
 declare Dependencies, constraint_generator => sub {
-    my %deps = @_;
+	my %deps = @_;
 
-    return reduce { $a & $b } pairmap { Dependency [ $a => $b ] } %deps;
+	return reduce { $a & $b } pairmap { Dependency [ $a => $b ] } %deps;
 };
 
 # Depencency[ foo => $type ]
 declare Dependency, constraint_generator => sub {
-    my ( $property, $dep ) = @_;
+	my ( $property, $dep ) = @_;
 
-    sub {
-        return 1 unless Object->check($_);
-        return 1 unless exists $_->{$property};
+	sub {
+		return 1 unless Object->check($_);
+		return 1 unless exists $_->{$property};
 
-        my $obj = $_;
+		my $obj = $_;
 
-        return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
+		return all { exists $obj->{$_} } @$dep if ref $dep eq 'ARRAY';
 
-        return $dep->check($_);
-    }
+		return $dep->check($_);
+	}
 };
 
 declare PatternProperties, constraint_generator => sub {
-    my %props = @_;
+	my %props = @_;
 
-    sub {
-        return 1 unless Object->check($_);
+	sub {
+		return 1 unless Object->check($_);
 
-        my $obj = $_;
+		my $obj = $_;
 
-        my @keys;
-        for my $key ( keys %props ) {
-            push @keys, grep { /$key/ } keys %$obj;
-        }
+		my @keys;
+		for my $key ( keys %props ) {
+			push @keys, grep { /$key/ } keys %$obj;
+		}
 
-        add_annotation( 'patternProperties', @keys );
+		add_annotation( 'patternProperties', @keys );
 
-        for my $key ( keys %props ) {
-            return
-              unless all { $props{$key}->check( $obj->{$_} ) }
-              grep { /$key/ } keys %$_;
-        }
+		for my $key ( keys %props ) {
+			return
+			  unless all { $props{$key}->check( $obj->{$_} ) }
+			  grep { /$key/ } keys %$_;
+		}
 
-        return 1;
+		return 1;
 
-    }
+	}
 };
 declare Properties, constraint_generator => sub {
-    my %types = @_;
+	my %types = @_;
 
-    %types = pairmap { $a => Optional [$b] } %types;
+	%types = pairmap { $a => Optional [$b] } %types;
 
-    return ~HashRef    # not an object, don't care
-      | (
-        Dict [ %types, Slurpy [Any] ] & sub {
-            my $value = $_;
-            add_annotation( 'properties',
-                grep { exists $value->{$_} } keys %types );
-            return 1;
-        }
-      );
+	return ~HashRef    # not an object, don't care
+	  | (
+		Dict [ %types, Slurpy [Any] ] & sub {
+			my $value = $_;
+			add_annotation( 'properties',
+				grep { exists $value->{$_} } keys %types );
+			return 1;
+		}
+	  );
 };
 
 declare Items, constraint_generator => sub {
-    my $types = shift;
+	my $types = shift;
 
-    if ( Boolean->check($types) ) {
-        return $types ? Any : sub { !@$_ };
-    }
+	if ( Boolean->check($types) ) {
+		return $types ? Any : sub { !@$_ };
+	}
 
-    my $type =
-      ref $types eq 'ARRAY'
-      ? Tuple [ ( map { Optional [$_] } @$types ), slurpy Any ]
-      : Tuple [ slurpy ArrayRef [$types] ];
+	my $type =
+	  ref $types eq 'ARRAY'
+	  ? Tuple [ ( map { Optional [$_] } @$types ), slurpy Any ]
+	  : Tuple [ slurpy ArrayRef [$types] ];
 
-    return ~ArrayRef | (
-        $type & sub {
-            if ( ref $types eq 'ARRAY' ) {
-                add_annotation( 'items', 0 .. $types->$#* );
-            }
-            else {
-                add_annotation( 'items', 0 .. $_->$#* );
-            }
-            return 1;
-        }
-    );
+	return ~ArrayRef | (
+		$type & sub {
+			if ( ref $types eq 'ARRAY' ) {
+				add_annotation( 'items', 0 .. $types->$#* );
+			}
+			else {
+				add_annotation( 'items', 0 .. $_->$#* );
+			}
+			return 1;
+		}
+	);
 
 };
 
 declare AdditionalItems, constraint_generator => sub {
-    if ( @_ > 1 ) {
-        my $to_skip = shift;
-        my $schema  = shift;
-        return sub {
+	if ( @_ > 1 ) {
+		my $to_skip = shift;
+		my $schema  = shift;
+		return sub {
 
-            return unless ref eq 'ARRAY';
-            my @additional = splice @$_, $to_skip;
+			return unless ref eq 'ARRAY';
+			my @additional = splice @$_, $to_skip;
 
-            if ( ref $schema eq 'JSON::PP::Boolean' ) {
-                my $verdict = @additional;
-                $verdict = !$verdict unless $schema;
-                return $verdict;
-            }
+			if ( ref $schema eq 'JSON::PP::Boolean' ) {
+				my $verdict = @additional;
+				$verdict = !$verdict unless $schema;
+				return $verdict;
+			}
 
-            return all { $schema->check($_) } @additional;
-        }
-    }
-    else {
-        my $size = shift;
-        if ( ref $size eq 'JSON::PP::Boolean' ) {
-            return sub {
-                my $s = ref($_) eq 'ARRAY' ? @_ : 0;
-                $DB::single = 1;
-                return !!$size ? $s : !$s;
-            }
-        }
-        return sub {
-            my $s = ref($_) eq 'ARRAY' ? @_ : 0;
-            $s <= $size;
-        };
-    }
+			return all { $schema->check($_) } @additional;
+		}
+	}
+	else {
+		my $size = shift;
+		if ( ref $size eq 'JSON::PP::Boolean' ) {
+			return sub {
+				my $s = ref($_) eq 'ARRAY' ? @_ : 0;
+				$DB::single = 1;
+				return !!$size ? $s : !$s;
+			}
+		}
+		return sub {
+			my $s = ref($_) eq 'ARRAY' ? @_ : 0;
+			$s <= $size;
+		};
+	}
 };
 
 declare MaxLength, constraint_generator => sub {
-    my $length = shift;
-    sub {
-        !String->check($_) or $length >= length;
-    }
+	my $length = shift;
+	sub {
+		!String->check($_) or $length >= length;
+	}
 };
 
 declare MinLength, constraint_generator => sub {
-    my $length = shift;
-    sub {
-        !String->check($_) or $length <= length;
-    }
+	my $length = shift;
+	sub {
+		!String->check($_) or $length <= length;
+	}
 };
 
 declare AllOf, constraint_generator => sub {
-    my @types = @_;
-    sub {
-        my $value = $_;
+	my @types = @_;
+	sub {
+		my $value = $_;
 
-        my $matched = 1;
-        my $scope   = {};
+		my $matched = 1;
+		my $scope   = {};
 
-        for my $type (@types) {
-            my %scope;
-            return 0 unless annotation_scope(
-                sub {
-                    return 0 unless $type->check($value);
+		for my $type (@types) {
+			my %scope;
+			return 0 unless annotation_scope(
+				sub {
+					return 0 unless $type->check($value);
 
-                    $scope = annotation_merge($scope);
+					$scope = annotation_merge($scope);
 
-                    return 1;
-                }
-            );
-        }
+					return 1;
+				}
+			);
+		}
 
-        annotation_merge($scope);
+		annotation_merge($scope);
 
-        return 1;
-    }
+		return 1;
+	}
 };
 
 declare AnyOf, constraint_generator => sub {
-    my @types = @_;
-    sub {
-        my $value = $_;
+	my @types = @_;
+	sub {
+		my $value = $_;
 
-        my $matched = 0;
-        my $scope   = {};
+		my $matched = 0;
+		my $scope   = {};
 
-        for my $type (@types) {
-            annotation_scope(
-                sub {
-                    return unless $type->check($value);
+		for my $type (@types) {
+			annotation_scope(
+				sub {
+					return unless $type->check($value);
 
-                    $scope   = annotation_merge($scope);
-                    $matched = 1;
-                }
-            );
-        }
+					$scope   = annotation_merge($scope);
+					$matched = 1;
+				}
+			);
+		}
 
-        if ($matched) {
-            annotation_merge($scope);
-        }
+		if ($matched) {
+			annotation_merge($scope);
+		}
 
-        return $matched;
-    }
+		return $matched;
+	}
 };
 
 declare OneOf, constraint_generator => sub {
-    my @types = @_;
-    sub {
-        my $value = $_;
+	my @types = @_;
+	sub {
+		my $value = $_;
 
-        my $matched = 0;
-        my $scope   = {};
+		my $matched = 0;
+		my $scope   = {};
 
-        for my $type (@types) {
-            return 0 unless annotation_scope(
-                sub {
-                    return 1 unless $type->check($value);
+		for my $type (@types) {
+			return 0 unless annotation_scope(
+				sub {
+					return 1 unless $type->check($value);
 
-                    return 0 if $matched;
+					return 0 if $matched;
 
-                    $scope   = annotation_merge($scope);
-                    $matched = 1;
+					$scope   = annotation_merge($scope);
+					$matched = 1;
 
-                    return 1;
+					return 1;
 
-                }
-            );
-        }
+				}
+			);
+		}
 
-        if ($matched) {
-            annotation_merge($scope);
-        }
+		if ($matched) {
+			annotation_merge($scope);
+		}
 
-        return $matched;
-    }
+		return $matched;
+	}
 };
 
 declare MaxProperties, constraint_generator => sub {
-    my $nbr = shift;
-    sub { !Object->check($_) or $nbr >= keys %$_; },;
+	my $nbr = shift;
+	sub { !Object->check($_) or $nbr >= keys %$_; },;
 };
 
 declare MinProperties, constraint_generator => sub {
-    my $nbr = shift;
-    sub {
-        !Object->check($_)
-          or $nbr <= scalar keys %$_;
-    },;
+	my $nbr = shift;
+	sub {
+		!Object->check($_)
+		  or $nbr <= scalar keys %$_;
+	},;
 };
 
 declare Not, constraint_generator => sub {
-    my $type = shift;
-    sub { not $type->check($_) },;
+	my $type = shift;
+	sub { not $type->check($_) },;
 };
 
 # ~Str or ~String?
 declare Pattern, constraint_generator => sub {
-    my $regex = shift;
-    sub { !String->check($_) or /$regex/ },;
+	my $regex = shift;
+	sub { !String->check($_) or /$regex/ },;
 };
 
 declare Object => as HashRef, where sub { ref eq 'HASH' };
 
 declare Required, constraint_generator => sub {
-    my @keys = @_;
-    sub {
-        return 1 unless Object->check($_);
-        my $obj = $_;
-        all { exists $obj->{$_} } @keys;
-    }
+	my @keys = @_;
+	sub {
+		return 1 unless Object->check($_);
+		my $obj = $_;
+		all { exists $obj->{$_} } @keys;
+	}
 };
 
 declare Array => as ArrayRef;
@@ -400,16 +402,16 @@ declare Boolean => where sub { ref =~ /JSON/ };
 declare
   LaxNumber => as StrictNum,
   where sub {
-    return !( !defined || ref );
+	return !( !defined || ref );
   };
 
 declare Number => where sub {
-    return 0 if !defined || ref;
+	return 0 if !defined || ref;
 
-    my $b_obj = B::svref_2object( \$_ );
-    my $flags = $b_obj->FLAGS;
-    return ( $flags & ( B::SVp_IOK | B::SVp_NOK )
-          and not( $flags & B::SVp_POK ) );
+	my $b_obj = B::svref_2object( \$_ );
+	my $flags = $b_obj->FLAGS;
+	return ( $flags & ( B::SVp_IOK | B::SVp_NOK )
+		  and not( $flags & B::SVp_POK ) );
 };
 
 declare
@@ -417,15 +419,15 @@ declare
   where sub { return !( !defined || ref ) };
 
 declare Integer => where sub {
-    return 0 unless Int->check($_);
+	return 0 unless Int->check($_);
 
-    # weeeird stuff stolen from JSON
-    my $b_obj = B::svref_2object( \$_ );
+	# weeeird stuff stolen from JSON
+	my $b_obj = B::svref_2object( \$_ );
 
-    my $flags = $b_obj->FLAGS;
-    my $verdict =
-      $flags & ( B::SVp_IOK | B::SVp_NOK ) && !( $flags & B::SVp_POK() );
-    return !!$verdict;
+	my $flags = $b_obj->FLAGS;
+	my $verdict =
+	  $flags & ( B::SVp_IOK | B::SVp_NOK ) && !( $flags & B::SVp_POK() );
+	return !!$verdict;
 };
 
 declare
@@ -435,83 +437,83 @@ declare
 declare
   String => as Str,
   where sub {
-    return 0 if !defined || ref;
+	return 0 if !defined || ref;
 
-    my $b_obj = B::svref_2object( \$_ );
-    my $flags = $b_obj->FLAGS;
-    return ( $flags & B::SVp_POK );
+	my $b_obj = B::svref_2object( \$_ );
+	my $flags = $b_obj->FLAGS;
+	return ( $flags & B::SVp_POK );
   };
 
 declare Null => where sub { not defined };
 
 declare 'MaxItems', constraint_generator => sub {
-    my $max = shift;
+	my $max = shift;
 
-    return sub {
-        ref ne 'ARRAY' or @$_ <= $max;
-    };
+	return sub {
+		ref ne 'ARRAY' or @$_ <= $max;
+	};
 };
 
 declare 'MinItems', constraint_generator => sub {
-    my $min = shift;
+	my $min = shift;
 
-    return sub {
-        ref ne 'ARRAY' or @$_ >= $min;
-    };
+	return sub {
+		ref ne 'ARRAY' or @$_ >= $min;
+	};
 };
 
 declare 'MultipleOf', constraint_generator => sub {
-    my $num = shift;
+	my $num = shift;
 
-    return sub {
-        return 1 unless Number->check($_);
-        my ( $q, $r ) = Math::BigFloat->new($_)->bdiv($num);
-        return !$r;
-    }
+	return sub {
+		return 1 unless Number->check($_);
+		my ( $q, $r ) = Math::BigFloat->new($_)->bdiv($num);
+		return !$r;
+	}
 };
 
 declare Minimum, constraint_generator => sub {
-    my $minimum = shift;
-    return sub {
-        !Number->check($_)
-          or $_ >= $minimum;
-    };
+	my $minimum = shift;
+	return sub {
+		!Number->check($_)
+		  or $_ >= $minimum;
+	};
 };
 
 declare ExclusiveMinimum, constraint_generator => sub {
-    my $minimum = shift;
-    return sub {
-        !StrictNum->check($_)
-          or $_ > $minimum;
-    }
+	my $minimum = shift;
+	return sub {
+		!StrictNum->check($_)
+		  or $_ > $minimum;
+	}
 };
 
 declare Maximum, constraint_generator => sub {
-    my $max = shift;
-    return sub {
-        !StrictNum->check($_)
-          or $_ <= $max;
-    };
+	my $max = shift;
+	return sub {
+		!StrictNum->check($_)
+		  or $_ <= $max;
+	};
 };
 
 declare ExclusiveMaximum, constraint_generator => sub {
-    my $max = shift;
-    return sub {
-        !StrictNum->check($_)
-          or $_ < $max;
-    }
+	my $max = shift;
+	return sub {
+		!StrictNum->check($_)
+		  or $_ < $max;
+	}
 };
 
 declare Schema, as InstanceOf ['Type::Tiny'];
 
 coerce Schema, from HashRef, via {
-    my $schema = JSON::Schema::AsType->new( draft => 4, schema => $_ );
+	my $schema = JSON::Schema::AsType->new( draft => 4, schema => $_ );
 
-    if ( $schema->validate_schema ) {
-        die "not a valid draft4 json schema\n";
-    }
+	if ( $schema->validate_schema ) {
+		die "not a valid draft4 json schema\n";
+	}
 
-    $schema->type
+	$schema->type
 };
 
 declare Date, as ~String | sub {
@@ -521,7 +523,31 @@ declare Date, as ~String | sub {
 		DateTime::Format::ISO8601->parse_datetime($_);
 		return 1;
 	}
-	catch($e) {
+	catch ($e) {
+		return 0;
+	}
+};
+
+declare DateTime, as ~String | sub {
+	require DateTime::Format::ISO8601;
+	return 0 unless /^\d{4}-\d{2}-\d{2}/;
+	try {
+		DateTime::Format::ISO8601->parse_datetime(uc);
+		return 1;
+	}
+	catch ($e) {
+		return 0;
+	}
+};
+
+declare Time, as ~String | sub {
+	require DateTime::Format::ISO8601;
+	s/://g;
+	try {
+		DateTime::Format::ISO8601->parse_time($_);
+		return 1;
+	}
+	catch ($e) {
 		return 0;
 	}
 };
@@ -537,156 +563,157 @@ declare IPv6Address, as ~String | sub {
 };
 
 declare CSSColor, as ~String | sub {
-	return 1 if /^#[A-F\d]{6}$/i or/^#[A-F\d]{3}$/i;
-	my $c = $_; return any { $c eq $_ } qw/
-  aliceblue
-  antiquewhite
-  aqua
-  aquamarine
-  azure
-  beige
-  bisque
-  black
-  blanchedalmond
-  blue
-  blueviolet
-  brown
-  burlywood
-  cadetblue
-  chartreuse
-  chocolate
-  coral
-  cornflowerblue
-  cornsilk
-  crimson
-  cyan
-  darkblue
-  darkcyan
-  darkgoldenrod
-  darkgray
-  darkgreen
-  darkgrey
-  darkkhaki
-  darkmagenta
-  darkolivegreen
-  darkorange
-  darkorchid
-  darkred
-  darksalmon
-  darkseagreen
-  darkslateblue
-  darkslategray
-  darkslategrey
-  darkturquoise
-  darkviolet
-  deeppink
-  deepskyblue
-  dimgray
-  dimgrey
-  dodgerblue
-  firebrick
-  floralwhite
-  forestgreen
-  fuchsia
-  gainsboro
-  ghostwhite
-  goldenrod
-  gold
-  gray
-  green
-  greenyellow
-  grey
-  honeydew
-  hotpink
-  indianred
-  indigo
-  ivory
-  khaki
-  lavenderblush
-  lavender
-  lawngreen
-  lemonchiffon
-  lightblue
-  lightcoral
-  lightcyan
-  lightgoldenrodyellow
-  lightgray
-  lightgreen
-  lightgrey
-  lightpink
-  lightsalmon
-  lightseagreen
-  lightskyblue
-  lightslategray
-  lightslategrey
-  lightsteelblue
-  lightyellow
-  lime
-  limegreen
-  linen
-  magenta
-  maroon
-  mediumaquamarine
-  mediumblue
-  mediumorchid
-  mediumpurple
-  mediumseagreen
-  mediumslateblue
-  mediumspringgreen
-  mediumturquoise
-  mediumvioletred
-  midnightblue
-  mintcream
-  mistyrose
-  moccasin
-  navajowhite
-  navy
-  oldlace
-  olive
-  olivedrab
-  orange
-  orangered
-  orchid
-  palegoldenrod
-  palegreen
-  paleturquoise
-  palevioletred
-  papayawhip
-  peachpuff
-  peru
-  pink
-  plum
-  powderblue
-  purple
-  rebeccapurple
-  red
-  rosybrown
-  royalblue
-  saddlebrown
-  salmon
-  sandybrown
-  seagreen
-  seashell
-  sienna
-  silver
-  skyblue
-  slateblue
-  slategray
-  slategrey
-  snow
-  springgreen
-  steelblue
-  tan
-  teal
-  thistle
-  tomato
-  turquoise
-  violet
-  wheat
-  white
-  whitesmoke
-  yellow
-  yellowgreen
-/;
+	return 1 if /^#[A-F\d]{6}$/i or /^#[A-F\d]{3}$/i;
+	my $c = $_;
+	return any { $c eq $_ } qw/
+	  aliceblue
+	  antiquewhite
+	  aqua
+	  aquamarine
+	  azure
+	  beige
+	  bisque
+	  black
+	  blanchedalmond
+	  blue
+	  blueviolet
+	  brown
+	  burlywood
+	  cadetblue
+	  chartreuse
+	  chocolate
+	  coral
+	  cornflowerblue
+	  cornsilk
+	  crimson
+	  cyan
+	  darkblue
+	  darkcyan
+	  darkgoldenrod
+	  darkgray
+	  darkgreen
+	  darkgrey
+	  darkkhaki
+	  darkmagenta
+	  darkolivegreen
+	  darkorange
+	  darkorchid
+	  darkred
+	  darksalmon
+	  darkseagreen
+	  darkslateblue
+	  darkslategray
+	  darkslategrey
+	  darkturquoise
+	  darkviolet
+	  deeppink
+	  deepskyblue
+	  dimgray
+	  dimgrey
+	  dodgerblue
+	  firebrick
+	  floralwhite
+	  forestgreen
+	  fuchsia
+	  gainsboro
+	  ghostwhite
+	  goldenrod
+	  gold
+	  gray
+	  green
+	  greenyellow
+	  grey
+	  honeydew
+	  hotpink
+	  indianred
+	  indigo
+	  ivory
+	  khaki
+	  lavenderblush
+	  lavender
+	  lawngreen
+	  lemonchiffon
+	  lightblue
+	  lightcoral
+	  lightcyan
+	  lightgoldenrodyellow
+	  lightgray
+	  lightgreen
+	  lightgrey
+	  lightpink
+	  lightsalmon
+	  lightseagreen
+	  lightskyblue
+	  lightslategray
+	  lightslategrey
+	  lightsteelblue
+	  lightyellow
+	  lime
+	  limegreen
+	  linen
+	  magenta
+	  maroon
+	  mediumaquamarine
+	  mediumblue
+	  mediumorchid
+	  mediumpurple
+	  mediumseagreen
+	  mediumslateblue
+	  mediumspringgreen
+	  mediumturquoise
+	  mediumvioletred
+	  midnightblue
+	  mintcream
+	  mistyrose
+	  moccasin
+	  navajowhite
+	  navy
+	  oldlace
+	  olive
+	  olivedrab
+	  orange
+	  orangered
+	  orchid
+	  palegoldenrod
+	  palegreen
+	  paleturquoise
+	  palevioletred
+	  papayawhip
+	  peachpuff
+	  peru
+	  pink
+	  plum
+	  powderblue
+	  purple
+	  rebeccapurple
+	  red
+	  rosybrown
+	  royalblue
+	  saddlebrown
+	  salmon
+	  sandybrown
+	  seagreen
+	  seashell
+	  sienna
+	  silver
+	  skyblue
+	  slateblue
+	  slategray
+	  slategrey
+	  snow
+	  springgreen
+	  steelblue
+	  tan
+	  teal
+	  thistle
+	  tomato
+	  turquoise
+	  violet
+	  wheat
+	  white
+	  whitesmoke
+	  yellow
+	  yellowgreen
+	  /;
 
 };
