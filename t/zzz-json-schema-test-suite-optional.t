@@ -99,7 +99,6 @@ my @optional_files = (
 	'2020-12', 'uri-reference.json',
 	'2020-12', 'uri-template.json',
 	'2020-12', 'uuid.json',
-	'2020-12', 'no-schema.json',
 	'2020-12', 'non-bmp-regex.json',
 	'2020-12', 'refOfUnknownKeyword.json',
 	'2020-12', 'unknownKeyword.json',
