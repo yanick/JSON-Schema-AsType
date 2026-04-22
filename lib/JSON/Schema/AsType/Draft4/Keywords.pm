@@ -65,6 +65,7 @@ my %formats = (
 	color        => CSSColor,
 	date         => Date,
 	'date-time'  => DateTime,
+	'host-name'  => Hostname,
 	'ip-address' => IPAddress,
 	ipv4         => IPAddress,
 	ipv6         => IPv6Address,

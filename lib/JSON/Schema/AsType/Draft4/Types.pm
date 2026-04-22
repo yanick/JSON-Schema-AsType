@@ -79,6 +79,7 @@ use Type::Library
   CSSColor
   Date
   DateTime
+  Hostname
   IPAddress
   IPv6Address
   Time
@@ -531,6 +532,7 @@ declare Date, as ~String | sub {
 declare DateTime, as ~String | sub {
 	require DateTime::Format::ISO8601;
 	return 0 unless /^\d{4}-\d{2}-\d{2}/;
+	return 0 if /-24:00$/; # invalid offset
 	try {
 		DateTime::Format::ISO8601->parse_datetime(uc);
 		return 1;
@@ -560,6 +562,11 @@ declare IPAddress, as ~String | sub {
 declare IPv6Address, as ~String | sub {
 	require Data::Validate::IP;
 	return Data::Validate::IP::is_ipv6($_);
+};
+
+declare Hostname, as ~String | sub {
+	require Data::Validate::Domain;
+	return Data::Validate::Domain::is_hostname($_);
 };
 
 declare CSSColor, as ~String | sub {

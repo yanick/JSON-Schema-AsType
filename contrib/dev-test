@@ -1,0 +1,3 @@
+#!/usr/bin/env fish
+
+TEST2_ENABLE_PLUGINS=BailOnFail prove -l -r -j4 --state=hot,slow,save t

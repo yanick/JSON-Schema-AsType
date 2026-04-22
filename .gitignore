@@ -5,3 +5,4 @@ taskchampion.sqlite3
 
 # git stuff
 *.orig
+.prove
