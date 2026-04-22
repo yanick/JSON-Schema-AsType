@@ -33,6 +33,8 @@ my @drafts = qw/ 3 4 6 7 2019-09 2020-12 /;
 for my $draft (@drafts) {
 	$todo->{$draft}{'ecmascript-regex.json'} = 'known TODO';
 	$todo->{$draft}{'regex.json'} = 'known TODO';
+
+	$todo->{$draft}{'uri.json'}{'validation of URIs'}{'invalid userinfo'} = 'TODO';
 }
 
 $todo->{$_}{'bignum.json'} = "don't do bignums" for @drafts;
@@ -42,17 +44,14 @@ $todo->{$_}{'email.json'}{'validation of e-mail addresses'}
 
 
 my @optional_files = (
-	'3',       'uri.json',
 	'3',       'non-bmp-regex.json',
 	'3',       'zeroTerminatedFloats.json',
 	'4',       'float-overflow.json',
-	'4',       'uri.json',
 	'4',       'non-bmp-regex.json',
 	'4',       'zeroTerminatedFloats.json',
 	'6',       'float-overflow.json',
 	'6',       'uri-reference.json',
 	'6',       'uri-template.json',
-	'6',       'uri.json',
 	'6',       'non-bmp-regex.json',
 	'6',       'unknownKeyword.json',
 	'7',       'content.json',
@@ -66,7 +65,6 @@ my @optional_files = (
 	'7',       'time.json',
 	'7',       'uri-reference.json',
 	'7',       'uri-template.json',
-	'7',       'uri.json',
 	'7',       'non-bmp-regex.json',
 	'7',       'unknownKeyword.json',
 	'2019-09', 'anchor.json',
@@ -82,7 +80,6 @@ my @optional_files = (
 	'2019-09', 'time.json',
 	'2019-09', 'uri-reference.json',
 	'2019-09', 'uri-template.json',
-	'2019-09', 'uri.json',
 	'2019-09', 'uuid.json',
 	'2019-09', 'no-schema.json',
 	'2019-09', 'non-bmp-regex.json',
@@ -104,7 +101,6 @@ my @optional_files = (
 	'2020-12', 'time.json',
 	'2020-12', 'uri-reference.json',
 	'2020-12', 'uri-template.json',
-	'2020-12', 'uri.json',
 	'2020-12', 'uuid.json',
 	'2020-12', 'no-schema.json',
 	'2020-12', 'non-bmp-regex.json',

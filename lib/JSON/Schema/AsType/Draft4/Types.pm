@@ -86,6 +86,7 @@ use Type::Library
   JSONPointer
   Regex
   Time
+  Uri
 
   );
 
@@ -588,6 +589,11 @@ declare Regex, as ~String | sub {
 declare Email, as ~String | sub {
 	require Data::Validate::Email;
 	return Data::Validate::Email::is_email_rfc822($_);
+};
+
+declare Uri, as ~String | sub {
+	require Data::Validate::URI;
+		Data::Validate::URI::is_uri($_);
 };
 
 declare Hostname, as ~String | sub {

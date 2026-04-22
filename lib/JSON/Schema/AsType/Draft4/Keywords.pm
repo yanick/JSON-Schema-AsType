@@ -74,6 +74,7 @@ my %formats = (
 	'json-pointer' => JSONPointer,
 	regex          => Regex,
 	time           => Time,
+	uri => Uri,
 );
 
 sub _keyword_format ( $self, $format ) {
