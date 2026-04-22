@@ -66,6 +66,7 @@ my %formats = (
 	date         => Date,
 	'date-time'  => DateTime,
 	'host-name'  => Hostname,
+	'hostname'  => Hostname,
 	'ip-address' => IPAddress,
 	ipv4         => IPAddress,
 	ipv6         => IPv6Address,

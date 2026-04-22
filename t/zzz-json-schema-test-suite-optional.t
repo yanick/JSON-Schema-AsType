@@ -44,14 +44,12 @@ my @optional_files = (
 	'3',       'zeroTerminatedFloats.json',
 	'4',       'float-overflow.json',
 	'4',       'email.json',
-	'4',       'hostname.json',
 	'4',       'unknown.json',
 	'4',       'uri.json',
 	'4',       'non-bmp-regex.json',
 	'4',       'zeroTerminatedFloats.json',
 	'6',       'float-overflow.json',
 	'6',       'email.json',
-	'6',       'hostname.json',
 	'6',       'json-pointer.json',
 	'6',       'unknown.json',
 	'6',       'uri-reference.json',
@@ -63,7 +61,6 @@ my @optional_files = (
 	'7',       'cross-draft.json',
 	'7',       'float-overflow.json',
 	'7',       'email.json',
-	'7',       'hostname.json',
 	'7',       'idn-email.json',
 	'7',       'idn-hostname.json',
 	'7',       'iri-reference.json',
@@ -84,7 +81,6 @@ my @optional_files = (
 	'2019-09', 'float-overflow.json',
 	'2019-09', 'duration.json',
 	'2019-09', 'email.json',
-	'2019-09', 'hostname.json',
 	'2019-09', 'idn-email.json',
 	'2019-09', 'idn-hostname.json',
 	'2019-09', 'iri-reference.json',
@@ -110,7 +106,6 @@ my @optional_files = (
 	'2020-12', 'format-assertion.json',
 	'2020-12', 'duration.json',
 	'2020-12', 'email.json',
-	'2020-12', 'hostname.json',
 	'2020-12', 'idn-email.json',
 	'2020-12', 'idn-hostname.json',
 	'2020-12', 'iri-reference.json',
@@ -128,6 +123,9 @@ my @optional_files = (
 	'2020-12', 'non-bmp-regex.json',
 	'2020-12', 'refOfUnknownKeyword.json',
 	'2020-12', 'unknownKeyword.json',
+	'2020-12', 'hostname.json',
+	'2019-09', 'hostname.json',
+	'7', 'hostname.json',
 );
 
 for my ( $d, $f ) (@optional_files) {
@@ -146,7 +144,7 @@ sub filter_target( $target, @entries ) {
 	return @entries unless $target;
 	return grep {
 		$_ = $_->{description} if ref and ref ne 'Path::Tiny';
-		-1 < index $_, $target
+		/$target/
 	} @entries;
 }
 

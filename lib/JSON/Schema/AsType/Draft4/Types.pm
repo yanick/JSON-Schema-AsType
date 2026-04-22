@@ -577,6 +577,7 @@ declare Regex, as ~String | sub {
 
 declare Hostname, as ~String | sub {
 	require Data::Validate::Domain;
+	return 0 if /\.$/; # trailing dot is invalid
 	return Data::Validate::Domain::is_hostname($_);
 };
 

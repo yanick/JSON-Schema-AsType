@@ -43,6 +43,7 @@ push $todo->{'2020-12'}{'format.json'}->@*,
   'ipv6 format', 'ipv4 format',
   'date-time format',
   'time format',
+  'hostname format',
   'regex format',
   'date format';
 
