@@ -35,6 +35,8 @@ for my $draft (@drafts) {
 	$todo->{$draft}{'regex.json'} = 'known TODO';
 
 	$todo->{$draft}{'uri.json'}{'validation of URIs'}{'invalid userinfo'} = 'TODO';
+
+	$todo->{$draft}{'zeroTerminatedFloats.json'} = 'TODO';
 }
 
 $todo->{$_}{'bignum.json'} = "don't do bignums" for @drafts;
@@ -42,21 +44,18 @@ $todo->{$_}{'bignum.json'} = "don't do bignums" for @drafts;
 $todo->{$_}{'email.json'}{'validation of e-mail addresses'}
   {'full "From" header is invalid'} = 'TODO' for @drafts;
 
+$todo->{$_}{'float-overflow.json'} = 'TODO' for qw/ 6 7 2019-09 2020-12 /;
+
 
 my @optional_files = (
 	'3',       'non-bmp-regex.json',
-	'3',       'zeroTerminatedFloats.json',
-	'4',       'float-overflow.json',
 	'4',       'non-bmp-regex.json',
-	'4',       'zeroTerminatedFloats.json',
-	'6',       'float-overflow.json',
 	'6',       'uri-reference.json',
 	'6',       'uri-template.json',
 	'6',       'non-bmp-regex.json',
 	'6',       'unknownKeyword.json',
 	'7',       'content.json',
 	'7',       'cross-draft.json',
-	'7',       'float-overflow.json',
 	'7',       'idn-email.json',
 	'7',       'idn-hostname.json',
 	'7',       'iri-reference.json',
@@ -70,7 +69,6 @@ my @optional_files = (
 	'2019-09', 'anchor.json',
 	'2019-09', 'cross-draft.json',
 	'2019-09', 'dependencies-compatibility.json',
-	'2019-09', 'float-overflow.json',
 	'2019-09', 'duration.json',
 	'2019-09', 'idn-email.json',
 	'2019-09', 'idn-hostname.json',
@@ -89,7 +87,6 @@ my @optional_files = (
 	'2020-12', 'cross-draft.json',
 	'2020-12', 'dependencies-compatibility.json',
 	'2020-12', 'dynamicRef.json',
-	'2020-12', 'float-overflow.json',
 	'2020-12', 'format-assertion.json',
 	'2020-12', 'duration.json',
 	'2020-12', 'email.json',
