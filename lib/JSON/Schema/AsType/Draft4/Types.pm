@@ -76,9 +76,10 @@ use Type::Library
 
   Schema
 
+  CSSColor
+  Date
   IPAddress
   IPv6Address
-  CSSColor
 
   );
 
@@ -513,6 +514,17 @@ coerce Schema, from HashRef, via {
     $schema->type
 };
 
+declare Date, as ~String | sub {
+	require DateTime::Format::ISO8601;
+	return 0 unless /^\d{4}-\d{2}-\d{2}$/;
+	try {
+		DateTime::Format::ISO8601->parse_datetime($_);
+		return 1;
+	}
+	catch($e) {
+		return 0;
+	}
+};
 
 declare IPAddress, as ~String | sub {
 	require Data::Validate::IP;

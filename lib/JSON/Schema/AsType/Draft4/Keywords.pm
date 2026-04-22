@@ -63,6 +63,7 @@ __PACKAGE__->meta->add_method(
 
 my %formats = (
 	color => CSSColor,
+	date => Date,
 	'ip-address' => IPAddress,
 	ipv4 => IPAddress,
 	ipv6 => IPv6Address,
