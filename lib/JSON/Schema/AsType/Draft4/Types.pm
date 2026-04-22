@@ -82,6 +82,7 @@ use Type::Library
   Hostname
   IPAddress
   IPv6Address
+  JSONPointer
   Regex
   Time
 
@@ -563,6 +564,14 @@ declare IPAddress, as ~String | sub {
 declare IPv6Address, as ~String | sub {
 	require Data::Validate::IP;
 	return Data::Validate::IP::is_ipv6($_);
+};
+
+declare JSONPointer, as ~String | sub {
+	return 1 if $_ eq '';
+	return 0 unless /^\//;
+	return 0 if /~([^01]|$)/;
+
+	return 1;
 };
 
 declare Regex, as ~String | sub {
