@@ -62,17 +62,18 @@ __PACKAGE__->meta->add_method(
 );
 
 my %formats = (
-	color        => CSSColor,
-	date         => Date,
-	'date-time'  => DateTime,
-	'host-name'  => Hostname,
-	'hostname'  => Hostname,
-	'ip-address' => IPAddress,
-	ipv4         => IPAddress,
-	ipv6         => IPv6Address,
+	color          => CSSColor,
+	date           => Date,
+	email          => Email,
+	'date-time'    => DateTime,
+	'host-name'    => Hostname,
+	'hostname'     => Hostname,
+	'ip-address'   => IPAddress,
+	ipv4           => IPAddress,
+	ipv6           => IPv6Address,
 	'json-pointer' => JSONPointer,
-	regex        => Regex,
-	time         => Time,
+	regex          => Regex,
+	time           => Time,
 );
 
 sub _keyword_format ( $self, $format ) {

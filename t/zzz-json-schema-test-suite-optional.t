@@ -32,23 +32,24 @@ my @drafts = qw/ 3 4 6 7 2019-09 2020-12 /;
 
 for my $draft (@drafts) {
 	$todo->{$draft}{'ecmascript-regex.json'} = 'known TODO';
+	$todo->{$draft}{'regex.json'} = 'known TODO';
 }
 
 $todo->{$_}{'bignum.json'} = "don't do bignums" for @drafts;
 
+$todo->{$_}{'email.json'}{'validation of e-mail addresses'}
+  {'full "From" header is invalid'} = 'TODO' for @drafts;
+
+
 my @optional_files = (
-	'3',       'email.json',
-	'3',       'regex.json',
 	'3',       'uri.json',
 	'3',       'non-bmp-regex.json',
 	'3',       'zeroTerminatedFloats.json',
 	'4',       'float-overflow.json',
-	'4',       'email.json',
 	'4',       'uri.json',
 	'4',       'non-bmp-regex.json',
 	'4',       'zeroTerminatedFloats.json',
 	'6',       'float-overflow.json',
-	'6',       'email.json',
 	'6',       'uri-reference.json',
 	'6',       'uri-template.json',
 	'6',       'uri.json',
@@ -57,12 +58,10 @@ my @optional_files = (
 	'7',       'content.json',
 	'7',       'cross-draft.json',
 	'7',       'float-overflow.json',
-	'7',       'email.json',
 	'7',       'idn-email.json',
 	'7',       'idn-hostname.json',
 	'7',       'iri-reference.json',
 	'7',       'iri.json',
-	'7',       'regex.json',
 	'7',       'relative-json-pointer.json',
 	'7',       'time.json',
 	'7',       'uri-reference.json',
@@ -75,12 +74,10 @@ my @optional_files = (
 	'2019-09', 'dependencies-compatibility.json',
 	'2019-09', 'float-overflow.json',
 	'2019-09', 'duration.json',
-	'2019-09', 'email.json',
 	'2019-09', 'idn-email.json',
 	'2019-09', 'idn-hostname.json',
 	'2019-09', 'iri-reference.json',
 	'2019-09', 'iri.json',
-	'2019-09', 'regex.json',
 	'2019-09', 'relative-json-pointer.json',
 	'2019-09', 'time.json',
 	'2019-09', 'uri-reference.json',
@@ -103,7 +100,6 @@ my @optional_files = (
 	'2020-12', 'idn-hostname.json',
 	'2020-12', 'iri-reference.json',
 	'2020-12', 'iri.json',
-	'2020-12', 'regex.json',
 	'2020-12', 'relative-json-pointer.json',
 	'2020-12', 'time.json',
 	'2020-12', 'uri-reference.json',
@@ -116,7 +112,7 @@ my @optional_files = (
 	'2020-12', 'unknownKeyword.json',
 	'2020-12', 'hostname.json',
 	'2019-09', 'hostname.json',
-	'7', 'hostname.json',
+	'7',       'hostname.json',
 );
 
 for my ( $d, $f ) (@optional_files) {
@@ -171,8 +167,17 @@ sub test_file( $draft, $file, $todo = {} ) {
 	# }
 
 	subtest $file => sub {
-		test_suite( $draft, $_, $file, $todo->{ path($file)->basename } )
-		  for filter_target( $target_test, @$data );
+		for ( filter_target( $target_test, @$data ) ) {
+			my $t = $todo;
+			if ( ref $t ) {
+				$t = $t->{ path($file)->basename };
+			}
+			if ( ref $t ) {
+				$t = $t->{ $_->{description} };
+			}
+			test_suite( $draft, $_, $file, $t );
+
+		}
 	};
 }
 

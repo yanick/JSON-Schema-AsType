@@ -79,6 +79,7 @@ use Type::Library
   CSSColor
   Date
   DateTime
+  Email
   Hostname
   IPAddress
   IPv6Address
@@ -534,7 +535,7 @@ declare Date, as ~String | sub {
 declare DateTime, as ~String | sub {
 	require DateTime::Format::ISO8601;
 	return 0 unless /^\d{4}-\d{2}-\d{2}/;
-	return 0 if /-24:00$/; # invalid offset
+	return 0 if /-24:00$/;    # invalid offset
 	try {
 		DateTime::Format::ISO8601->parse_datetime(uc);
 		return 1;
@@ -579,14 +580,19 @@ declare Regex, as ~String | sub {
 		qr/$_/;
 		return 1;
 	}
-	catch($e) {
+	catch ($e) {
 		return 0;
 	}
 };
 
+declare Email, as ~String | sub {
+	require Data::Validate::Email;
+	return Data::Validate::Email::is_email_rfc822($_);
+};
+
 declare Hostname, as ~String | sub {
 	require Data::Validate::Domain;
-	return 0 if /\.$/; # trailing dot is invalid
+	return 0 if /\.$/;    # trailing dot is invalid
 	return Data::Validate::Domain::is_hostname($_);
 };
 

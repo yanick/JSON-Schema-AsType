@@ -44,6 +44,7 @@ push $todo->{'2020-12'}{'format.json'}->@*,
   'date-time format',
   'time format',
   'hostname format',
+  'email format',
   'regex format',
   'json-pointer format',
   'date format';
