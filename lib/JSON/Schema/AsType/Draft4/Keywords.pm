@@ -64,6 +64,7 @@ __PACKAGE__->meta->add_method(
 my %formats = (
 	color          => CSSColor,
 	date           => Date,
+	duration       => Duration,
 	email          => Email,
 	'date-time'    => DateTime,
 	'host-name'    => Hostname,
@@ -74,8 +75,8 @@ my %formats = (
 	'json-pointer' => JSONPointer,
 	regex          => Regex,
 	time           => Time,
-	uri => Uri,
-	uuid => UUID
+	uri            => Uri,
+	uuid           => UUID
 );
 
 sub _keyword_format ( $self, $format ) {
