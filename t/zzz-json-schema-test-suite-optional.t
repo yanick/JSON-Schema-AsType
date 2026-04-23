@@ -32,9 +32,10 @@ my @drafts = qw/ 3 4 6 7 2019-09 2020-12 /;
 
 for my $draft (@drafts) {
 	$todo->{$draft}{'ecmascript-regex.json'} = 'known TODO';
-	$todo->{$draft}{'regex.json'} = 'known TODO';
+	$todo->{$draft}{'regex.json'}            = 'known TODO';
 
-	$todo->{$draft}{'uri.json'}{'validation of URIs'}{'invalid userinfo'} = 'TODO';
+	$todo->{$draft}{'uri.json'}{'validation of URIs'}{'invalid userinfo'} =
+	  'TODO';
 
 	$todo->{$draft}{'zeroTerminatedFloats.json'} = 'TODO';
 }
@@ -42,10 +43,10 @@ for my $draft (@drafts) {
 $todo->{$_}{'bignum.json'} = "don't do bignums" for @drafts;
 
 $todo->{$_}{'email.json'}{'validation of e-mail addresses'}
-  {'full "From" header is invalid'} = 'TODO' for @drafts;
+  {'full "From" header is invalid'} = 'TODO'
+  for @drafts;
 
 $todo->{$_}{'float-overflow.json'} = 'TODO' for qw/ 6 7 2019-09 2020-12 /;
-
 
 my @optional_files = (
 	'3',       'non-bmp-regex.json',
@@ -82,7 +83,6 @@ my @optional_files = (
 	'2019-09', 'non-bmp-regex.json',
 	'2019-09', 'refOfUnknownKeyword.json',
 	'2019-09', 'unknownKeyword.json',
-	'2020-12', 'anchor.json',
 	'2020-12', 'cross-draft.json',
 	'2020-12', 'dependencies-compatibility.json',
 	'2020-12', 'dynamicRef.json',
