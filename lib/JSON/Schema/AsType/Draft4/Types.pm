@@ -79,6 +79,7 @@ use Type::Library
   CSSColor
   Date
   DateTime
+  Duration
   Email
   Hostname
   IPAddress
@@ -547,6 +548,19 @@ declare DateTime, as ~String | sub {
 	}
 };
 
+declare Duration, as ~String | sub {
+	require DateTime::Format::Duration::ISO8601;
+	return 0 if $_ eq 'P';
+	return 0 if /T$/;
+	try {
+		DateTime::Format::Duration::ISO8601->new->parse_duration($_);
+		return 1;
+	}
+	catch ($e) {
+		return 0;
+	}
+};
+
 declare Time, as ~String | sub {
 	require DateTime::Format::ISO8601;
 	s/://g;
@@ -594,7 +608,7 @@ declare Email, as ~String | sub {
 
 declare Uri, as ~String | sub {
 	require Data::Validate::URI;
-		Data::Validate::URI::is_uri($_);
+	Data::Validate::URI::is_uri($_);
 };
 
 declare UUID, as ~String | sub {
