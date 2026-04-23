@@ -78,7 +78,6 @@ my @optional_files = (
 	'2019-09', 'time.json',
 	'2019-09', 'uri-reference.json',
 	'2019-09', 'uri-template.json',
-	'2019-09', 'no-schema.json',
 	'2019-09', 'non-bmp-regex.json',
 	'2019-09', 'refOfUnknownKeyword.json',
 	'2019-09', 'unknownKeyword.json',
